@@ -42,12 +42,14 @@ function normalizeBranchBase(): URL | null {
 export function branchCtaUrl({
   canonical,
   ref,
+  source,
   shareId,
   shareType,
   targetPath,
 }: {
   canonical: string;
   ref?: string;
+  source?: string;
   shareId: string;
   shareType: ShareLandingKind;
   targetPath: string;
@@ -56,6 +58,7 @@ export function branchCtaUrl({
   if (!branchUrl) return APP_STORE_URL;
 
   const cleanRef = normalizeReferralCode(ref ?? '');
+  const cleanSource = (source ?? '').trim();
   branchUrl.searchParams.set('$canonical_url', canonical);
   branchUrl.searchParams.set('$desktop_url', canonical);
   branchUrl.searchParams.set('$fallback_url', APP_STORE_URL);
@@ -67,6 +70,7 @@ export function branchCtaUrl({
   branchUrl.searchParams.set('~feature', 'share');
   branchUrl.searchParams.set('~channel', 'web_landing');
   if (cleanRef) branchUrl.searchParams.set('ref', cleanRef);
+  if (cleanSource) branchUrl.searchParams.set('source', cleanSource);
   return branchUrl.toString();
 }
 
