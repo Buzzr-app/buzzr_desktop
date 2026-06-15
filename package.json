@@ -44,7 +44,7 @@
     "postcss": "^8.5.10",
     "tailwind-merge": "^3.5.0",
     "tailwindcss": "^4.0.0",
-    "ts-jest": "^29.1.2",
+    "ts-jest": "^29.4.11",
     "typescript": "^5.4.2"
   },
   "overrides": {
