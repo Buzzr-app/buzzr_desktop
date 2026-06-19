@@ -32,7 +32,7 @@ export function ScrollSection() {
               style={{ background: 'radial-gradient(circle, rgba(0,230,118,0.14), transparent 70%)' }}
             />
             <div className="absolute left-1 top-10 w-[176px] -rotate-[5deg]">
-              <DeviceFrame src="/screenshot-party.png" alt="A Buzzr watch party in progress" />
+              <DeviceFrame src="/screenshot-rate.png" alt="Rating a live game in the Buzzr app" />
             </div>
             <div className="absolute right-0 top-0 w-[214px] rotate-[3deg]">
               <DeviceFrame src="/screenshot-games.png" alt="The Buzzr games feed" priority />

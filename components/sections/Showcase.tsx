@@ -9,10 +9,9 @@ type Screen = {
 };
 
 const SCREENS: Screen[] = [
-  { src: '/screenshot-home.png',  eyebrow: 'Home',        caption: 'Your feed of rated games' },
-  { src: '/screenshot-games.png', eyebrow: 'Games',       caption: 'Every live game, scored' },
-  { src: '/screenshot-rate.png',  eyebrow: 'Rate',        caption: 'Score the show, 1 to 10' },
-  { src: '/screenshot-party.png', eyebrow: 'Watch party', caption: 'Rate together, live' }
+  { src: '/screenshot-home.png',  eyebrow: 'Feed',  caption: 'Ratings, takes, and news' },
+  { src: '/screenshot-games.png', eyebrow: 'Games', caption: 'Every live game, scored' },
+  { src: '/screenshot-rate.png',  eyebrow: 'Swipe', caption: 'Swipe to score, 1 to 10' }
 ];
 
 export function Showcase() {
@@ -31,7 +30,7 @@ export function Showcase() {
         </p>
       </header>
 
-      <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:gap-8 lg:grid-cols-4">
+      <div className="mx-auto grid max-w-[820px] grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-3 sm:gap-8">
         {SCREENS.map((s, i) => (
           <DeviceFrame
             key={s.src}

@@ -33,7 +33,7 @@ export function LeaguesWall() {
             Every league you actually watch.
           </h2>
           <p className="mt-5 text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-            47 leagues across 12 sports, from NBA Playoffs and FIFA World Cup 2026 to F1, IPL, the UFC P4P chase, and the UCL knockouts. Track upcoming events, rate live games as they finish, log historical classics to your profile, and host watch parties with friends to rate in real time. No spreads. No lines. No gambling.
+            47 leagues across 12 sports, from NBA Playoffs and FIFA World Cup 2026 to F1, IPL, the UFC P4P chase, and the UCL knockouts. Track upcoming events, rate live games as they finish, log historical classics to your profile, and rate live with your crew. No spreads. No lines. No gambling.
           </p>
         </header>
 

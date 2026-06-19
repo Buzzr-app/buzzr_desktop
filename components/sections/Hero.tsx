@@ -25,7 +25,7 @@ export function Hero() {
         <div className="mt-10 grid items-end gap-12 lg:grid-cols-[1.05fr_auto]">
           <div>
             <p className="max-w-[460px] text-[16px] font-medium leading-[1.55] tracking-[-0.01em] text-foreground/80">
-              Any sport, any league. Score games by entertainment, not the final whistle. Scroll, rate, and follow the moments that actually mattered.
+              Any sport, any league. Score games by entertainment, not the final whistle. Swipe, rate, and follow the moments that actually mattered.
             </p>
 
             <div className="mt-8 flex flex-wrap items-center gap-3">
