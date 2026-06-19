@@ -17,6 +17,7 @@ import { SurfacesGrid } from '@/components/sections/SurfacesGrid';
 import { Highlights } from '@/components/sections/Highlights';
 import { DataBento } from '@/components/sections/DataBento';
 import { RateMission } from '@/components/sections/RateMission';
+import { Showcase } from '@/components/sections/Showcase';
 import { LeaguesWall } from '@/components/sections/LeaguesWall';
 import { Faq } from '@/components/sections/Faq';
 import { Reviews, REVIEWS_SUMMARY } from '@/components/sections/Reviews';
@@ -146,6 +147,9 @@ export default function HomePage() {
       <Hero />
       <ScrollReveal>
         <RateMission />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Showcase />
       </ScrollReveal>
       <ScrollReveal>
         <ScrollSection />
