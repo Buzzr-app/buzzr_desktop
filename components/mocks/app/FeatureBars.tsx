@@ -28,7 +28,7 @@ export function FeatureBars() {
   const s = useBuzzScene();
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-none p-6">
+    <div className="flex h-full flex-col justify-between rounded-xl p-6">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
           Features · fᵢ(t)

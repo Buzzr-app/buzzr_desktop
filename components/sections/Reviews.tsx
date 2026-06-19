@@ -83,7 +83,7 @@ export function Reviews() {
           href={APP_STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-none border border-white/25 px-5 py-3 text-[12px] font-bold uppercase tracking-[0.04em] text-foreground transition-colors hover:border-accent hover:text-accent"
+          className="inline-flex items-center gap-2 rounded-xl border border-white/25 px-5 py-3 text-[12px] font-bold uppercase tracking-[0.04em] text-foreground transition-colors hover:border-accent hover:text-accent"
         >
           Read all reviews on the App Store
           <span aria-hidden>→</span>

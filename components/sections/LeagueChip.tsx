@@ -13,7 +13,7 @@ export function LeagueChip({ league }: { league: League }) {
     >
       <span
         aria-hidden
-        className="relative inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-none bg-foreground"
+        className="relative inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-foreground"
       >
         {logo ? (
           <Image src={logo} alt="" width={18} height={18} sizes="18px" className="h-[16px] w-[16px] object-contain" />

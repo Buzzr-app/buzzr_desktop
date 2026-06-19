@@ -12,7 +12,7 @@ export function BuzzrMeter() {
   const [intPart, decPart] = s.buzz.toFixed(1).split('.');
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-none p-6">
+    <div className="flex h-full flex-col justify-between rounded-xl p-6">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
           Buzzr Score

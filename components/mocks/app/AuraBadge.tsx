@@ -15,7 +15,7 @@ export function AuraBadge() {
   const dotColor = s.periodLabel === 'FINAL' ? 'rgb(0 230 118)' : 'rgb(239 68 68)';
 
   return (
-    <div className="relative flex h-full w-full flex-col rounded-none p-6">
+    <div className="relative flex h-full w-full flex-col rounded-xl p-6">
       <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
         Live badge
       </span>

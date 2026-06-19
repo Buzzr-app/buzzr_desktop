@@ -19,7 +19,7 @@ export function FinalCTA() {
           href={APP_STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center rounded-none bg-foreground px-3 py-1 text-[14px] tracking-[-0.025em] text-canvas transition-colors hover:bg-foreground/90"
+          className="mt-2 inline-flex items-center rounded-xl bg-foreground px-3 py-1 text-[14px] tracking-[-0.025em] text-canvas transition-colors hover:bg-foreground/90"
         >
           Get the App
         </Link>
