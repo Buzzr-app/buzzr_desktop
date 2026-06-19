@@ -13,7 +13,7 @@ import {
   SITE_NAME,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { inter, spaceMono } from './fonts';
+import { montserrat, spaceMono } from './fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { BrandMark } from '@/components/BrandMark';
 import { ProductHuntLaunchEmbed } from '@/components/ProductHuntLaunchEmbed';
@@ -49,7 +49,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const fontVariables = `${inter.variable} ${spaceMono.variable}`;
+  const fontVariables = `${montserrat.variable} ${spaceMono.variable}`;
 
   return (
     <html lang="en" className={`dark ${fontVariables}`}>

@@ -1,8 +1,10 @@
+import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Marquee } from '@/components/Marquee';
 import { LEAGUES, SPORT_LABELS, SPORT_ORDER, type League, type LeagueSport } from '@/src/lib/constants';
 import { LeagueChip } from '@/components/sections/LeagueChip';
+import { getLeagueLogo } from '@/src/lib/leagueLogos';
 
 const GROUPED: Record<LeagueSport, League[]> = SPORT_ORDER.reduce(
   (acc, sport) => {
@@ -11,6 +13,8 @@ const GROUPED: Record<LeagueSport, League[]> = SPORT_ORDER.reduce(
   },
   {} as Record<LeagueSport, League[]>
 );
+
+const LOGO_LEAGUES = LEAGUES.filter((l) => getLeagueLogo(l.label));
 
 export function LeaguesWall() {
   return (
@@ -24,7 +28,7 @@ export function LeaguesWall() {
           <Badge>Coverage</Badge>
           <h2
             id="leagues-title"
-            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             Every league you actually watch.
           </h2>
@@ -33,6 +37,29 @@ export function LeaguesWall() {
           </p>
         </header>
 
+        {/* Real league logos, shown not claimed */}
+        <div className="mb-12 grid grid-cols-3 border-l border-t border-white/10 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+          {LOGO_LEAGUES.map((l) => {
+            const logo = getLeagueLogo(l.label)!;
+            return (
+              <div
+                key={l.label}
+                className="group flex aspect-square flex-col items-center justify-center gap-2 border-b border-r border-white/10 p-3 transition-colors hover:bg-white/[0.03]"
+              >
+                <Image
+                  src={logo}
+                  alt={l.long}
+                  width={40}
+                  height={40}
+                  sizes="40px"
+                  className="h-9 w-9 object-contain opacity-75 transition-opacity group-hover:opacity-100"
+                />
+                <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-muted">{l.label}</span>
+              </div>
+            );
+          })}
+        </div>
+
         <div className="flex flex-col">
           {SPORT_ORDER.map((sport) => {
             const leagues = GROUPED[sport];
@@ -40,7 +67,7 @@ export function LeaguesWall() {
             return (
               <div
                 key={sport}
-                className="flex flex-col gap-3 border-t border-surface py-5 md:flex-row md:items-baseline md:gap-x-6 md:gap-y-3"
+                className="flex flex-col gap-3 border-t border-white/10 py-5 md:flex-row md:items-baseline md:gap-x-6 md:gap-y-3"
               >
                 <div className="shrink-0 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted md:w-[140px]">
                   {SPORT_LABELS[sport]}

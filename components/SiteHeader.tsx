@@ -120,8 +120,8 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] tracking-[-0.025em] transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)] rounded-full ${
-                        isActive ? 'text-foreground' : 'text-muted hover:text-foreground'
+                      className={`inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] tracking-[-0.025em] transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)] rounded-none ${
+                        isActive ? 'text-accent' : 'text-muted hover:text-foreground'
                       }`}
                     >
                       <Icon size={14} strokeWidth={1.5} aria-hidden />
@@ -136,13 +136,13 @@ export function SiteHeader() {
           <div className="hidden md:flex items-center gap-2">
             <Link
               href="/changelog"
-              className="inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors rounded-full focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors rounded-none focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
             >
               Changelog
             </Link>
             <Link
               href="/blog"
-              className="inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors rounded-full focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors rounded-none focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
             >
               Blog
             </Link>
@@ -150,7 +150,7 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-[44px] items-center rounded-full border border-white/25 px-4 py-2.5 text-[14px] tracking-[-0.025em] text-foreground hover:border-white/50 transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="inline-flex min-h-[44px] items-center rounded-none border border-white/25 px-4 py-2.5 text-[14px] tracking-[-0.025em] text-foreground hover:border-white/50 transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
             >
               Get the App
             </Link>
@@ -198,7 +198,7 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       className={`flex items-center justify-between border-b border-surface py-3 text-[14px] tracking-[-0.025em] transition-colors ${
-                        isActive ? 'text-foreground' : 'text-muted hover:text-foreground'
+                        isActive ? 'text-accent' : 'text-muted hover:text-foreground'
                       }`}
                     >
                       <span className="inline-flex items-center gap-2.5">
@@ -224,7 +224,7 @@ export function SiteHeader() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-3 py-2 text-[14px] tracking-[-0.025em] text-canvas transition-colors hover:bg-foreground/90"
+                className="inline-flex w-full items-center justify-center rounded-none bg-foreground px-3 py-2 text-[14px] tracking-[-0.025em] text-canvas transition-colors hover:bg-foreground/90"
               >
                 Get the App
               </Link>

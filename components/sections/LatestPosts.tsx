@@ -14,7 +14,7 @@ export function LatestPosts() {
         <Badge>Blog</Badge>
         <h2
           id="latest-title"
-          className="mt-3 text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+          className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
         >
           From the blog.
         </h2>
@@ -32,7 +32,7 @@ export function LatestPosts() {
           <Badge>Blog</Badge>
           <h2
             id="latest-title"
-            className="mt-3 max-w-[22ch] text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="mt-3 max-w-[22ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             From the blog.
           </h2>

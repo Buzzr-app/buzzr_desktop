@@ -46,7 +46,7 @@ export function RateMission() {
           <Badge>The mission</Badge>
           <h2
             id="mission-title"
-            className="text-[clamp(36px,5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="text-[clamp(36px,5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             Letterboxd, for sports.
           </h2>
@@ -88,7 +88,15 @@ export function RateMission() {
               <p className="text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
                 &ldquo;{m.take}&rdquo;
               </p>
-              <Badge>@{m.author}</Badge>
+              <div className="mt-1 flex items-center gap-2.5">
+                <span className="flex h-7 w-7 items-center justify-center border border-white/15 bg-white/[0.04] text-[11px] font-bold text-foreground">
+                  {m.author.slice(0, 1).toUpperCase()}
+                </span>
+                <span className="text-[13px] font-medium text-foreground/80">@{m.author}</span>
+                <svg width="13" height="13" viewBox="0 0 24 24" className="text-accent" aria-hidden fill="currentColor">
+                  <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" />
+                </svg>
+              </div>
             </CalloutCard>
           ))}
         </div>

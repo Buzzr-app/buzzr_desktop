@@ -53,7 +53,7 @@ export function Reviews() {
           <Badge>Ratings &amp; Reviews</Badge>
           <h2
             id="reviews-title"
-            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             5.0 on the App Store.
           </h2>

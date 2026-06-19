@@ -29,7 +29,7 @@ export function Highlights() {
           <Badge>Highlights</Badge>
           <h2
             id="highlights-title"
-            className="mt-3 max-w-[18ch] text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="mt-3 max-w-[18ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             Wake up. Watch last night.
           </h2>
@@ -63,45 +63,56 @@ function ClipCard({ clip }: { clip: Clip }) {
   const logo = getLeagueLogo(clip.league);
   return (
     <CalloutCard className="group flex flex-col overflow-hidden p-0">
-      <div className="relative aspect-video w-full overflow-hidden bg-canvas border-b border-surface">
+      <div className="relative aspect-video w-full overflow-hidden border-b border-white/10">
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={{ background: 'linear-gradient(150deg, #0c1a12 0%, #08090b 55%, #0a120c 100%)' }}
+        />
         {logo && (
           <Image
             src={logo}
             alt=""
             aria-hidden
-            width={140}
-            height={140}
-            sizes="140px"
-            className="pointer-events-none absolute -right-6 -bottom-6 h-[140px] w-[140px] object-contain opacity-[0.08]"
+            width={150}
+            height={150}
+            sizes="150px"
+            className="pointer-events-none absolute -bottom-5 -right-5 h-[150px] w-[150px] object-contain opacity-[0.16]"
           />
         )}
+
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-[44px] font-normal tracking-[-0.025em] text-foreground">
-            {clip.teams[0]}
-          </span>
-          <span className="mx-3 font-mono text-[12px] tracking-[0.1em] text-muted">vs</span>
-          <span className="text-[44px] font-normal tracking-[-0.025em] text-foreground">
-            {clip.teams[1]}
+          <span className="flex h-12 w-12 items-center justify-center border border-white/30 bg-black/30 text-foreground backdrop-blur-sm transition-colors group-hover:border-accent group-hover:bg-accent/10 group-hover:text-accent">
+            <svg width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden>
+              <path d="M1 1.2v12.6L12 7.5z" fill="currentColor" />
+            </svg>
           </span>
         </div>
+
+        <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-2 pb-2.5">
+          <span className="text-[15px] font-bold tracking-[-0.02em] text-foreground">{clip.teams[0]}</span>
+          <span className="font-mono text-[10px] tracking-[0.1em] text-muted">vs</span>
+          <span className="text-[15px] font-bold tracking-[-0.02em] text-foreground">{clip.teams[1]}</span>
+        </div>
+
         <div className="absolute left-3 top-3">
           <Badge>{clip.league}</Badge>
         </div>
-        <div className="absolute right-3 top-3 score-mono text-[14px] tabular-nums text-foreground">
+        <div className="absolute right-3 top-3 score-mono text-[14px] font-bold tabular-nums text-accent">
           {clip.buzz.toFixed(1)}
         </div>
-        <div className="absolute bottom-3 right-3 font-mono text-[12px] leading-[2] tracking-[0.1em] text-muted">
+        <div className="absolute bottom-3 right-3 font-mono text-[11px] tracking-[0.1em] text-foreground/70">
           {clip.duration}
         </div>
       </div>
       <div className="flex flex-col gap-1 p-4">
-        <h3 className="truncate text-[16px] leading-[1.5] tracking-[-0.025em] text-foreground">
+        <h3 className="truncate text-[16px] font-semibold leading-[1.5] tracking-[-0.02em] text-foreground">
           {clip.matchup}
         </h3>
         <p className="truncate text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
           {clip.subtitle}
         </p>
-        <div className="mt-1 flex items-center justify-between font-mono text-[12px] tracking-[0.1em] text-muted">
+        <div className="mt-1 flex items-center justify-between font-mono text-[11px] tracking-[0.1em] text-muted">
           <span>{clip.views} views</span>
           <span>OFFICIAL</span>
         </div>

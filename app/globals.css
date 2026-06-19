@@ -4,27 +4,37 @@
 @source "../components";
 @source "../src";
 
-/* ─── Design tokens (xAI Midnight Command Center, emerald-substituted) ──────
-   One canvas. One surface. One foreground. Muted-ash for secondary type.
-   Emerald `#00e676` is the SOLE chromatic accent, replaces xAI's electric
-   blue everywhere it appears (focus rings, BuzzrMeter fill).
+/* ─── Design tokens (Buzzr "Void Arena") ────────────────────────────────────
+   Cool absolute-ish void. One brand accent: emerald #00e676 (the app's real
+   accent), used sparingly as signal. NO grey text tokens, secondary type is
+   warm-white at reduced opacity so it blends into the grain rather than reading
+   as dead grey. Zero radius everywhere. Montserrat across all type.
 ─────────────────────────────────────────────────────────────────────────── */
 @theme {
   /* Colors */
-  --color-canvas:     #0c0c0b;
-  --color-surface:    #1f2228;
-  --color-foreground: #ffffff;
-  --color-muted:      #7d8187;
-  --color-whisper:    #474747;
+  --color-canvas:     #08090b;
+  --color-surface:    #16181c;
+  --color-foreground: #f5fbff;
+  --color-muted:      rgba(245, 251, 255, 0.56);
+  --color-whisper:    rgba(245, 251, 255, 0.30);
   --color-accent:     #00e676;
+  --color-accent-dim: #00b85e;
   --color-on-accent:  #021a0a;
   --color-live:       #ef4444;
 
-  /* Type families, Inter (universalSans substitute) + Space Mono (GeistMono substitute) */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  /* Buzz heat ramp (mirrors app score bands), for meters/data only */
+  --color-buzz-peak:    #00e676;
+  --color-buzz-great:   #22c55e;
+  --color-buzz-good:    #fde047;
+  --color-buzz-mid:     #f59e0b;
+  --color-buzz-bad:     #ef4444;
+  --color-buzz-garbage: #7c3aed;
+
+  /* Type families, Montserrat (app face) + Space Mono (numerals) */
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-space-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Type scale, xAI verbatim */
+  /* Type scale, tighter crush at display sizes */
   --text-caption: 12px;
   --text-caption--line-height: 2;
   --text-caption--letter-spacing: 0.1px;
@@ -35,30 +45,30 @@
 
   --text-body: 16px;
   --text-body--line-height: 1.5;
-  --text-body--letter-spacing: -0.025em;
+  --text-body--letter-spacing: -0.01em;
 
   --text-subheading: 20px;
   --text-subheading--line-height: 1.4;
-  --text-subheading--letter-spacing: -0.025em;
+  --text-subheading--letter-spacing: -0.02em;
 
   --text-heading: 36px;
-  --text-heading--line-height: 1.2;
-  --text-heading--letter-spacing: -0.025em;
+  --text-heading--line-height: 1.1;
+  --text-heading--letter-spacing: -0.03em;
 
   --text-heading-lg: 48px;
-  --text-heading-lg--line-height: 1.11;
-  --text-heading-lg--letter-spacing: -0.025em;
+  --text-heading-lg--line-height: 1.04;
+  --text-heading-lg--letter-spacing: -0.035em;
 
-  --text-display: 80px;
-  --text-display--line-height: 1;
-  --text-display--letter-spacing: -0.025em;
+  --text-display: 92px;
+  --text-display--line-height: 0.9;
+  --text-display--letter-spacing: -0.04em;
 
-  /* Radii, xAI three-radius system */
-  --radius-input:   24px;
-  --radius-button:  9999px;
+  /* Radii, zero everywhere, no exceptions */
+  --radius-input:   0px;
+  --radius-button:  0px;
   --radius-callout: 0px;
 
-  /* Shadow, xAI's only shadow (input focus). Recolored to emerald. */
+  /* Only shadow in the system: focus ring, brand-green */
   --shadow-focus: 0 0 0 2px rgba(0, 230, 118, 0.55);
 }
 
@@ -83,7 +93,7 @@ body {
   min-height: 100vh;
   font-family: var(--font-sans);
   font-weight: 400;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.01em;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-canvas);
@@ -98,18 +108,17 @@ body {
 :focus-visible {
   outline: 2px solid rgba(0, 230, 118, 0.55);
   outline-offset: 2px;
-  border-radius: 2px;
+  border-radius: 0;
 }
 
+/* Headings default to display weight; explicit utility classes still win. */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  font-variant-ligatures: none;
-  font-feature-settings: 'liga' 0, 'clig' 0;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
-/* ─── Surviving keyframes (3 total) ─────────────────────────────────────────── */
+/* ─── Keyframes ─────────────────────────────────────────────────────────────── */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -125,6 +134,11 @@ h1, h2, h3, h4, h5, h6 {
   100% { transform: translateX(-50%); }
 }
 
+@keyframes buzz-pulse {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.25; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -135,17 +149,15 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ─── Utilities ─────────────────────────────────────────────────────────────── */
 @layer utilities {
-  /* Animation classes */
   .animate-fade-in-up { animation: fade-in-up 0.22s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
   .animate-fade-in    { animation: fade-in 0.22s ease-out forwards; }
   .animate-marquee    { animation: marquee-scroll 30s linear infinite; }
+  .animate-buzz-pulse { animation: buzz-pulse 1.6s ease-in-out infinite; }
 
-  /* Reveal helpers, used by ScrollReveal */
   .opacity-0-init { opacity: 0; }
   .in-view.animate-fade-in-up,
   .in-view.animate-fade-in { opacity: 1; }
 
-  /* Stagger delays */
   .stagger-1 { animation-delay: 0.10s; }
   .stagger-2 { animation-delay: 0.20s; }
   .stagger-3 { animation-delay: 0.30s; }
@@ -153,24 +165,30 @@ h1, h2, h3, h4, h5, h6 {
   .stagger-5 { animation-delay: 0.50s; }
   .stagger-6 { animation-delay: 0.60s; }
 
-  /* Edge mask for marquees (fade at start/end) */
   .mask-edges-x {
     -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
     mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
   }
 
-  /* Section divider, emerald-tinted gradient hairline */
+  /* Section divider, faint white hairline (no grey, no emerald wash) */
   .divider-hairline {
     height: 1px;
     background-image: linear-gradient(
       90deg,
       transparent,
-      rgba(0, 230, 118, 0.10) 50%,
+      rgba(245, 251, 255, 0.12) 50%,
       transparent
     );
   }
 
-  /* Mono numerals (kept for product mocks) */
+  /* Display crush, massive compressed headline treatment */
+  .text-crush {
+    letter-spacing: -0.055em;
+    line-height: 0.85;
+    text-transform: uppercase;
+  }
+
+  /* Mono numerals for product mocks / scores */
   .score-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
     font-variant-numeric: tabular-nums;
