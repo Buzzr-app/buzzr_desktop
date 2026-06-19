@@ -104,7 +104,7 @@ export default function DeleteAccountPage() {
             <ul className="list-disc space-y-1 pl-5">
               <li>Authentication account in Supabase Auth.</li>
               <li>Profile and preferences tied to your user ID.</li>
-              <li>Ratings, events, watch parties, RSVPs, follows, and related social content tied to your user ID.</li>
+              <li>Ratings, events, crews, RSVPs, follows, and related social content tied to your user ID.</li>
               <li>Most other user-linked records that reference your account with delete cascades.</li>
             </ul>
           </section>
