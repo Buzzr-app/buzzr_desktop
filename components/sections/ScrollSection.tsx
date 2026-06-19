@@ -20,7 +20,7 @@ export function ScrollSection() {
           </p>
 
           <p className="max-w-[48ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-            Buzzr is a sports rating app built for fans, not fantasy managers. Every live game gets a 1 to 10 entertainment score, the Buzzr Score, built from chaos, energy, and drama. Not the final margin. A 40-point blowout and a triple-overtime thriller aren&apos;t the same game, and your feed shouldn&apos;t treat them like they are.
+            Buzzr is a sports rating app built for fans, not fantasy managers. Every live game gets a 1 to 10 entertainment score, the Buzzr Score, built from star power, rivalry, and stakes. Not the final margin. A 40-point blowout and a triple-overtime thriller aren&apos;t the same game, and your feed shouldn&apos;t treat them like they are.
           </p>
         </div>
 

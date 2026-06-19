@@ -6,11 +6,12 @@ import { readableTextColor } from '@/components/utils';
 // Buzz score color bands , 1:1 with the mobile app's getRatingColor().
 // Inlined here (the only consumer on the landing) to keep the dependency graph flat.
 const RATING_BANDS = [
-  { min: 9, color: '#00e676', label: 'Elite' },
-  { min: 7, color: '#22c55e', label: 'Good'  },
-  { min: 5, color: '#f59e0b', label: 'Mid'   },
-  { min: 3, color: '#ef4444', label: 'Meh'   },
-  { min: 0, color: '#7c3aed', label: 'Bad'   }
+  { min: 9,   color: '#16a34a', label: 'Peak'    },
+  { min: 8,   color: '#22c55e', label: 'Great'   },
+  { min: 6.5, color: '#fde047', label: 'Good'    },
+  { min: 5,   color: '#f59e0b', label: 'Mid'     },
+  { min: 3,   color: '#ef4444', label: 'Bad'     },
+  { min: 0,   color: '#7c3aed', label: 'Garbage' }
 ] as const;
 
 function ratingBand(score: number) {

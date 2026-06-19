@@ -35,15 +35,15 @@ export function Highlights() {
           </h2>
         </div>
         <p className="max-w-[36ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted lg:text-right">
-          Official reels. Ranked. Ready at 7 AM.
+          Post-game highlights. Linked from official channels.
         </p>
       </header>
 
       <CalloutCard className="mb-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Fact value="7 AM"     label="local delivery" />
+        <Fact value="Live"     label="on-demand" />
         <Fact value="12"       label="sports covered" />
         <Fact value="47"       label="leagues" />
-        <Fact value="≤ 10 min" label="per reel" />
+        <Fact value="Quick"    label="recaps" />
       </CalloutCard>
 
       <ul role="list" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

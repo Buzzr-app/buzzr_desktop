@@ -13,7 +13,7 @@ export function FinalCTA() {
           Rate the game.
         </h2>
         <p className="text-[20px] leading-[1.4] tracking-[-0.025em] text-muted">
-          Free on iPhone.
+          Free on iOS and Android.
         </p>
         <Link
           href={APP_STORE_URL}

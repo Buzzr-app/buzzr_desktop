@@ -16,7 +16,7 @@ const TILES: readonly Tile[] = [
   { number: '02', title: 'Your sports, your widgets.',  body: 'Drag-and-drop widgets per league.',       shot: '/screenshot-home.png',  pos: 'object-center' },
   { number: '03', title: 'Every stat, one tap deep.',   body: 'Box score to odds, stacked.',             shot: '/screenshot-games.png', pos: 'object-top' },
   { number: '04', title: 'Yell about it together.',     body: 'DMs, crews, live per-game threads.',       shot: '/screenshot-home.png',  pos: 'object-center' },
-  { number: '05', title: 'Crews for bracket warfare.',  body: 'Invite-only crews, shared leaderboard.',   shot: '/screenshot-games.png', pos: 'object-bottom' },
+  { number: '05', title: 'Crews for bracket warfare.',  body: 'Invite-only crews and squads, shared leaderboards.',   shot: '/screenshot-games.png', pos: 'object-bottom' },
   { number: '06', title: 'Brackets you can’t put down.', body: 'Madness, playoffs, World Cup.',          shot: '/screenshot-games.png', pos: 'object-bottom' }
 ];
 

@@ -16,7 +16,7 @@ const SAMPLES: Moment[] = [
     league: 'NCAAM',
     matchup: 'Yale vs Auburn',
     score: '9.8',
-    label: 'Elite',
+    label: 'Peak',
     take: 'OT buzzer-beater. #13 takes down #4. Instant classic.',
     author: 'hoopshead'
   },
@@ -32,7 +32,7 @@ const SAMPLES: Moment[] = [
     league: 'NFL',
     matchup: 'Rams vs Cardinals',
     score: '2.8',
-    label: 'Skip',
+    label: 'Garbage',
     take: 'Blowout from the first quarter. Turned it off at halftime.',
     author: 'soccerphil'
   }
