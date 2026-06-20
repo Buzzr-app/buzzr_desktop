@@ -109,7 +109,7 @@ export default function BlogIndexPage() {
         <span className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Blog</span>
         <h1
           id="blog-title"
-          className="mt-3 text-[clamp(36px,5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+          className="mt-3 text-[clamp(36px,5vw,52px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
         >
           The state of fandom.
         </h1>
@@ -125,7 +125,7 @@ export default function BlogIndexPage() {
             <Link
               key={slug}
               href={`/blog/tag/${slug}`}
-              className="border border-surface px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] uppercase text-muted transition-colors hover:border-white/25 hover:text-foreground"
+              className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] uppercase text-muted transition-colors hover:border-accent hover:text-foreground"
             >
               {tagLabelFromSlug(slug)}
             </Link>

@@ -9,7 +9,7 @@ import {
   SITE_TAGLINE,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { BrandAura } from '@/components/BrandAura';
+import { ScrollRail } from '@/components/sections/ScrollRail';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { Hero } from '@/components/sections/Hero';
 import { ScrollSection } from '@/components/sections/ScrollSection';
@@ -143,7 +143,6 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }}
       />
 
-      <BrandAura />
       <Hero />
       <ScrollReveal>
         <RateMission />
@@ -156,6 +155,9 @@ export default function HomePage() {
       </ScrollReveal>
       <ScrollReveal>
         <SurfacesGrid />
+      </ScrollReveal>
+      <ScrollReveal>
+        <ScrollRail />
       </ScrollReveal>
       <ScrollReveal>
         <Highlights />

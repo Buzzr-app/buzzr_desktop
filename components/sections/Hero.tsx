@@ -33,7 +33,7 @@ export function Hero() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-xl bg-foreground px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.04em] text-canvas transition-[colors,box-shadow,transform] hover:bg-accent hover:text-on-accent hover:shadow-[0_0_0_3px_rgba(0,230,118,0.25)] active:scale-[0.98]"
+                className="inline-flex items-center rounded-2xl bg-foreground px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.04em] text-canvas transition-[colors,box-shadow,transform] hover:bg-accent hover:text-on-accent hover:shadow-[0_0_0_3px_rgba(0,230,118,0.25)] active:scale-[0.98]"
               >
                 Get the app
               </Link>
@@ -41,14 +41,14 @@ export function Hero() {
                 href={DISCORD_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-xl border border-white/30 px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.04em] text-foreground transition-colors hover:border-accent hover:text-accent active:scale-[0.98]"
+                className="inline-flex items-center rounded-2xl border border-white/30 px-6 py-3.5 text-[13px] font-bold uppercase tracking-[0.04em] text-foreground transition-colors hover:border-accent hover:text-accent active:scale-[0.98]"
               >
                 Join the Discord
               </Link>
             </div>
 
             {/* Live Buzz card — real game, brand-green fill, dominant score */}
-            <div className="mt-10 max-w-[420px] animate-fade-in-up stagger-4 rounded-[20px] border border-white/10 bg-white/[0.02] p-4">
+            <div className="mt-10 max-w-[420px] animate-fade-in-up stagger-4 rounded-[24px] border border-white/10 bg-white/[0.02] p-4">
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="score-mono inline-flex items-center gap-2 text-[11px] uppercase tracking-[0.18em] text-foreground/80">

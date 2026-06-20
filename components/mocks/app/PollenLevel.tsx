@@ -15,7 +15,7 @@ export function PollenLevel() {
   const progress = Math.max(0.02, pollenInLevel / pollenNeeded);
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-xl p-6">
+    <div className="flex h-full flex-col justify-between rounded-2xl p-6">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
           Pollen · you

@@ -14,7 +14,7 @@ export function EventTicker() {
   const rows = [...s.events].reverse().slice(0, 5);
 
   return (
-    <div className="flex h-full flex-col rounded-xl p-6">
+    <div className="flex h-full flex-col rounded-2xl p-6">
       <div className="mb-4 flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
           Provider feed · live
