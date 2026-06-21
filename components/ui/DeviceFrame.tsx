@@ -19,10 +19,10 @@ export function DeviceFrame({ src, alt, eyebrow, caption, className, priority }:
   return (
     <figure className={cn('flex flex-col items-center gap-4', className)}>
       <div className="relative aspect-[9/19] w-full max-w-[240px]">
-        {/* Outer bevel glow */}
+        {/* Outer soft shadow for elevation off the cream canvas */}
         <div
           aria-hidden
-          className="absolute -inset-[6px] rounded-[18px] opacity-40"
+          className="absolute -inset-[6px] rounded-[18px] shadow-[var(--shadow-card)]"
         />
         {/* Frame */}
         <div className="bg-canvas border border-surface relative h-full w-full overflow-hidden rounded-[14px] p-[3px]">
