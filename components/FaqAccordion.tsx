@@ -71,7 +71,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
               id={panelId}
               role="region"
               aria-labelledby={triggerId}
-              hidden={!isOpen}
+              aria-hidden={!isOpen || undefined}
               className="grid overflow-hidden transition-all duration-200 ease-out"
               style={{
                 gridTemplateRows: isOpen ? '1fr' : '0fr',
