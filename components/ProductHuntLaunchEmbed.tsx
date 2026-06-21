@@ -13,7 +13,7 @@ export function ProductHuntLaunchEmbed() {
       className="mx-auto w-full max-w-[1200px] px-6 pt-10"
     >
       <div
-        className="w-full max-w-[500px] rounded-xl border border-[#e0e0e0] bg-white p-5 text-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.05)] sm:ml-auto"
+        className="w-full max-w-[500px] rounded-2xl border border-[#e0e0e0] bg-white p-5 text-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.05)] sm:ml-auto"
         style={{
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'

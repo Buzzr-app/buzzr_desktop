@@ -8,7 +8,7 @@ import {
   formatGameDate,
 } from '@/src/lib/share';
 
-export const alt = 'Buzzr — rate this matchup by entertainment.';
+export const alt = 'Buzzr, rate this matchup by entertainment.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 

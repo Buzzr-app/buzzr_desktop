@@ -9,7 +9,7 @@ import {
   SITE_TAGLINE,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { BrandAura } from '@/components/BrandAura';
+import { ScrollRail } from '@/components/sections/ScrollRail';
 import { ScrollReveal } from '@/components/ScrollReveal';
 import { Hero } from '@/components/sections/Hero';
 import { ScrollSection } from '@/components/sections/ScrollSection';
@@ -17,6 +17,7 @@ import { SurfacesGrid } from '@/components/sections/SurfacesGrid';
 import { Highlights } from '@/components/sections/Highlights';
 import { DataBento } from '@/components/sections/DataBento';
 import { RateMission } from '@/components/sections/RateMission';
+import { Showcase } from '@/components/sections/Showcase';
 import { LeaguesWall } from '@/components/sections/LeaguesWall';
 import { Faq } from '@/components/sections/Faq';
 import { Reviews, REVIEWS_SUMMARY } from '@/components/sections/Reviews';
@@ -26,7 +27,7 @@ import { BRAND_ASSETS } from '@/src/lib/brandAssets';
 
 const PAGE_TITLE = `${SITE_NAME} · Rate sports games by entertainment`;
 const PAGE_DESCRIPTION =
-  'Rate live sports games by entertainment, not the final score. 47 leagues across 12 sports, NBA, NFL, EPL, NCAAM, F1, ATP, WTA, MLS, esports, cricket, and more. Free on iOS and Android.';
+  'Rate live sports games on how good they actually were to watch, not the final score. Swipe through 47 leagues across 12 sports, from the NBA Finals and FIFA World Cup to F1, the UFC, esports, and cricket. Free on iOS and Android.';
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -142,16 +143,21 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareLd) }}
       />
 
-      <BrandAura />
       <Hero />
       <ScrollReveal>
         <RateMission />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Showcase />
       </ScrollReveal>
       <ScrollReveal>
         <ScrollSection />
       </ScrollReveal>
       <ScrollReveal>
         <SurfacesGrid />
+      </ScrollReveal>
+      <ScrollReveal>
+        <ScrollRail />
       </ScrollReveal>
       <ScrollReveal>
         <Highlights />

@@ -18,7 +18,7 @@ export function SceneScoreboard() {
   const leagueBadgeText = readableTextColor('#F88D24');
 
   return (
-    <div className="relative h-full w-full overflow-hidden rounded-none">
+    <div className="relative h-full w-full overflow-hidden rounded-2xl">
       {/* Team-color gradient wash */}
       <div
         aria-hidden

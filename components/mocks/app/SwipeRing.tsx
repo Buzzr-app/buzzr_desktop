@@ -23,7 +23,7 @@ export function SwipeRing() {
   const ringColor = isComplete ? '#00e676' : '#00e676';
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-none p-6">
+    <div className="flex h-full flex-col justify-between rounded-2xl p-6">
       <div className="flex items-center justify-between">
         <span className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted">
           Your scrolls · today

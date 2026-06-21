@@ -94,7 +94,7 @@ export function gameDescription(game: GameRecord): string {
       game.home_score > game.away_score ? game.home_team : game.away_team;
     return `Final · ${winner ?? 'Result in'} won ${Math.max(game.home_score, game.away_score)}–${Math.min(game.home_score, game.away_score)}.`;
   }
-  if (kind === 'live') return 'LIVE on Buzzr — rate it now.';
+  if (kind === 'live') return 'LIVE on Buzzr, rate it now.';
   return formatGameDate(game.starts_at);
 }
 

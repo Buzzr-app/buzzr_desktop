@@ -13,9 +13,10 @@ import {
   SITE_NAME,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { inter, spaceMono } from './fonts';
+import { montserrat, spaceMono } from './fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { BrandMark } from '@/components/BrandMark';
+import { BrandAura } from '@/components/BrandAura';
 import { ProductHuntLaunchEmbed } from '@/components/ProductHuntLaunchEmbed';
 import { SiteHeader } from '@/components/SiteHeader';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
@@ -49,11 +50,12 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const fontVariables = `${inter.variable} ${spaceMono.variable}`;
+  const fontVariables = `${montserrat.variable} ${spaceMono.variable}`;
 
   return (
     <html lang="en" className={`dark ${fontVariables}`}>
       <body className="bg-canvas text-foreground font-sans">
+        <BrandAura />
         <a
           href="#main-content"
           className="sr-only absolute left-4 top-4 z-50 bg-canvas border border-surface px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground focus:not-sr-only focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"

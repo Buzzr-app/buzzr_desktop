@@ -16,8 +16,8 @@ const SUMMARY = REVIEWS_SUMMARY;
 
 const REVIEWS: Review[] = [
   {
-    title: 'The Watch Party feature carried March Madness for me',
-    body: "Got 9 friends in a party for the Final Four, live reactions popping off, everyone's brackets on one screen. This replaced our groupchat. Only complaint is I wish I could pin someone's reactions so I could see my buddy's meltdown in real time without scrolling. Otherwise perfect, we're doing the whole NBA playoffs here now.",
+    title: 'Crews turned our group chat into a leaderboard',
+    body: "Made a crew for the Final Four and everyone's brackets and ratings landed on one board. The trash talk writes itself now, and the standings keep everyone honest. This straight up replaced our group chat. We're running the whole NBA playoffs in here.",
     author: 'Sid Sain',
     age: '2D AGO',
     stars: 5
@@ -53,7 +53,7 @@ export function Reviews() {
           <Badge>Ratings &amp; Reviews</Badge>
           <h2
             id="reviews-title"
-            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
+            className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
           >
             5.0 on the App Store.
           </h2>
@@ -83,7 +83,7 @@ export function Reviews() {
           href={APP_STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground transition-colors hover:border-white/50"
+          className="inline-flex items-center gap-2 rounded-2xl border border-white/25 px-5 py-3 text-[12px] font-bold uppercase tracking-[0.04em] text-foreground transition-colors hover:border-accent hover:text-accent"
         >
           Read all reviews on the App Store
           <span aria-hidden>→</span>

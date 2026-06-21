@@ -296,11 +296,12 @@ function buzzColor(score: number): string {
   return '#7c3aed';
 }
 function buzzLabel(score: number): string {
-  if (score >= 9) return 'Elite';
-  if (score >= 7) return 'Good';
+  if (score >= 9) return 'Peak';
+  if (score >= 8) return 'Great';
+  if (score >= 6.5) return 'Good';
   if (score >= 5) return 'Mid';
-  if (score >= 3) return 'Meh';
-  return 'Bad';
+  if (score >= 3) return 'Bad';
+  return 'Garbage';
 }
 
 function CardBody({ card }: { card: Card }) {
