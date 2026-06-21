@@ -195,13 +195,6 @@ h1, h2, h3, h4, h5, h6 {
     );
   }
 
-  /* Display crush, massive compressed headline treatment */
-  .text-crush {
-    letter-spacing: -0.055em;
-    line-height: 0.85;
-    text-transform: uppercase;
-  }
-
   /* Mono numerals for product mocks / scores */
   .score-mono {
     font-family: var(--font-mono), ui-monospace, monospace;
