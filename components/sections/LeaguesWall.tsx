@@ -2,7 +2,7 @@ import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
 import { Marquee } from '@/components/Marquee';
-import { LEAGUES, SPORT_LABELS, SPORT_ORDER, type League, type LeagueSport } from '@/src/lib/constants';
+import { LEAGUE_COUNT, LEAGUES, SPORT_LABELS, SPORT_ORDER, type League, type LeagueSport } from '@/src/lib/constants';
 import { LeagueChip } from '@/components/sections/LeagueChip';
 import { getLeagueLogo } from '@/src/lib/leagueLogos';
 
@@ -33,7 +33,7 @@ export function LeaguesWall() {
             Every league you actually watch.
           </h2>
           <p className="mt-5 text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-            47 leagues across 12 sports, from NBA Playoffs and FIFA World Cup 2026 to F1, IPL, the UFC P4P chase, and the UCL knockouts. Track upcoming events, rate live games as they finish, log historical classics to your profile, and rate live with your crew. No spreads. No lines. No gambling.
+            {LEAGUE_COUNT} leagues across 12 sports, from NBA Playoffs and FIFA World Cup 2026 to F1, IPL, the UFC P4P chase, and the UCL knockouts. Track upcoming events, rate live games as they finish, log historical classics to your profile, and rate live with your crew. No spreads. No lines. No gambling.
           </p>
         </header>
 

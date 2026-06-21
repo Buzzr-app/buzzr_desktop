@@ -9,7 +9,7 @@ export const ALTERNATE_NAME = 'Buzzr Sports';
 export const SITE_TAGLINE = 'Rate sports games by entertainment.';
 
 export const SITE_DESCRIPTION =
-  'Buzzr is the Letterboxd for sports, rate live games by entertainment across 47 leagues, from NBA Finals and FIFA World Cup 2026 to F1, ATP, WTA, esports, and cricket. No spreads, no sportsbooks. Just the games that actually delivered.';
+  'Buzzr is the Letterboxd for sports, rate live games by entertainment across 49 leagues, from NBA Finals and FIFA World Cup 2026 to F1, ATP, WTA, esports, and cricket. No spreads, no sportsbooks. Just the games that actually delivered.';
 
 export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.getbuzzr.online';
 
@@ -64,7 +64,7 @@ export const BUZZR_TV_DISCLAIMER =
 export const TRUST_STRIP =
   'NBA Finals · FIFA World Cup 2026 · UCL · EPL · F1 · MLB · NFL · UFC · and every game that actually delivers.';
 
-/** Leagues & competitions Buzzr covers. 47 leagues across 12 sports.
+/** Leagues & competitions Buzzr covers. 49 leagues across 12 sports.
  *  Single source of truth, mirrored from the mobile app's league-coverage.ts.
  *  Grouped into sports for the landing page Leagues Wall; flat list drives the Marquee.
  *  Status tiers map app freshness:
@@ -96,7 +96,7 @@ export interface League {
 }
 
 export const LEAGUES: ReadonlyArray<League> = [
-  // Basketball (3)
+  // Basketball (4)
   { label: 'NBA',          long: 'National Basketball Association',         sport: 'basketball',    status: 'healthy' },
   { label: 'WNBA',         long: 'Women’s National Basketball Association', sport: 'basketball',    status: 'beta' },
   { label: 'NCAAM',        long: 'NCAA Men’s Basketball',                   sport: 'basketball',    status: 'healthy' },
@@ -158,6 +158,9 @@ export const LEAGUES: ReadonlyArray<League> = [
   { label: 'SUPER RUGBY',  long: 'Super Rugby Pacific',                     sport: 'rugby',         status: 'news-only' },
   { label: 'RUGBY CHAMP',  long: 'Rugby Championship',                      sport: 'rugby',         status: 'news-only' }
 ];
+
+/** Derived single source of truth for "N leagues" copy across the site. */
+export const LEAGUE_COUNT = LEAGUES.length;
 
 export const SPORT_LABELS: Record<LeagueSport, string> = {
   basketball:    'Basketball',

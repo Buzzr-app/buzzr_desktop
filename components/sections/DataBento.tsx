@@ -1,6 +1,7 @@
 import { Section } from '@/components/ui/Section';
 import { CalloutCard } from '@/components/ui/CalloutCard';
 import { Badge } from '@/components/ui/Badge';
+import { LEAGUE_COUNT } from '@/src/lib/constants';
 import { BuzzSceneProvider } from '@/src/hooks/useBuzzScene';
 import Image from 'next/image';
 import { BuzzrMeter } from '@/components/mocks/app/BuzzrMeter';
@@ -23,7 +24,7 @@ export function DataBento() {
           The anatomy of a 9.2.
         </h2>
         <p className="mt-5 text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-          47 leagues across 12 sports, every league a fan actually watches, from NBA Finals and FIFA World Cup to F1, ATP, WTA, esports, and cricket. Live scores update in under 30 seconds where available. Every Buzzr Score is built from star power, rivalry, and stakes, re-ranked to what you actually watch.
+          {LEAGUE_COUNT} leagues across 12 sports, every league a fan actually watches, from NBA Finals and FIFA World Cup to F1, ATP, WTA, esports, and cricket. Live scores update in under 30 seconds where available. Every Buzzr Score is built from star power, rivalry, and stakes, re-ranked to what you actually watch.
         </p>
       </header>
 

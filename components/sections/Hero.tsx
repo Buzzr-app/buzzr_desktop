@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { DeviceFrame } from '@/components/ui/DeviceFrame';
 import { MagneticButton } from '@/components/ui/MagneticButton';
-import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
+import { APP_STORE_URL, DISCORD_URL, LEAGUE_COUNT } from '@/src/lib/constants';
 
 export function Hero() {
   return (
@@ -12,7 +12,7 @@ export function Hero() {
     >
       <div className="mx-auto w-full max-w-[1240px]">
         <span className="block animate-fade-in-up font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
-          Letterboxd for sports · 47 leagues, 12 sports
+          Letterboxd for sports · {LEAGUE_COUNT} leagues, 12 sports
         </span>
 
         <h1

@@ -3,6 +3,7 @@ import { Section } from '@/components/ui/Section';
 import { CalloutCard } from '@/components/ui/CalloutCard';
 import { Badge } from '@/components/ui/Badge';
 import { getLeagueLogo } from '@/src/lib/leagueLogos';
+import { LEAGUE_COUNT } from '@/src/lib/constants';
 
 type Clip = {
   league: string;
@@ -42,7 +43,7 @@ export function Highlights() {
       <CalloutCard className="mb-3 grid grid-cols-2 gap-4 md:grid-cols-4">
         <Fact value="Live"     label="on-demand" />
         <Fact value="12"       label="sports covered" />
-        <Fact value="47"       label="leagues" />
+        <Fact value={String(LEAGUE_COUNT)} label="leagues" />
         <Fact value="Quick"    label="recaps" />
       </CalloutCard>
 

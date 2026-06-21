@@ -5,6 +5,7 @@ import {
   BASE_URL,
   COMPANY_NAME,
   INSTAGRAM_URL,
+  LEAGUE_COUNT,
   SITE_NAME,
   SITE_TAGLINE,
   TWITTER_URL
@@ -26,8 +27,7 @@ import { FinalCTA } from '@/components/sections/FinalCTA';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
 
 const PAGE_TITLE = `${SITE_NAME} · Rate sports games by entertainment`;
-const PAGE_DESCRIPTION =
-  'Rate live sports games on how good they actually were to watch, not the final score. Swipe through 47 leagues across 12 sports, from the NBA Finals and FIFA World Cup to F1, the UFC, esports, and cricket. Free on iOS and Android.';
+const PAGE_DESCRIPTION = `Rate live sports games on how good they actually were to watch, not the final score. Swipe through ${LEAGUE_COUNT} leagues across 12 sports, from the NBA Finals and FIFA World Cup to F1, the UFC, esports, and cricket. Free on iOS and Android.`;
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,

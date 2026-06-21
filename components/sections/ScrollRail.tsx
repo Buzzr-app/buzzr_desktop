@@ -1,12 +1,13 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { Badge } from '@/components/ui/Badge';
+import { LEAGUE_COUNT } from '@/src/lib/constants';
 
 type Surface = { name: string; blurb: string; shot: string; pos: string };
 
 const SURFACES: Surface[] = [
   { name: 'Swipe',     blurb: 'Swipe through live games and score the show 1 to 10.',                 shot: '/screenshot-rate.png',  pos: 'object-top' },
-  { name: 'Games',     blurb: 'Every live game across 47 leagues, scored in real time.',              shot: '/screenshot-games.png', pos: 'object-top' },
+  { name: 'Games',     blurb: `Every live game across ${LEAGUE_COUNT} leagues, scored in real time.`,              shot: '/screenshot-games.png', pos: 'object-top' },
   { name: 'Swarm',     blurb: 'The community feed of ratings, takes, and reactions.',                 shot: '/screenshot-home.png',  pos: 'object-top' },
   { name: 'Crews',     blurb: 'Invite-only crews with shared brackets and a private leaderboard.',    shot: '/screenshot-home.png',  pos: 'object-center' },
   { name: 'Bets',      blurb: 'Snap a PrizePicks or Underdog slip and auto-grade it. No sportsbooks.', shot: '/screenshot-games.png', pos: 'object-center' },
