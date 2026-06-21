@@ -35,7 +35,7 @@ export function Hero() {
                 external
                 className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
               >
-                Get the app
+                Get the app<span className="sr-only"> (opens in new tab)</span>
               </MagneticButton>
               <Link
                 href={DISCORD_URL}
@@ -43,7 +43,7 @@ export function Hero() {
                 rel="noopener noreferrer"
                 className="inline-flex items-center rounded-button border border-border bg-surface px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-foreground transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-subtle active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
               >
-                Join the Discord
+                Join the Discord<span className="sr-only"> (opens in new tab)</span>
               </Link>
             </div>
 
@@ -52,7 +52,7 @@ export function Hero() {
               <div className="flex items-start justify-between gap-4">
                 <div>
                   <span className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">
-                    <span className="h-[7px] w-[7px] rounded-full bg-live" aria-hidden />
+                    <span className="h-[7px] w-[7px] rounded-full bg-live animate-buzz-pulse" aria-hidden />
                     Live Buzz
                   </span>
                   <p className="mt-2 text-[14px] font-medium tracking-[-0.011em] text-foreground">

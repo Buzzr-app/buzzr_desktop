@@ -25,10 +25,10 @@ const SECTIONS: NavItem[] = [
 // The app's surfaces (its bottom-nav tabs), surfaced as a Product dropdown.
 const FEATURES: { label: string; blurb: string; id: string }[] = [
   { label: 'Swipe',     blurb: 'Rate live games',       id: 'scroll' },
-  { label: 'Swarm',     blurb: 'The community feed',     id: 'surfaces' },
+  { label: 'Swarm',     blurb: 'The community feed',     id: 'showcase' },
   { label: 'Crews',     blurb: 'Compete with friends',   id: 'surfaces' },
   { label: 'Bets',      blurb: 'Track DFS slips',        id: 'rail' },
-  { label: 'Dashboard', blurb: 'Your widgets, your way', id: 'surfaces' }
+  { label: 'Dashboard', blurb: 'Your widgets, your way', id: 'data' }
 ];
 
 const FIRST_SECTION_ID = SECTIONS[0].id;
@@ -215,7 +215,7 @@ export function SiteHeader() {
               rel="noopener noreferrer"
               className="ml-1 inline-flex min-h-[44px] items-center rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Get the app
+              Get the app<span className="sr-only"> (opens in new tab)</span>
             </Link>
           </div>
 
@@ -304,7 +304,7 @@ export function SiteHeader() {
                 rel="noopener noreferrer"
                 className="inline-flex w-full items-center justify-center rounded-button bg-accent px-3 py-3 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-colors duration-200 hover:bg-accent-dim"
               >
-                Get the app
+                Get the app<span className="sr-only"> (opens in new tab)</span>
               </Link>
             </div>
           </nav>
