@@ -33,7 +33,7 @@ export function Hero() {
               <MagneticButton
                 href={APP_STORE_URL}
                 external
-                className="inline-flex items-center rounded-[10px] bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
               >
                 Get the app
               </MagneticButton>
@@ -41,7 +41,7 @@ export function Hero() {
                 href={DISCORD_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center rounded-[10px] border border-border bg-surface px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-foreground transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-subtle active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                className="inline-flex items-center rounded-button border border-border bg-surface px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-foreground transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-subtle active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
               >
                 Join the Discord
               </Link>

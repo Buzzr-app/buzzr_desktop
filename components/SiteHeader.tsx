@@ -165,7 +165,7 @@ export function SiteHeader() {
                         key={f.label}
                         href={hrefFor(f.id)}
                         onClick={(e) => { handleAnchor(e, f.id); setProductOpen(false); }}
-                        className="flex items-center justify-between gap-3 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none"
+                        className="flex items-center justify-between gap-3 rounded-button px-3 py-2.5 transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none"
                       >
                         <span className="text-[14px] tracking-[-0.015em] text-foreground">{f.label}</span>
                         <span className="text-[12px] tracking-[-0.01em] text-muted">{f.blurb}</span>
@@ -213,7 +213,7 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1 inline-flex min-h-[44px] items-center rounded-[10px] bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="ml-1 inline-flex min-h-[44px] items-center rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Get the app
             </Link>
@@ -259,7 +259,7 @@ export function SiteHeader() {
                   <Link
                     href={hrefFor(f.id)}
                     onClick={(e) => handleAnchor(e, f.id)}
-                    className="block rounded-[10px] border border-border bg-subtle px-3 py-2.5 text-[14px] tracking-[-0.015em] text-foreground transition-colors hover:border-accent"
+                    className="block rounded-button border border-border bg-subtle px-3 py-2.5 text-[14px] tracking-[-0.015em] text-foreground transition-colors hover:border-accent"
                   >
                     {f.label}
                   </Link>
@@ -302,7 +302,7 @@ export function SiteHeader() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-[10px] bg-accent px-3 py-3 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-colors duration-200 hover:bg-accent-dim"
+                className="inline-flex w-full items-center justify-center rounded-button bg-accent px-3 py-3 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-colors duration-200 hover:bg-accent-dim"
               >
                 Get the app
               </Link>
