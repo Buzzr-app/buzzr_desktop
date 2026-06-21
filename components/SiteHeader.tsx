@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Activity,
   HelpCircle,
@@ -38,6 +38,9 @@ export function SiteHeader() {
   const isHome = pathname === '/';
   const [active, setActive] = useState<string>(FIRST_SECTION_ID);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
+  const productRef = useRef<HTMLLIElement>(null);
+  const productTriggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!isHome) return;
@@ -63,7 +66,7 @@ export function SiteHeader() {
     return () => observer.disconnect();
   }, [isHome]);
 
-  useEffect(() => { setMenuOpen(false); }, [pathname]);
+  useEffect(() => { setMenuOpen(false); setProductOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
@@ -78,6 +81,27 @@ export function SiteHeader() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
+
+  useEffect(() => {
+    if (!productOpen) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (productRef.current && !productRef.current.contains(event.target as Node)) {
+        setProductOpen(false);
+      }
+    };
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setProductOpen(false);
+        productTriggerRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    document.addEventListener('keydown', onKeyDown);
+    return () => {
+      document.removeEventListener('pointerdown', onPointerDown);
+      document.removeEventListener('keydown', onKeyDown);
+    };
+  }, [productOpen]);
 
   const handleAnchor = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -120,24 +144,27 @@ export function SiteHeader() {
           <nav aria-label="Primary" className="hidden md:block">
             <ul className="flex items-center gap-1">
               {/* Product dropdown — the app's surfaces */}
-              <li className="group relative">
+              <li ref={productRef} className="group relative">
                 <button
+                  ref={productTriggerRef}
                   type="button"
                   aria-haspopup="true"
+                  aria-expanded={productOpen}
+                  onClick={() => setProductOpen((v) => !v)}
                   className="inline-flex min-h-[44px] items-center gap-1 rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
                 >
                   Product
-                  <svg width="11" height="11" viewBox="0 0 24 24" className="opacity-60 transition-transform duration-200 group-hover:rotate-180" aria-hidden>
+                  <svg width="11" height="11" viewBox="0 0 24 24" className={`opacity-60 transition-transform duration-200 group-hover:rotate-180 ${productOpen ? 'rotate-180' : ''}`} aria-hidden>
                     <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </button>
-                <div className="invisible absolute left-0 top-full z-50 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                <div className={`absolute left-0 top-full z-50 pt-2 transition-all duration-150 group-hover:visible group-hover:opacity-100 ${productOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
                   <div className="w-[260px] rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-card)]">
                     {FEATURES.map((f) => (
                       <Link
                         key={f.label}
                         href={hrefFor(f.id)}
-                        onClick={(e) => handleAnchor(e, f.id)}
+                        onClick={(e) => { handleAnchor(e, f.id); setProductOpen(false); }}
                         className="flex items-center justify-between gap-3 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none"
                       >
                         <span className="text-[14px] tracking-[-0.015em] text-foreground">{f.label}</span>
