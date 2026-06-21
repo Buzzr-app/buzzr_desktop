@@ -11,6 +11,7 @@ import {
   type LucideIcon
 } from 'lucide-react';
 import { BrandMark } from '@/components/BrandMark';
+import { ThemeToggle } from '@/components/ThemeToggle';
 import { APP_STORE_URL, DOCS_URL } from '@/src/lib/constants';
 
 type NavItem = { id: string; label: string; Icon: LucideIcon };
@@ -197,6 +198,7 @@ export function SiteHeader() {
           </nav>
 
           <div className="hidden md:flex items-center gap-1">
+            <ThemeToggle />
             <Link
               href="/blog"
               className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
@@ -296,6 +298,11 @@ export function SiteHeader() {
               <li><Link href="/support" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Support</Link></li>
               <li><Link href="/privacy" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Privacy</Link></li>
             </ul>
+
+            <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
+              <span className="text-[14px] tracking-[-0.015em] text-muted">Theme</span>
+              <ThemeToggle />
+            </div>
 
             <div className="mt-6">
               <Link

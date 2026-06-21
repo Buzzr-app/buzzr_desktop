@@ -45,15 +45,24 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
-  themeColor: '#f6f3ec'
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#f6f3ec' },
+    { media: '(prefers-color-scheme: dark)', color: '#14181d' }
+  ]
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   const fontVariables = `${geistSans.variable} ${geistMono.variable}`;
 
   return (
-    <html lang="en" className={fontVariables}>
+    <html lang="en" className={fontVariables} suppressHydrationWarning>
       <body className="bg-canvas text-foreground font-sans antialiased">
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "try{var t=localStorage.getItem('theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}"
+          }}
+        />
         <a
           href="#main-content"
           className="sr-only absolute left-4 top-4 z-50 border border-border bg-surface px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground focus:not-sr-only focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,194,100,0.55)]"

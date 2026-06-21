@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
 
 @source "../app";
 @source "../components";
@@ -94,6 +95,27 @@ html {
   color-scheme: light;
   background-color: var(--color-canvas);
   color: var(--color-foreground);
+}
+
+/* ─── Dark mode ──────────────────────────────────────────────────────────────
+   Token-value overrides only, so every bg-canvas / text-foreground / border-*
+   etc. flips automatically. The no-FOUC script in layout.tsx adds `.dark` to
+   <html> from localStorage or the system preference before first paint. */
+html.dark {
+  color-scheme: dark;
+  --color-canvas:        #14181d;  /* deep warm steel page */
+  --color-surface:       #1c222b;  /* raised cards */
+  --color-subtle:        #252e38;  /* wells / hover */
+  --color-border:        #323b46;  /* hairline */
+  --color-foreground:    #f1efe9;  /* cream-white ink */
+  --color-muted:         #9aa3ad;  /* secondary */
+  --color-whisper:       #6b747e;  /* faint */
+  --color-accent-text:   #34d399;  /* green text/links, AA on dark */
+  --color-live:          #f0584f;  /* live red, brighter on dark */
+  --color-steel:         #0f1318;  /* steel sections sink deeper than canvas */
+  --color-steel-surface: #1a2027;
+  --color-steel-border:  #2a323b;
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
 }
 
 html {
