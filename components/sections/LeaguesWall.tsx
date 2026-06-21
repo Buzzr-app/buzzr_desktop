@@ -38,13 +38,13 @@ export function LeaguesWall() {
         </header>
 
         {/* Real league logos, shown not claimed */}
-        <div className="mb-12 grid grid-cols-3 border-l border-t border-white/10 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+        <div className="mb-12 grid grid-cols-3 border-l border-t border-border sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
           {LOGO_LEAGUES.map((l) => {
             const logo = getLeagueLogo(l.label)!;
             return (
               <div
                 key={l.label}
-                className="group flex aspect-square flex-col items-center justify-center gap-2 border-b border-r border-white/10 p-3 transition-colors hover:bg-white/[0.03]"
+                className="group flex aspect-square flex-col items-center justify-center gap-2 border-b border-r border-border p-3 transition-colors hover:bg-surface"
               >
                 <Image
                   src={logo}
@@ -67,7 +67,7 @@ export function LeaguesWall() {
             return (
               <div
                 key={sport}
-                className="flex flex-col gap-3 border-t border-white/10 py-5 md:flex-row md:items-baseline md:gap-x-6 md:gap-y-3"
+                className="flex flex-col gap-3 border-t border-border py-5 md:flex-row md:items-baseline md:gap-x-6 md:gap-y-3"
               >
                 <div className="shrink-0 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted md:w-[140px]">
                   {SPORT_LABELS[sport]}

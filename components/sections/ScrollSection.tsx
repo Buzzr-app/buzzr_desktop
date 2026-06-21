@@ -29,7 +29,7 @@ export function ScrollSection() {
             <div
               aria-hidden
               className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-              style={{ background: 'radial-gradient(circle, rgba(0,230,118,0.14), transparent 70%)' }}
+              style={{ background: 'radial-gradient(circle, rgba(0,194,100,0.14), transparent 70%)' }}
             />
             <div className="absolute left-1 top-10 w-[176px] -rotate-[5deg]">
               <DeviceFrame src="/screenshot-rate.png" alt="Rating a live game in the Buzzr app" />

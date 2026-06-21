@@ -1,29 +1,31 @@
-import Link from 'next/link';
-import { Section } from '@/components/ui/Section';
+import { MagneticButton } from '@/components/ui/MagneticButton';
 import { APP_STORE_URL } from '@/src/lib/constants';
 
 export function FinalCTA() {
   return (
-    <Section id="download" aria-labelledby="cta-title" className="text-center">
-      <div className="mx-auto flex max-w-[760px] flex-col items-center gap-6 py-16">
+    <section
+      id="download"
+      aria-labelledby="cta-title"
+      className="relative w-full bg-steel"
+    >
+      <div className="mx-auto flex max-w-[760px] flex-col items-center gap-7 px-6 py-28 text-center">
         <h2
           id="cta-title"
-          className="text-[clamp(36px,5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
+          className="text-[clamp(36px,5vw,56px)] font-semibold leading-[1.02] tracking-[-0.032em] text-on-steel"
         >
           Rate the game.
         </h2>
-        <p className="text-[20px] leading-[1.4] tracking-[-0.025em] text-muted">
+        <p className="text-[18px] leading-[1.5] tracking-[-0.015em] text-on-steel-muted">
           Free on iOS and Android.
         </p>
-        <Link
+        <MagneticButton
           href={APP_STORE_URL}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center rounded-2xl bg-foreground px-3 py-1 text-[14px] tracking-[-0.025em] text-canvas transition-colors hover:bg-foreground/90"
+          external
+          className="mt-2 inline-flex items-center rounded-[10px] bg-accent px-6 py-3.5 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
-          Get the App
-        </Link>
+          Get the app
+        </MagneticButton>
       </div>
-    </Section>
+    </section>
   );
 }

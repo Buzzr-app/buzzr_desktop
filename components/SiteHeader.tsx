@@ -97,7 +97,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-white/[0.08] bg-canvas/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 w-full border-b border-border bg-canvas/80 backdrop-blur-xl">
         <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-6 py-3">
           <Link
             href={isHome ? '#top' : '/'}
@@ -113,7 +113,7 @@ export function SiteHeader() {
           >
             <BrandMark alt="" size={22} priority />
             <span className="text-[16px] lowercase leading-none tracking-[-0.025em] text-foreground">
-              buzzr<span className="text-accent">.</span>
+              buzzr<span className="text-accent-text">.</span>
             </span>
           </Link>
 
@@ -124,7 +124,7 @@ export function SiteHeader() {
                 <button
                   type="button"
                   aria-haspopup="true"
-                  className="inline-flex min-h-[44px] items-center gap-1 rounded-full px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+                  className="inline-flex min-h-[44px] items-center gap-1 rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
                 >
                   Product
                   <svg width="11" height="11" viewBox="0 0 24 24" className="opacity-60 transition-transform duration-200 group-hover:rotate-180" aria-hidden>
@@ -132,15 +132,15 @@ export function SiteHeader() {
                   </svg>
                 </button>
                 <div className="invisible absolute left-0 top-full z-50 pt-2 opacity-0 transition-all duration-150 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-                  <div className="w-[260px] rounded-2xl border border-white/10 bg-canvas/95 p-2 shadow-[0_24px_70px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+                  <div className="w-[260px] rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-card)]">
                     {FEATURES.map((f) => (
                       <Link
                         key={f.label}
                         href={hrefFor(f.id)}
                         onClick={(e) => handleAnchor(e, f.id)}
-                        className="flex items-center justify-between gap-3 rounded-xl px-3 py-2.5 transition-colors hover:bg-white/[0.06] focus-visible:bg-white/[0.06] focus-visible:outline-none"
+                        className="flex items-center justify-between gap-3 rounded-[10px] px-3 py-2.5 transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none"
                       >
-                        <span className="text-[14px] tracking-[-0.025em] text-foreground">{f.label}</span>
+                        <span className="text-[14px] tracking-[-0.015em] text-foreground">{f.label}</span>
                         <span className="text-[12px] tracking-[-0.01em] text-muted">{f.blurb}</span>
                       </Link>
                     ))}
@@ -156,11 +156,11 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 py-2.5 text-[14px] tracking-[-0.025em] transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)] ${
-                        isActive ? 'bg-white/[0.06] text-accent' : 'text-muted hover:text-foreground'
+                      className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
+                        isActive ? 'bg-subtle text-accent-text' : 'text-muted hover:text-foreground'
                       }`}
                     >
-                      <Icon size={14} strokeWidth={1.5} aria-hidden />
+                      <Icon size={14} strokeWidth={1.75} aria-hidden />
                       {label}
                     </Link>
                   </li>
@@ -172,13 +172,13 @@ export function SiteHeader() {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/blog"
-              className="inline-flex min-h-[44px] items-center rounded-full px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Blog
             </Link>
             <Link
               href="/changelog"
-              className="inline-flex min-h-[44px] items-center rounded-full px-3 py-2.5 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Changelog
             </Link>
@@ -186,7 +186,7 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1 inline-flex min-h-[44px] items-center rounded-full bg-foreground px-5 py-2.5 text-[13px] font-bold uppercase tracking-[0.03em] text-canvas transition-[colors,box-shadow] hover:bg-accent hover:text-on-accent hover:shadow-[0_0_0_3px_rgba(0,230,118,0.25)] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+              className="ml-1 inline-flex min-h-[44px] items-center rounded-[10px] bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Get the app
             </Link>
@@ -201,9 +201,9 @@ export function SiteHeader() {
             className="inline-flex h-10 w-10 items-center justify-center text-foreground transition-colors hover:text-muted md:hidden"
           >
             <span className="relative block h-4 w-5">
-              <span className={`absolute left-0 top-0 h-[1px] w-full bg-current transition-transform duration-200 ${menuOpen ? 'translate-y-[7px] rotate-45' : ''}`} />
-              <span className={`absolute left-0 top-[7px] h-[1px] w-full bg-current transition-opacity duration-150 ${menuOpen ? 'opacity-0' : 'opacity-100'}`} />
-              <span className={`absolute left-0 bottom-0 h-[1px] w-full bg-current transition-transform duration-200 ${menuOpen ? '-translate-y-[7px] -rotate-45' : ''}`} />
+              <span className={`absolute left-0 top-0 h-[1.5px] w-full bg-current transition-transform duration-200 ${menuOpen ? 'translate-y-[7px] rotate-45' : ''}`} />
+              <span className={`absolute left-0 top-[7px] h-[1.5px] w-full bg-current transition-opacity duration-150 ${menuOpen ? 'opacity-0' : 'opacity-100'}`} />
+              <span className={`absolute left-0 bottom-0 h-[1.5px] w-full bg-current transition-transform duration-200 ${menuOpen ? '-translate-y-[7px] -rotate-45' : ''}`} />
             </span>
           </button>
         </div>
@@ -219,20 +219,20 @@ export function SiteHeader() {
       >
         <div
           onClick={() => setMenuOpen(false)}
-          className={`absolute inset-0 bg-canvas/85 backdrop-blur-sm transition-opacity duration-200 ${menuOpen ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-foreground/20 backdrop-blur-sm transition-opacity duration-200 ${menuOpen ? 'opacity-100' : 'opacity-0'}`}
         />
         <div
-          className={`absolute inset-x-0 top-[64px] border-b border-white/[0.08] bg-canvas transition-transform duration-200 ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
+          className={`absolute inset-x-0 top-[64px] border-b border-border bg-surface transition-transform duration-200 ${menuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
         >
           <nav aria-label="Site" className="mx-auto w-full max-w-[1200px] px-6 py-6">
-            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-muted">Product</p>
+            <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Product</p>
             <ul className="mb-4 grid grid-cols-2 gap-2">
               {FEATURES.map((f) => (
                 <li key={f.label}>
                   <Link
                     href={hrefFor(f.id)}
                     onClick={(e) => handleAnchor(e, f.id)}
-                    className="block rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5 text-[14px] tracking-[-0.025em] text-foreground transition-colors hover:border-accent/40"
+                    className="block rounded-[10px] border border-border bg-subtle px-3 py-2.5 text-[14px] tracking-[-0.015em] text-foreground transition-colors hover:border-accent"
                   >
                     {f.label}
                   </Link>
@@ -248,12 +248,12 @@ export function SiteHeader() {
                     <Link
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
-                      className={`flex items-center justify-between border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] transition-colors ${
-                        isActive ? 'text-accent' : 'text-muted hover:text-foreground'
+                      className={`flex items-center justify-between border-b border-border py-3 text-[14px] tracking-[-0.015em] transition-colors ${
+                        isActive ? 'text-accent-text' : 'text-muted hover:text-foreground'
                       }`}
                     >
                       <span className="inline-flex items-center gap-2.5">
-                        <Icon size={16} strokeWidth={1.5} aria-hidden />
+                        <Icon size={16} strokeWidth={1.75} aria-hidden />
                         {label}
                       </span>
                     </Link>
@@ -263,11 +263,11 @@ export function SiteHeader() {
             </ul>
 
             <ul className="mt-4 flex flex-col">
-              <li><a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="block border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors">Docs</a></li>
-              <li><Link href="/changelog" className="block border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors">Changelog</Link></li>
-              <li><Link href="/blog" className="block border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors">Blog</Link></li>
-              <li><Link href="/support" className="block border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors">Support</Link></li>
-              <li><Link href="/privacy" className="block border-b border-white/[0.08] py-3 text-[14px] tracking-[-0.025em] text-muted hover:text-foreground transition-colors">Privacy</Link></li>
+              <li><a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Docs</a></li>
+              <li><Link href="/changelog" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Changelog</Link></li>
+              <li><Link href="/blog" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Blog</Link></li>
+              <li><Link href="/support" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Support</Link></li>
+              <li><Link href="/privacy" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Privacy</Link></li>
             </ul>
 
             <div className="mt-6">
@@ -275,7 +275,7 @@ export function SiteHeader() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-full bg-foreground px-3 py-3 text-[13px] font-bold uppercase tracking-[0.03em] text-canvas transition-colors hover:bg-accent hover:text-on-accent"
+                className="inline-flex w-full items-center justify-center rounded-[10px] bg-accent px-3 py-3 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-colors duration-200 hover:bg-accent-dim"
               >
                 Get the app
               </Link>

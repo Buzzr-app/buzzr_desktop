@@ -13,10 +13,9 @@ import {
   SITE_NAME,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { montserrat, spaceMono } from './fonts';
+import { geistSans, geistMono } from './fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { BrandMark } from '@/components/BrandMark';
-import { BrandAura } from '@/components/BrandAura';
 import { ProductHuntLaunchEmbed } from '@/components/ProductHuntLaunchEmbed';
 import { SiteHeader } from '@/components/SiteHeader';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
@@ -50,15 +49,14 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const fontVariables = `${montserrat.variable} ${spaceMono.variable}`;
+  const fontVariables = `${geistSans.variable} ${geistMono.variable}`;
 
   return (
-    <html lang="en" className={`dark ${fontVariables}`}>
-      <body className="bg-canvas text-foreground font-sans">
-        <BrandAura />
+    <html lang="en" className={fontVariables}>
+      <body className="bg-canvas text-foreground font-sans antialiased">
         <a
           href="#main-content"
-          className="sr-only absolute left-4 top-4 z-50 bg-canvas border border-surface px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground focus:not-sr-only focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+          className="sr-only absolute left-4 top-4 z-50 border border-border bg-surface px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground focus:not-sr-only focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,194,100,0.55)]"
         >
           Skip to content
         </a>
@@ -70,7 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </main>
 
-          <footer className="relative border-t border-surface">
+          <footer className="relative border-t border-border">
             <ProductHuntLaunchEmbed />
             <div className="mx-auto w-full max-w-[1200px] px-6 py-12">
               <div className="mb-12 flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
@@ -93,26 +91,26 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <div className="space-y-3">
                     <p className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Product</p>
                     <ul className="space-y-2 text-[14px] tracking-[-0.025em]">
-                      <li><a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground">Get the App</a></li>
-                      <li><a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground">Docs</a></li>
-                      <li><Link href="/blog" className="text-muted transition-colors hover:text-foreground">Blog</Link></li>
-                      <li><Link href="/support" className="text-muted transition-colors hover:text-foreground">Support</Link></li>
+                      <li><a href={APP_STORE_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground link-underline">Get the App</a></li>
+                      <li><a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground link-underline">Docs</a></li>
+                      <li><Link href="/blog" className="text-muted transition-colors hover:text-foreground link-underline">Blog</Link></li>
+                      <li><Link href="/support" className="text-muted transition-colors hover:text-foreground link-underline">Support</Link></li>
                     </ul>
                   </div>
                   <div className="space-y-3">
                     <p className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Legal</p>
                     <ul className="space-y-2 text-[14px] tracking-[-0.025em]">
-                      <li><Link href="/privacy" className="text-muted transition-colors hover:text-foreground">Privacy</Link></li>
-                      <li><Link href="/terms" className="text-muted transition-colors hover:text-foreground">Terms</Link></li>
-                      <li><Link href="/delete-account" className="text-muted transition-colors hover:text-foreground">Delete Account</Link></li>
+                      <li><Link href="/privacy" className="text-muted transition-colors hover:text-foreground link-underline">Privacy</Link></li>
+                      <li><Link href="/terms" className="text-muted transition-colors hover:text-foreground link-underline">Terms</Link></li>
+                      <li><Link href="/delete-account" className="text-muted transition-colors hover:text-foreground link-underline">Delete Account</Link></li>
                     </ul>
                   </div>
                   <div className="space-y-3">
                     <p className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Social</p>
                     <ul className="space-y-2 text-[14px] tracking-[-0.025em]">
-                      <li><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground">Discord</a></li>
-                      <li><a href={TWITTER_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground">X / Twitter</a></li>
-                      <li><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground">Instagram</a></li>
+                      <li><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground link-underline">Discord</a></li>
+                      <li><a href={TWITTER_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground link-underline">X / Twitter</a></li>
+                      <li><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-foreground link-underline">Instagram</a></li>
                     </ul>
                   </div>
                 </div>

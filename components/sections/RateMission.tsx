@@ -89,10 +89,10 @@ export function RateMission() {
                 &ldquo;{m.take}&rdquo;
               </p>
               <div className="mt-1 flex items-center gap-2.5">
-                <span className="flex h-7 w-7 items-center justify-center border border-white/15 bg-white/[0.04] text-[11px] font-bold text-foreground">
+                <span className="flex h-7 w-7 items-center justify-center border border-border bg-subtle text-[11px] font-bold text-foreground">
                   {m.author.slice(0, 1).toUpperCase()}
                 </span>
-                <span className="text-[13px] font-medium text-foreground/80">@{m.author}</span>
+                <span className="text-[13px] font-medium text-muted">@{m.author}</span>
                 <svg width="13" height="13" viewBox="0 0 24 24" className="text-accent" aria-hidden fill="currentColor">
                   <path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z" />
                 </svg>

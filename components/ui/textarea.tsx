@@ -13,7 +13,7 @@ export const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
           'px-4 py-4 text-[16px] leading-[1.5] tracking-[-0.025em]',
           'rounded-2xl',
           'placeholder:text-muted',
-          'focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]',
+          'focus:outline-none focus:shadow-[0_0_0_2px_rgba(0,194,100,0.55)]',
           'transition-shadow duration-150',
           className
         )}

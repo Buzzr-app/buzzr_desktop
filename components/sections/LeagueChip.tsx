@@ -9,7 +9,7 @@ export function LeagueChip({ league }: { league: League }) {
   return (
     <span
       title={league.long}
-      className="inline-flex items-center gap-2 border border-surface bg-canvas py-1 pl-1 pr-3 font-mono text-[12px] tracking-[0.1em] leading-[2] text-muted transition-colors hover:text-foreground hover:border-white/25"
+      className="inline-flex items-center gap-2 border border-surface bg-canvas py-1 pl-1 pr-3 font-mono text-[12px] tracking-[0.1em] leading-[2] text-muted transition-colors hover:text-foreground hover:border-border"
     >
       <span
         aria-hidden

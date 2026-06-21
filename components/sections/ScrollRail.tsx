@@ -24,14 +24,14 @@ export function ScrollRail() {
         >
           Built for every way you watch.
         </h2>
-        <p className="mt-4 text-[14px] tracking-[-0.01em] text-foreground/60">Scroll across the surfaces.</p>
+        <p className="mt-4 text-[14px] tracking-[-0.01em] text-muted">Scroll across the surfaces.</p>
       </header>
 
       <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 md:-mx-10 md:px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {SURFACES.map((s) => (
           <article
             key={s.name}
-            className="group w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] transition-colors hover:border-accent/40"
+            className="group w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:border-accent/40"
           >
             <div className="relative aspect-[4/5] w-full overflow-hidden bg-canvas">
               <Image
@@ -50,7 +50,7 @@ export function ScrollRail() {
                 {s.name}
               </span>
             </div>
-            <p className="p-4 text-[14px] leading-[1.5] tracking-[-0.01em] text-foreground/80">{s.blurb}</p>
+            <p className="p-4 text-[14px] leading-[1.5] tracking-[-0.01em] text-muted">{s.blurb}</p>
           </article>
         ))}
       </div>

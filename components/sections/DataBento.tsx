@@ -42,7 +42,7 @@ export function DataBento() {
               className="pointer-events-none absolute inset-0"
               style={{ background: 'linear-gradient(to right, transparent 38%, rgba(8,9,11,0.55))' }}
             />
-            <span className="score-mono absolute bottom-3 left-3 text-[11px] uppercase tracking-[0.18em] text-foreground/80">
+            <span className="score-mono absolute bottom-3 left-3 text-[11px] uppercase tracking-[0.18em] text-muted">
               The rate screen
             </span>
           </CalloutCard>

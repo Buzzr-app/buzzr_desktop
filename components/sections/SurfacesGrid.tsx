@@ -53,7 +53,7 @@ function TileCard({ tile }: { tile: Tile }) {
         <h3 className="text-[20px] font-semibold leading-[1.4] tracking-[-0.02em] text-foreground">{title}</h3>
         <p className="text-[14px] leading-[1.43] tracking-[0.1px] text-muted">{body}</p>
       </div>
-      <div className="relative mt-auto aspect-[5/4] w-full overflow-hidden border border-white/10 bg-canvas">
+      <div className="relative mt-auto aspect-[5/4] w-full overflow-hidden border border-border bg-canvas">
         <Image
           src={shot}
           alt={`Buzzr app: ${title}`}

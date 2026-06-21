@@ -301,7 +301,7 @@ export function LiveScoreWidget() {
           </div>
 
           {/* Auto-animating rate slider, fills from 0 to game.buzz */}
-          <div className="relative mb-3 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+          <div className="relative mb-3 h-1.5 overflow-hidden rounded-full bg-subtle">
             <motion.div
               key={`fill-${idx}`}
               initial={{ width: '0%' }}
@@ -332,7 +332,7 @@ export function LiveScoreWidget() {
         </div>
 
         {/* Live reactions row */}
-        <div className="flex items-center justify-between border-t border-white/[0.05] pt-3 text-[11px] font-mono tabular-nums">
+        <div className="flex items-center justify-between border-t border-border pt-3 text-[11px] font-mono tabular-nums">
           <ReactionCount emoji="🔥" value={fire} />
           <ReactionCount emoji="💯" value={hundred} />
           <ReactionCount emoji="❄️" value={game.ice} />
@@ -341,7 +341,7 @@ export function LiveScoreWidget() {
       </div>
 
       {/* Full league coverage strip */}
-      <div className="relative border-t border-white/[0.06] bg-black/30 py-2.5">
+      <div className="relative border-t border-border bg-black/30 py-2.5">
         <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-8 bg-gradient-to-r from-[#0a0a0c] to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-8 bg-gradient-to-l from-[#0a0a0c] to-transparent" />
         <div className="flex gap-2 whitespace-nowrap" style={{ animation: 'marquee-scroll 34s linear infinite', width: 'max-content' }}>

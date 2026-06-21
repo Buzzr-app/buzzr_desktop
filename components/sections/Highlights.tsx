@@ -63,7 +63,7 @@ function ClipCard({ clip }: { clip: Clip }) {
   const logo = getLeagueLogo(clip.league);
   return (
     <CalloutCard className="group flex flex-col overflow-hidden p-0">
-      <div className="relative aspect-video w-full overflow-hidden border-b border-white/10">
+      <div className="relative aspect-video w-full overflow-hidden border-b border-border">
         <div
           aria-hidden
           className="absolute inset-0"
@@ -82,7 +82,7 @@ function ClipCard({ clip }: { clip: Clip }) {
         )}
 
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-12 w-12 items-center justify-center border border-white/30 bg-black/30 text-foreground backdrop-blur-sm transition-colors group-hover:border-accent group-hover:bg-accent/10 group-hover:text-accent">
+          <span className="flex h-12 w-12 items-center justify-center border border-border bg-black/30 text-foreground backdrop-blur-sm transition-colors group-hover:border-accent group-hover:bg-accent/10 group-hover:text-accent">
             <svg width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden>
               <path d="M1 1.2v12.6L12 7.5z" fill="currentColor" />
             </svg>
@@ -101,7 +101,7 @@ function ClipCard({ clip }: { clip: Clip }) {
         <div className="absolute right-3 top-3 score-mono text-[14px] font-bold tabular-nums text-accent">
           {clip.buzz.toFixed(1)}
         </div>
-        <div className="absolute bottom-3 right-3 font-mono text-[11px] tracking-[0.1em] text-foreground/70">
+        <div className="absolute bottom-3 right-3 font-mono text-[11px] tracking-[0.1em] text-muted">
           {clip.duration}
         </div>
       </div>

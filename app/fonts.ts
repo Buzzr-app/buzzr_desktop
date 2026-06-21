@@ -1,18 +1,11 @@
-import { Montserrat, Space_Mono } from 'next/font/google';
+// Geist (Vercel) — the clean, engineered grotesque the redesign is built on.
+// Self-hosted via the `geist` package (no Google FOUT), exposing the CSS
+// variables --font-geist-sans and --font-geist-mono.
+//   - GeistSans: display + body. Authority comes from size + precise tracking,
+//     not black weight (we top out at 600, never 900).
+//   - GeistMono: tabular score numerals + mono eyebrow labels.
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 
-// Montserrat is the Buzzr app's real display/body face (see app src/theme/typography.ts).
-// Loaded across the weight range so display type can carry mass at 800/900.
-export const montserrat = Montserrat({
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700', '800', '900'],
-  variable: '--font-montserrat',
-  display: 'swap'
-});
-
-// Space Mono drives tabular score numerals + mono eyebrow labels.
-export const spaceMono = Space_Mono({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-space-mono',
-  display: 'swap'
-});
+export const geistSans = GeistSans;
+export const geistMono = GeistMono;

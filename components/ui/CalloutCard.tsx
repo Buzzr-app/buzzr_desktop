@@ -12,9 +12,9 @@ export const CalloutCard = React.forwardRef<HTMLDivElement, CalloutCardProps>(
       <Component
         ref={ref}
         className={cn(
-          'bg-white/[0.02] border border-white/10 rounded-2xl p-4',
+          'bg-surface border border-border rounded-2xl p-4',
           'transition-[border-color,box-shadow,background-color] duration-200',
-          'hover:border-accent/40 hover:bg-white/[0.04] hover:shadow-[0_0_0_1px_rgba(0,230,118,0.15),inset_0_0_50px_rgba(0,230,118,0.05)]',
+          'hover:border-accent/40 hover:bg-subtle hover:shadow-[0_0_0_1px_rgba(0,194,100,0.15),inset_0_0_50px_rgba(0,194,100,0.05)]',
           className
         )}
         {...props}
