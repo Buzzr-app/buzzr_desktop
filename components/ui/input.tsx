@@ -10,8 +10,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       <input
         type={type}
         className={cn(
-          'flex w-full bg-canvas text-foreground border border-surface',
-          'py-5 pl-4 pr-16',
+          'flex w-full bg-canvas text-foreground border border-border',
+          'py-5 px-4',
           'rounded-2xl',
           'text-[16px] leading-[1.5] tracking-[-0.025em]',
           'placeholder:text-muted',

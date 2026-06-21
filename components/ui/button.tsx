@@ -8,7 +8,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         ghost:
-          'bg-transparent text-foreground border border-border hover:border-border px-4 py-2',
+          'bg-transparent text-foreground border border-border hover:border-foreground/30 hover:bg-subtle px-4 py-2',
         filled:
           'bg-foreground text-canvas hover:bg-foreground/90 px-3 py-1'
       }
