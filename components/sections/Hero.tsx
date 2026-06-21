@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ScrollClayPhone } from '@/components/ui/ScrollClayPhone';
+import { ClayHero } from '@/components/ui/ClayHero';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { APP_STORE_URL, DISCORD_URL, LEAGUE_COUNT } from '@/src/lib/constants';
 
@@ -71,8 +71,8 @@ export function Hero() {
 
         </div>
 
-        {/* Real product — a huge clay iPhone that turns on scroll */}
-        <ScrollClayPhone className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 animate-fade-in-up stagger-3 lg:block" />
+        {/* Real product — a WebGL clay iPhone + voxel basketball that turns on scroll */}
+        <ClayHero className="pointer-events-none absolute right-[-6%] top-1/2 hidden h-[clamp(460px,74dvh,760px)] w-[clamp(440px,48vw,640px)] -translate-y-1/2 animate-fade-in-up stagger-3 lg:block xl:right-[-2%]" />
       </div>
 
       <div className="absolute bottom-7 left-6 flex animate-fade-in-up stagger-5 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-whisper md:left-10">
