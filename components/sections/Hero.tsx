@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { DeviceFrame } from '@/components/ui/DeviceFrame';
+import { ScrollClayPhone } from '@/components/ui/ScrollClayPhone';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { APP_STORE_URL, DISCORD_URL, LEAGUE_COUNT } from '@/src/lib/constants';
 
@@ -10,7 +10,7 @@ export function Hero() {
       aria-labelledby="hero-title"
       className="relative flex min-h-[92dvh] w-full items-center overflow-hidden px-6 pt-32 pb-24 md:px-10 md:pt-40"
     >
-      <div className="mx-auto w-full max-w-[1240px]">
+      <div className="relative mx-auto w-full max-w-[1240px]">
         <span className="block animate-fade-in-up font-mono text-[12px] uppercase tracking-[0.14em] text-muted">
           Letterboxd for sports · {LEAGUE_COUNT} leagues, 12 sports
         </span>
@@ -69,21 +69,10 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Real product — the credibility anchor */}
-          <div className="relative mx-auto hidden h-[470px] w-[340px] shrink-0 animate-fade-in-up stagger-3 sm:block">
-            <div
-              aria-hidden
-              className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl"
-              style={{ background: 'radial-gradient(circle, rgba(0,194,100,0.10), transparent 70%)' }}
-            />
-            <div className="absolute right-0 top-9 w-[180px] rotate-[4deg]">
-              <DeviceFrame src="/screenshot-rate.png" alt="Rating a live game in the Buzzr app" />
-            </div>
-            <div className="absolute left-0 top-0 w-[214px] -rotate-[3deg]">
-              <DeviceFrame src="/screenshot-home.png" alt="The Buzzr home feed" priority />
-            </div>
-          </div>
         </div>
+
+        {/* Real product — a huge clay iPhone that turns on scroll */}
+        <ScrollClayPhone className="pointer-events-none absolute right-0 top-1/2 hidden -translate-y-1/2 animate-fade-in-up stagger-3 lg:block" />
       </div>
 
       <div className="absolute bottom-7 left-6 flex animate-fade-in-up stagger-5 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-whisper md:left-10">

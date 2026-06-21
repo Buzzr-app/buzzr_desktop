@@ -240,3 +240,152 @@ h1, h2, h3, h4, h5, h6 {
     .link-underline { transition: none; }
   }
 }
+
+/* ─── Hero clay-phone centerpiece (ScrollClayPhone) ───────────────────────────
+   A huge mint clay iPhone over a receding token grid. The component writes --p
+   (clamped to [-1,1]) on .cp-stage; CSS multiplies it into a BOUNDED turn. All
+   colour via tokens + color-mix(in oklab,…). blur/mask live on NON-rotated
+   siblings (.cp-horizon/.cp-floor/.cp-shadow), never inside the .cp-phone
+   preserve-3d chain (WebKit flattens 3D subtrees that carry filter/mask). */
+.cphone {
+  /* positioning comes from the Tailwind classes on the element (absolute in the
+     hero, etc.); only the box size is fixed here. */
+  height: clamp(380px, 58dvh, 600px);
+  aspect-ratio: 1000 / 2174;
+}
+.cp-stage {
+  --p: 0;
+  position: relative;
+  width: 100%;
+  height: 100%;
+  perspective: 1500px;
+  perspective-origin: 50% 42%;
+  transform-style: preserve-3d;
+}
+
+/* Receding grid floor — warm hairlines on cream, lifted toward mint on dark */
+.cp-floor {
+  position: absolute;
+  left: 50%;
+  bottom: -2%;
+  width: 175%;
+  height: 130%;
+  transform-origin: 50% 100%;
+  transform: translateX(-50%) rotateX(74deg) translateZ(calc(var(--p) * -8px));
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-border) 90%, transparent) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-border) 90%, transparent) 0 1px, transparent 1px 60px);
+  -webkit-mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
+          mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
+  pointer-events: none;
+}
+html.dark .cp-floor {
+  background-image:
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px);
+}
+
+/* Single accent horizon glow (non-rotated blur sibling) */
+.cp-horizon {
+  position: absolute;
+  left: 50%;
+  bottom: 2%;
+  width: 78%;
+  height: 42%;
+  transform: translateX(-50%);
+  background: radial-gradient(62% 100% at 50% 100%, color-mix(in oklab, var(--color-accent) 26%, transparent), transparent 70%);
+  filter: blur(20px);
+  pointer-events: none;
+}
+
+/* Contact shadow grounding the phone (flattened, blurred sibling) */
+.cp-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: 9%;
+  width: 60%;
+  height: 9%;
+  transform: translateX(-50%) rotateX(78deg) scaleY(0.42);
+  background: radial-gradient(closest-side, color-mix(in oklab, var(--color-on-accent) 34%, transparent), transparent 72%);
+  filter: blur(20px);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+/* The rigid clay body — the only 3D-rotated element */
+.cp-phone {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+  transform:
+    rotateX(calc(6deg - var(--p) * 4deg))
+    rotateY(calc(var(--p) * 35deg));
+  border-radius: 13% / 6%;
+  background: linear-gradient(155deg,
+    var(--color-accent) 0%,
+    var(--color-accent-dim) 60%,
+    color-mix(in oklab, var(--color-accent-dim) 76%, var(--color-foreground)) 100%);
+  box-shadow:
+    var(--shadow-card),
+    0 44px 90px -34px color-mix(in oklab, var(--color-accent) 42%, transparent),
+    inset 0 2px 1px color-mix(in oklab, var(--color-surface) 55%, transparent),
+    inset 0 -4px 10px color-mix(in oklab, var(--color-on-accent) 30%, transparent);
+}
+.cp-phone::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset 0 0 0 1.5px color-mix(in oklab, var(--color-on-accent) 26%, transparent),
+    inset 0 0 0 3px color-mix(in oklab, var(--color-surface) 20%, transparent);
+  pointer-events: none;
+}
+
+.cp-bezel {
+  position: absolute;
+  inset: 3.6%;
+  border-radius: 10% / 5%;
+  background: color-mix(in oklab, var(--color-on-accent) 86%, var(--color-accent-dim));
+  transform: translateZ(1px);
+}
+.cp-screen {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  background: var(--color-steel);
+}
+.cp-island {
+  position: absolute;
+  top: 2.6%;
+  left: 50%;
+  width: 30%;
+  height: 3%;
+  transform: translateX(-50%) translateZ(4px);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-on-accent) 92%, transparent);
+}
+.cp-glare {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  transform: translateZ(3px) translateX(calc(var(--p) * 8px));
+  background: linear-gradient(118deg, transparent 32%, color-mix(in oklab, var(--color-surface) 24%, transparent) 47%, transparent 60%);
+  pointer-events: none;
+}
+.cp-btn {
+  position: absolute;
+  width: 3px;
+  border-radius: 3px;
+  background: linear-gradient(color-mix(in oklab, var(--color-accent-dim) 65%, var(--color-on-accent)), color-mix(in oklab, var(--color-accent-dim) 35%, var(--color-on-accent)));
+  transform: translateZ(-1px);
+}
+.cp-btn-a   { left: -2px; top: 23%; height: 6%; }
+.cp-btn-b   { left: -2px; top: 31%; height: 6%; }
+.cp-btn-pwr { right: -2px; top: 27%; height: 9%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cp-phone { transform: rotateX(6deg) rotateY(-9deg); }
+}
