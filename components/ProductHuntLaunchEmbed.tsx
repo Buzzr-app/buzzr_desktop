@@ -13,7 +13,7 @@ export function ProductHuntLaunchEmbed() {
       className="mx-auto w-full max-w-[1200px] px-6 pt-10"
     >
       <div
-        className="w-full max-w-[500px] rounded-2xl border border-[#e0e0e0] bg-white p-5 text-[#1a1a1a] shadow-[0_2px_8px_rgba(0,0,0,0.05)] sm:ml-auto"
+        className="w-full max-w-[500px] rounded-2xl border border-border bg-surface p-5 text-foreground shadow-[var(--shadow-card)] sm:ml-auto"
         style={{
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
@@ -28,10 +28,10 @@ export function ProductHuntLaunchEmbed() {
             className="h-16 w-16 flex-shrink-0 rounded-lg object-cover"
           />
           <div className="min-w-0 flex-1">
-            <h3 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold leading-[1.3] text-[#1a1a1a]">
+            <h3 className="m-0 overflow-hidden text-ellipsis whitespace-nowrap text-lg font-semibold leading-[1.3] text-foreground">
               Buzzr Sports
             </h3>
-            <p className="mt-1 line-clamp-2 text-sm leading-[1.4] text-[#666666]">
+            <p className="mt-1 line-clamp-2 text-sm leading-[1.4] text-muted">
               Rate live games, make picks, and follow fan buzz
             </p>
           </div>

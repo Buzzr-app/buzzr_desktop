@@ -42,6 +42,7 @@ export function SiteHeader() {
   const [productOpen, setProductOpen] = useState(false);
   const productRef = useRef<HTMLLIElement>(null);
   const productTriggerRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!isHome) return;
@@ -72,6 +73,13 @@ export function SiteHeader() {
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
+  }, [menuOpen]);
+
+  // Keep the closed drawer out of the tab order + a11y tree. `inert` preserves
+  // the open/close animation (unlike visibility:hidden) and neutralizes the
+  // always-mounted aria-modal dialog while it is closed.
+  useEffect(() => {
+    if (drawerRef.current) drawerRef.current.inert = !menuOpen;
   }, [menuOpen]);
 
   useEffect(() => {
@@ -240,6 +248,7 @@ export function SiteHeader() {
 
       {/* Mobile drawer */}
       <div
+        ref={drawerRef}
         id="mobile-nav"
         role="dialog"
         aria-modal="true"
