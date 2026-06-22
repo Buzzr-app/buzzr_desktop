@@ -389,3 +389,51 @@ html.dark .cp-floor {
 @media (prefers-reduced-motion: reduce) {
   .cp-phone { transform: rotateX(6deg) rotateY(-9deg); }
 }
+
+/* ─── Pinned WebGL hero overlays (token-driven; raw three.js scene) ───────────
+   Edge permeability + film grain done in CSS over a transparent canvas, so the
+   scene composites against the page bg and the edges melt into the theme. The
+   only literals allowed here are neutral grain / black-alpha for the mask. */
+.hero-stage { isolation: isolate; }
+
+/* True edge dissolve on the canvas itself — soft elliptical mask, no hard rect. */
+.hero-canvas-clip {
+  -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, #000 58%, transparent 100%);
+  mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, #000 58%, transparent 100%);
+}
+
+/* Sibling vignette: edges melt into --color-canvas (re-themes for free). */
+.hero-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at 50% 45%, transparent 56%, var(--color-canvas) 100%);
+}
+
+/* Film grain: monochrome turbulence, blend-mode does the theming. */
+.hero-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+  animation: hero-grain-drift 8s steps(6) infinite;
+}
+html.dark .hero-grain {
+  opacity: 0.08;
+  mix-blend-mode: screen;
+}
+
+@keyframes hero-grain-drift {
+  0%   { background-position: 0 0; }
+  25%  { background-position: 4px -4px; }
+  50%  { background-position: -4px 4px; }
+  75%  { background-position: 4px 4px; }
+  100% { background-position: 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-grain { animation: none; opacity: 0.04; }
+}

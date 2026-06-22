@@ -1,4 +1,5 @@
 import { MagneticButton } from '@/components/ui/MagneticButton';
+import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { APP_STORE_URL } from '@/src/lib/constants';
 
 export function FinalCTA() {
@@ -23,7 +24,7 @@ export function FinalCTA() {
           external
           className="mt-2 inline-flex items-center rounded-button bg-accent px-6 py-3.5 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
-          Get the app
+          <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
         </MagneticButton>
       </div>
     </section>

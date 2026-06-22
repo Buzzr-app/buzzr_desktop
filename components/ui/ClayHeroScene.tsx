@@ -1,30 +1,41 @@
 'use client';
 
+import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { RoundedBox, useTexture, Grid, ContactShadows, Float } from '@react-three/drei';
-import { Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
-/* ── theme tokens → three colours (re-read when the .dark class flips) ────────── */
-type Tokens = ReturnType<typeof readTokens>;
+/* ── theme tokens (read at mount, re-read on .dark mutation) ──────────────────── */
+type SceneTokens = {
+  canvas: string;
+  steel: string;
+  steelSurface: string;
+  accent: string;
+  foreground: string;
+  ramp: string[]; // [peak, great, good, mid, bad, garbage]
+};
 
-function readTokens() {
-  const fallback = {
-    accent: '#00c264', accentDim: '#00a152', onAccent: '#04150b',
-    canvas: '#f6f3ec', border: '#ddd8cc', foreground: '#232a31', steel: '#20262d',
-    ramp: ['#00c264', '#16a34a', '#ca8a04', '#ea580c', '#dc2626', '#7c3aed']
+function readTokens(): SceneTokens {
+  // Neutral, non-brand fallbacks: only reached if getComputedStyle yields empty
+  // (CSS not yet applied / token renamed). Kept theme-blind-neutral so a token
+  // read failure is visibly grey rather than a wrong-theme brand impostor.
+  const fallback: SceneTokens = {
+    canvas: '#808080',
+    steel: '#404040',
+    steelSurface: '#505050',
+    accent: '#808080',
+    foreground: '#d0d0d0',
+    ramp: ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080']
   };
   if (typeof window === 'undefined') return fallback;
   const s = getComputedStyle(document.documentElement);
   const g = (n: string, fb: string) => s.getPropertyValue(n).trim() || fb;
   return {
-    accent: g('--color-accent', fallback.accent),
-    accentDim: g('--color-accent-dim', fallback.accentDim),
-    onAccent: g('--color-on-accent', fallback.onAccent),
     canvas: g('--color-canvas', fallback.canvas),
-    border: g('--color-border', fallback.border),
-    foreground: g('--color-foreground', fallback.foreground),
     steel: g('--color-steel', fallback.steel),
+    steelSurface: g('--color-steel-surface', fallback.steelSurface),
+    accent: g('--color-accent', fallback.accent),
+    foreground: g('--color-foreground', fallback.foreground),
     ramp: [
       g('--color-buzz-peak', fallback.ramp[0]),
       g('--color-buzz-great', fallback.ramp[1]),
@@ -36,191 +47,544 @@ function readTokens() {
   };
 }
 
-function useTokens(): Tokens {
-  const [t, setT] = useState<Tokens>(() => readTokens());
-  useEffect(() => {
-    const obs = new MutationObserver(() => setT(readTokens()));
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
-    return () => obs.disconnect();
-  }, []);
-  return t;
-}
-
-function usePrefersReducedMotion() {
-  const [r, setR] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    setR(mq.matches);
-    const on = () => setR(mq.matches);
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
-  }, []);
-  return r;
-}
-
-/* ── voxel-sphere geometry (basketball shell) ─────────────────────────────────── */
+/* ── translucent voxel heat-ball: a fine, dense spherical shell ───────────────── */
+// Each voxel carries a base position, an outward radial direction (drives both
+// the heat ramp and the explosion vector), a tumble axis, a per-voxel random,
+// and a base scale jitter — so the shell reads as crafted, not procedural-flat.
 function buildVoxels() {
-  const N = 7, R = 1, step = R / N, size = step * 0.84;
-  const inner = 0.78, outer = 1.0;
-  const m: number[] = [];
-  for (let x = -N; x <= N; x++)
-    for (let y = -N; y <= N; y++)
-      for (let z = -N; z <= N; z++) {
-        const px = x * step, py = y * step, pz = z * step;
+  const R = 1.42;
+  const g = 0.123; // grid spacing — smaller = denser, finer cubes
+  const size = g * 0.9;
+  const inner = 0.82 * R;
+  const outer = 1.0 * R;
+  const lim = Math.ceil(outer / g) + 1;
+
+  const base: number[] = [];
+  const dir: number[] = [];
+  const axis: number[] = [];
+  const rand: number[] = [];
+  const scl: number[] = [];
+
+  // Deterministic hash so the look is stable across reloads (no Math.random
+  // dependency on first-paint timing); cheap and good enough for jitter.
+  let seed = 1;
+  const rng = () => {
+    seed = (seed * 1103515245 + 12345) & 0x7fffffff;
+    return seed / 0x7fffffff;
+  };
+
+  for (let x = -lim; x <= lim; x++) {
+    for (let y = -lim; y <= lim; y++) {
+      for (let z = -lim; z <= lim; z++) {
+        const px = x * g;
+        const py = y * g;
+        const pz = z * g;
         const d = Math.hypot(px, py, pz);
-        if (d >= inner * R && d <= outer * R) m.push(px, py, pz);
+        if (d < inner || d > outer) continue;
+        base.push(px, py, pz);
+        const inv = 1 / (d || 1e-5);
+        dir.push(px * inv, py * inv, pz * inv);
+        // random unit tumble axis
+        let ax = rng() * 2 - 1;
+        let ay = rng() * 2 - 1;
+        let az = rng() * 2 - 1;
+        const al = Math.hypot(ax, ay, az) || 1;
+        ax /= al;
+        ay /= al;
+        az /= al;
+        axis.push(ax, ay, az);
+        rand.push(rng());
+        scl.push(0.78 + rng() * 0.34); // per-voxel size variation
       }
-  return { positions: m, count: m.length / 3, size };
+    }
+  }
+  return {
+    base: new Float32Array(base),
+    dir: new Float32Array(dir),
+    axis: new Float32Array(axis),
+    rand: new Float32Array(rand),
+    scl: new Float32Array(scl),
+    count: base.length / 3,
+    size
+  };
 }
 
-/* ── voxel basketball: GLSL shader cycles the Buzz heat ramp + darkens the seams ── */
-function VoxelBall({ tokens, reduce }: { tokens: Tokens; reduce: boolean }) {
-  const ref = useRef<THREE.InstancedMesh>(null);
-  const { positions, count, size } = useMemo(buildVoxels, []);
-  const geometry = useMemo(() => new THREE.BoxGeometry(size, size, size), [size]);
+const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
+const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t;
+const smooth = (e0: number, e1: number, x: number) => {
+  const t = clamp01((x - e0) / (e1 - e0));
+  return t * t * (3 - 2 * t);
+};
 
-  const uniforms = useMemo(
-    () => ({
-      uTime: { value: 0 },
-      uRamp: { value: tokens.ramp.map((c) => new THREE.Color(c)) },
-      uSeam: { value: new THREE.Color(tokens.onAccent) }
-    }),
-    [tokens]
-  );
-
-  const material = useMemo(() => {
-    const mat = new THREE.MeshStandardMaterial({ roughness: 0.42, metalness: 0.05 });
-    mat.onBeforeCompile = (shader) => {
-      shader.uniforms.uTime = uniforms.uTime;
-      shader.uniforms.uRamp = uniforms.uRamp;
-      shader.uniforms.uSeam = uniforms.uSeam;
-      shader.vertexShader =
-        'varying vec3 vDir;\n' +
-        shader.vertexShader.replace(
-          '#include <begin_vertex>',
-          '#include <begin_vertex>\n  vDir = normalize(instanceMatrix[3].xyz);'
-        );
-      shader.fragmentShader =
-        'uniform float uTime;\nuniform vec3 uRamp[6];\nuniform vec3 uSeam;\nvarying vec3 vDir;\n' +
-        'vec3 buzzRamp(float t){ t = clamp(t,0.0,1.0)*5.0; float i = floor(t); int idx = int(i);\n' +
-        '  vec3 a = uRamp[idx]; vec3 b = uRamp[idx>=5?5:idx+1]; return mix(a,b,t-i); }\n' +
-        shader.fragmentShader.replace(
-          '#include <color_fragment>',
-          '#include <color_fragment>\n  {\n    float tt = fract(vDir.y*0.5+0.5 + uTime*0.07);\n    vec3 grad = buzzRamp(tt);\n    float seam = clamp(smoothstep(0.09,0.0,abs(vDir.x)) + smoothstep(0.09,0.0,abs(vDir.z)) + smoothstep(0.06,0.0,abs(vDir.y)), 0.0, 1.0);\n    diffuseColor.rgb = mix(grad, uSeam, seam*0.8);\n  }'
-        );
-    };
-    return mat;
-  }, [uniforms]);
+export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const mesh = ref.current;
-    if (!mesh) return;
-    const m = new THREE.Matrix4();
-    for (let i = 0; i < count; i++) {
-      m.setPosition(positions[i * 3], positions[i * 3 + 1], positions[i * 3 + 2]);
-      mesh.setMatrixAt(i, m);
-    }
-    mesh.instanceMatrix.needsUpdate = true;
-  }, [positions, count]);
+    const container = containerRef.current;
+    if (!container) return;
 
-  useFrame((state, delta) => {
-    if (reduce) return;
-    uniforms.uTime.value = state.clock.elapsedTime;
-    if (ref.current) {
-      ref.current.rotation.y += delta * 0.32;
-      ref.current.rotation.x += delta * 0.12;
-    }
-  });
+    const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reduce = reduceMQ.matches;
+    // Guards async callbacks (texture load) against a unmount that already ran
+    // cleanup — StrictMode tears the first mount down before the image resolves.
+    let disposed = false;
 
-  return <instancedMesh ref={ref} args={[geometry, material, count]} />;
-}
+    /* ── renderer ── */
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      alpha: true,
+      powerPreference: 'high-performance',
+      // Retain the last frame in the drawing buffer so off-rAF / hidden-tab
+      // captures (and toDataURL) reflect the current pose instead of an empty
+      // buffer. Negligible cost for a scene this small.
+      preserveDrawingBuffer: true
+    });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.05;
+    renderer.setSize(container.clientWidth || 1, container.clientHeight || 1, false);
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
+    renderer.domElement.style.display = 'block';
+    container.appendChild(renderer.domElement);
 
-/* ── clay iPhone: matte rounded body + the dashboard screen ───────────────────── */
-function ClayPhone({ tokens }: { tokens: Tokens }) {
-  const tex = useTexture('/screenshot-dashboard.png');
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 8;
-  return (
-    <group rotation={[0.04, -0.12, 0]}>
-      <RoundedBox args={[1.55, 3.18, 0.34]} radius={0.2} smoothness={6}>
-        <meshStandardMaterial color={tokens.accent} roughness={0.82} metalness={0} />
-      </RoundedBox>
-      <RoundedBox args={[1.38, 3.0, 0.02]} radius={0.16} smoothness={5} position={[0, 0, 0.175]}>
-        <meshStandardMaterial color={tokens.onAccent} roughness={0.6} />
-      </RoundedBox>
-      <mesh position={[0, 0, 0.186]}>
-        <planeGeometry args={[1.28, 2.9]} />
-        <meshStandardMaterial map={tex} roughness={0.34} metalness={0} toneMapped={false} />
-      </mesh>
-      <mesh position={[0, 1.28, 0.2]}>
-        <capsuleGeometry args={[0.05, 0.34, 4, 12]} />
-        <meshStandardMaterial color={tokens.onAccent} roughness={0.5} />
-      </mesh>
-    </group>
-  );
-}
+    const scene = new THREE.Scene();
+    scene.background = null;
 
-/* ── scroll rig: turns the whole rig, settles level when the hero is centred ───── */
-function Rig({ reduce, children }: { reduce: boolean; children: React.ReactNode }) {
-  const ref = useRef<THREE.Group>(null);
-  const { gl } = useThree();
-  useFrame(() => {
-    if (!ref.current) return;
+    const camera = new THREE.PerspectiveCamera(36, 1, 0.1, 100);
+    camera.position.set(0, 0.1, 6.3);
+    camera.lookAt(0, 0, 0);
+
+    /* ── environment IBL (matte clay GI) ── */
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    const envScene = new RoomEnvironment();
+    const envRT = pmrem.fromScene(envScene, 0.04);
+    scene.environment = envRT.texture;
+    scene.environmentIntensity = 0.55;
+    pmrem.dispose();
+    envScene.dispose?.();
+
+    /* ── tokens → colors ── */
+    let tokens = readTokens();
+    const rampColors = tokens.ramp.map((c) => new THREE.Color(c));
+    const hemi = new THREE.HemisphereLight(
+      new THREE.Color(tokens.canvas),
+      new THREE.Color(tokens.steel),
+      0.6
+    );
+    const amb = new THREE.AmbientLight(0xffffff, 0.28);
+    const key = new THREE.DirectionalLight(0xffffff, 1.15);
+    key.position.set(3.5, 5, 4);
+    const rim = new THREE.DirectionalLight(new THREE.Color(tokens.accent), 0.45);
+    rim.position.set(-4, 2, -2);
+    // Front fill so the phone body reads (lit, not a dark silhouette).
+    const fill = new THREE.DirectionalLight(0xffffff, 0.85);
+    fill.position.set(0, 1.2, 6.5);
+    scene.add(hemi, amb, key, rim, fill);
+
+    /* ── scene graph: sceneGroup (parallax) > ball + phoneGroup ── */
+    const sceneGroup = new THREE.Group();
+    scene.add(sceneGroup);
+
+    /* ── voxel ball ── */
+    const vox = buildVoxels();
+    const voxGeo = new RoundedBoxGeometry(vox.size, vox.size, vox.size, 2, vox.size * 0.22);
+    voxGeo.setAttribute('aBaseDir', new THREE.InstancedBufferAttribute(vox.dir, 3));
+    voxGeo.setAttribute('aRand', new THREE.InstancedBufferAttribute(vox.rand, 1));
+
+    const voxMat = new THREE.MeshStandardMaterial({
+      transparent: true,
+      opacity: 0.78,
+      depthWrite: false,
+      depthTest: true,
+      side: THREE.FrontSide,
+      blending: THREE.NormalBlending,
+      roughness: 0.42,
+      metalness: 0.0,
+      emissive: new THREE.Color(tokens.ramp[2]),
+      emissiveIntensity: 0.18
+    });
+
+    const ballUniforms = {
+      uTime: { value: 0 },
+      uRamp: { value: rampColors },
+      uExplode: { value: 0 },
+      uFresnel: { value: 0.9 }
+    };
+
+    voxMat.onBeforeCompile = (shader) => {
+      shader.uniforms.uTime = ballUniforms.uTime;
+      shader.uniforms.uRamp = ballUniforms.uRamp;
+      shader.uniforms.uExplode = ballUniforms.uExplode;
+      shader.uniforms.uFresnel = ballUniforms.uFresnel;
+
+      // Heat ramp + fresnel + per-voxel alpha all resolved in the vertex stage
+      // (voxels are tiny — per-vertex is indistinguishable from per-fragment and
+      // far cheaper / version-robust). Anchors used are stable three includes.
+      shader.vertexShader =
+        'attribute vec3 aBaseDir;\nattribute float aRand;\n' +
+        'uniform float uTime;\nuniform float uExplode;\nuniform vec3 uRamp[6];\n' +
+        'varying vec3 vBuzz;\nvarying float vFresnel;\nvarying float vFade;\nvarying float vRand;\n' +
+        'vec3 buzzRamp(float t){ t = clamp(t,0.0,1.0)*5.0; float i = floor(t);\n' +
+        '  int idx = int(i); float f = smoothstep(0.0,1.0, t - i);\n' +
+        '  vec3 a = uRamp[idx]; vec3 b = uRamp[idx>=5?5:idx+1]; return mix(a,b,f); }\n' +
+        shader.vertexShader.replace(
+          '#include <project_vertex>',
+          '#include <project_vertex>\n' +
+            '  vec3 vd = normalize(aBaseDir + vec3(1e-5));\n' +
+            '  float hh = fract(vd.y * 0.5 + 0.5 + uTime * 0.05);\n' +
+            '  vBuzz = buzzRamp(hh);\n' +
+            '  vRand = aRand;\n' +
+            '  vec3 nrmV = normalize(transformedNormal);\n' +
+            '  vec3 viewV = normalize(-mvPosition.xyz);\n' +
+            '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.4);\n' +
+            '  float w = aRand * 0.42;\n' +
+            '  vFade = 1.0 - smoothstep(w, w + 0.5, uExplode);\n'
+        );
+
+      shader.fragmentShader =
+        'uniform float uFresnel;\n' +
+        'varying vec3 vBuzz;\nvarying float vFresnel;\nvarying float vFade;\nvarying float vRand;\n' +
+        shader.fragmentShader
+          .replace(
+            'vec3 totalEmissiveRadiance = emissive;',
+            'vec3 totalEmissiveRadiance = emissive + vBuzz * (0.10 + vRand * 0.06 + vFresnel * uFresnel);'
+          )
+          .replace(
+            '#include <color_fragment>',
+            '#include <color_fragment>\n  diffuseColor.rgb = vBuzz;\n  diffuseColor.a *= vFade;'
+          );
+    };
+    voxMat.customProgramCacheKey = () => 'voxelBuzzExplode';
+
+    const ball = new THREE.InstancedMesh(voxGeo, voxMat, vox.count);
+    ball.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+    ball.frustumCulled = false; // voxels fly far out during the burst
+    ball.renderOrder = 2;
+    ball.position.y = 0.12;
+    sceneGroup.add(ball);
+
+    // Reusable scratch + per-instance writer for the explosion.
+    const m4 = new THREE.Matrix4();
+    const qTmp = new THREE.Quaternion();
+    const pTmp = new THREE.Vector3();
+    const sTmp = new THREE.Vector3();
+    const axTmp = new THREE.Vector3();
+    const BURST = 3.4;
+
+    const writeInstance = (i: number, explode: number) => {
+      const local = clamp01((explode - vox.rand[i] * 0.16) / 0.84);
+      const dist = local * BURST * (0.45 + vox.rand[i]);
+      pTmp.set(
+        vox.base[i * 3] + vox.dir[i * 3] * dist,
+        vox.base[i * 3 + 1] + vox.dir[i * 3 + 1] * dist,
+        vox.base[i * 3 + 2] + vox.dir[i * 3 + 2] * dist
+      );
+      const angle = local * (2.0 + vox.rand[i] * 3.2);
+      axTmp.set(vox.axis[i * 3], vox.axis[i * 3 + 1], vox.axis[i * 3 + 2]);
+      qTmp.setFromAxisAngle(axTmp, angle);
+      const s = vox.scl[i] * (1 - local * 0.45);
+      sTmp.set(s, s, s);
+      m4.compose(pTmp, qTmp, sTmp);
+      ball.setMatrixAt(i, m4);
+    };
+
+    // Initial (un-exploded) layout.
+    for (let i = 0; i < vox.count; i++) writeInstance(i, 0);
+    ball.instanceMatrix.needsUpdate = true;
+
+    let prevExplode = -1;
+    const EXPLODE_EPS = 1e-4;
+    const applyExplosion = (explode: number) => {
+      // Only rewrite instances when the explode value actually moved — a held
+      // value (e.g. progress pinned at 1) shouldn't re-pose ~2.3k matrices/frame.
+      if (Math.abs(explode - prevExplode) < EXPLODE_EPS) return;
+      for (let i = 0; i < vox.count; i++) writeInstance(i, explode);
+      ball.instanceMatrix.needsUpdate = true;
+      prevExplode = explode;
+    };
+
+    /* ── clean clay phone ── */
+    const phoneGroup = new THREE.Group();
+    sceneGroup.add(phoneGroup);
+
+    const phone = new THREE.Group();
+    phone.rotation.x = -0.04;
+    phone.rotation.y = 0.05;
+    phoneGroup.add(phone);
+
+    const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
+    // A lit graphite slab that reads against BOTH themes: steel-surface sits a
+    // touch above the canvas in dark mode, and is a deep slab on cream in light.
+    const phoneBodyColor = () => new THREE.Color(tokens.steelSurface);
+    const bodyMat = new THREE.MeshStandardMaterial({
+      color: phoneBodyColor(),
+      roughness: 0.58,
+      metalness: 0.12
+    });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    body.renderOrder = 0;
+    phone.add(body);
+
+    // Subtle accent frame just inside the body edge — premium device bezel glow.
+    const frameGeo = new RoundedBoxGeometry(1.5, 3.13, 0.355, 4, 0.19);
+    const frameMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(tokens.accent),
+      roughness: 0.5,
+      metalness: 0.0,
+      emissive: new THREE.Color(tokens.accent),
+      emissiveIntensity: 0.12,
+      transparent: true,
+      opacity: 0.0
+    });
+    const frame = new THREE.Mesh(frameGeo, frameMat);
+    frame.renderOrder = 0;
+    phone.add(frame);
+
+    const screenGeo = new THREE.PlaneGeometry(1.34, 2.86);
+    const screenMat = new THREE.MeshBasicMaterial({
+      // Dark token slab before the dashboard texture arrives, so a map-less
+      // frame (e.g. the reduced-motion first paint) is never an opaque white quad.
+      color: new THREE.Color(tokens.steel),
+      transparent: true,
+      opacity: 0,
+      toneMapped: false
+    });
+    const screen = new THREE.Mesh(screenGeo, screenMat);
+    screen.position.z = 0.181;
+    screen.renderOrder = 1;
+    phone.add(screen);
+
+    const texLoader = new THREE.TextureLoader();
+    let screenTex: THREE.Texture | null = null;
+    texLoader.load(
+      '/screenshot-dashboard.png',
+      (tex) => {
+        // The component may already have unmounted (StrictMode dev double-mount,
+        // or a fast nav) — don't touch a disposed material / lost GL context.
+        if (disposed) {
+          tex.dispose();
+          return;
+        }
+        tex.colorSpace = THREE.SRGBColorSpace;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        screenTex = tex;
+        screenMat.map = tex;
+        screenMat.color.set(0xffffff); // neutral multiplier so the dashboard reads true
+        screenMat.needsUpdate = true;
+        if (reduce) renderer.render(scene, camera);
+      },
+      undefined,
+      (err) => {
+        if (process.env.NODE_ENV !== 'production') {
+          console.warn('[ClayHeroScene] screen texture failed to load', err);
+        }
+      }
+    );
+
+    /* ── token re-theming on .dark flip ── */
+    const applyTokens = () => {
+      tokens = readTokens();
+      tokens.ramp.forEach((c, i) => rampColors[i].set(c));
+      hemi.color.set(tokens.canvas);
+      hemi.groundColor.set(tokens.steel);
+      rim.color.set(tokens.accent);
+      voxMat.emissive.set(tokens.ramp[2]);
+      bodyMat.color.copy(phoneBodyColor());
+      frameMat.color.set(tokens.accent);
+      frameMat.emissive.set(tokens.accent);
+      if (reduce) renderer.render(scene, camera);
+    };
+    const themeObs = new MutationObserver(applyTokens);
+    themeObs.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class']
+    });
+
+    /* ── progress source: the pin wrapper ── */
+    const wrapper =
+      (wrapperSelector && document.querySelector<HTMLElement>(wrapperSelector)) ||
+      container.closest<HTMLElement>('[data-hero-pin]');
+
+    let progress = 0;
+
+    const sampleProgress = () => {
+      if (!wrapper) return reduce ? 1 : 0;
+      const rect = wrapper.getBoundingClientRect();
+      const total = rect.height - window.innerHeight;
+      if (total <= 0) return reduce ? 1 : 0;
+      return clamp01(-rect.top / total);
+    };
+
+    /* ── pointer parallax ── */
+    let mx = 0;
+    let my = 0;
+    const onPointerMove = (e: PointerEvent) => {
+      mx = (e.clientX / window.innerWidth) * 2 - 1;
+      my = (e.clientY / window.innerHeight) * 2 - 1;
+    };
+    if (!reduce) window.addEventListener('pointermove', onPointerMove);
+
+    /* ── resize ── */
+    const resize = () => {
+      const w = container.clientWidth || 1;
+      const h = container.clientHeight || 1;
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+      renderer.setSize(w, h, false);
+      camera.aspect = w / h;
+      camera.updateProjectionMatrix();
+      // Re-render the current pose immediately: when rAF is throttled (hidden
+      // tab) a resize would otherwise leave the resized buffer un-redrawn.
+      renderer.render(scene, camera);
+    };
+    const ro = new ResizeObserver(resize);
+    ro.observe(container);
+    resize();
+
+    /* ── pose: ball detonates while the phone rises forward into center stage ── */
+    const poseScene = (p: number, t: number) => {
+      const explode = smooth(0.16, 0.62, p);
+      ballUniforms.uExplode.value = explode;
+      ballUniforms.uTime.value = t;
+      applyExplosion(explode);
+
+      // ball gently shrinks as it scatters
+      const ballScale = lerp(1, 0.86, explode);
+      ball.scale.setScalar(ballScale);
+
+      const rise = easeOutCubic(smooth(0.3, 0.9, p));
+      phone.position.y = lerp(-4.2, -0.05, rise);
+      phone.position.z = lerp(-0.5, 0.4, rise); // pulled forward, in front of where the ball was
+      const sc = lerp(0.9, 1.0, rise);
+      phone.scale.setScalar(sc);
+
+      screenMat.opacity = smooth(0.4, 0.64, p);
+      frameMat.opacity = smooth(0.42, 0.72, p) * 0.55;
+    };
+
+    /* ── reduced-motion: single static pose, one frame ── */
     if (reduce) {
-      ref.current.rotation.set(0.05, -0.18, 0);
-      return;
+      ball.rotation.set(0.08, 0.6, 0);
+      poseScene(1, 0);
+      screenMat.opacity = 1;
+      renderer.render(scene, camera);
     }
-    const r = gl.domElement.getBoundingClientRect();
-    const center = r.top + r.height / 2;
-    const p = (center - window.innerHeight / 2) / (window.innerHeight / 2 + r.height / 2);
-    const c = Math.max(-1, Math.min(1, p));
-    const eased = Math.sign(c) * (c * c * (3 - 2 * Math.abs(c)));
-    ref.current.rotation.y += (eased * 0.62 - ref.current.rotation.y) * 0.12;
-    ref.current.rotation.x += (0.05 + eased * 0.04 - ref.current.rotation.x) * 0.12;
-  });
-  return <group ref={ref}>{children}</group>;
-}
 
-export default function ClayHeroScene() {
-  const tokens = useTokens();
-  const reduce = usePrefersReducedMotion();
-  return (
-    <Canvas
-      dpr={[1, 1.8]}
-      camera={{ position: [0.35, 0.25, 6.3], fov: 36 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
-      style={{ width: '100%', height: '100%' }}
-    >
-      <hemisphereLight args={[new THREE.Color(tokens.canvas), new THREE.Color(tokens.steel), 0.7]} />
-      <ambientLight intensity={0.35} />
-      <directionalLight position={[3.5, 5, 4]} intensity={1.2} />
-      <directionalLight position={[-4, 2, -2]} intensity={0.4} color={new THREE.Color(tokens.accent)} />
-      <Suspense fallback={null}>
-        <Rig reduce={reduce}>
-          <group position={[-0.5, -0.05, 0]}>
-            <ClayPhone tokens={tokens} />
-          </group>
-          <Float speed={reduce ? 0 : 1.3} floatIntensity={reduce ? 0 : 0.5} rotationIntensity={0}>
-            <group position={[1.55, 1.2, 0.5]} scale={0.92}>
-              <VoxelBall tokens={tokens} reduce={reduce} />
-            </group>
-          </Float>
-        </Rig>
-        <ContactShadows position={[0, -1.78, 0]} opacity={0.45} scale={9} blur={2.6} far={3.6} color={tokens.onAccent} />
-        <Grid
-          position={[0, -1.8, 0]}
-          args={[26, 26]}
-          cellSize={0.5}
-          cellThickness={0.6}
-          cellColor={tokens.border}
-          sectionSize={2.5}
-          sectionThickness={1}
-          sectionColor={tokens.accent}
-          fadeDistance={17}
-          fadeStrength={3}
-          infiniteGrid
-        />
-      </Suspense>
-    </Canvas>
-  );
+    /* ── animation loop ── */
+    let raf = 0;
+    const clock = new THREE.Clock();
+    const animate = () => {
+      raf = requestAnimationFrame(animate);
+      const dt = clock.getDelta();
+      const t = clock.elapsedTime;
+
+      const raw = sampleProgress();
+      progress += (raw - progress) * 0.1;
+
+      // Idle spin only while the ball is still coherent; let the burst take over after.
+      const spin = 1 - smooth(0.16, 0.5, progress);
+      ball.rotation.y += dt * 0.42 * spin;
+      ball.rotation.x += dt * 0.09 * spin;
+
+      poseScene(progress, t);
+
+      sceneGroup.rotation.y += (mx * 0.1 - sceneGroup.rotation.y) * 0.06;
+      sceneGroup.rotation.x += (-my * 0.06 - sceneGroup.rotation.x) * 0.06;
+
+      renderer.render(scene, camera);
+    };
+
+    if (!reduce) {
+      clock.start();
+      animate();
+    }
+
+    /* ── scroll-linked render fallback ──
+       Browsers throttle requestAnimationFrame to ~0fps when the tab is hidden
+       (backgrounded / off-screen). For a pinned scroll sequence that means the
+       pose would freeze mid-scroll. Rendering directly on scroll while hidden
+       keeps the frames correct (and is a no-op cost when visible, since rAF is
+       already sampling scroll every frame). */
+    const onScroll = () => {
+      if (reduce || !document.hidden) return;
+      progress = sampleProgress();
+      poseScene(progress, clock.elapsedTime);
+      renderer.render(scene, camera);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+
+    // Dev-only deterministic seek hook for headless/preview verification, where
+    // requestAnimationFrame is throttled to 0fps and scroll-driving is unstable.
+    // Never compiled into a meaningful path in production-style envs.
+    const devHook =
+      process.env.NODE_ENV !== 'production'
+        ? (p: number) => {
+            resize();
+            progress = clamp01(p);
+            poseScene(progress, clock.elapsedTime);
+            renderer.render(scene, camera);
+          }
+        : null;
+    if (devHook) {
+      (window as unknown as { __heroSeek?: (p: number) => void }).__heroSeek = devHook;
+    }
+
+    /* ── react to reduced-motion change ── */
+    const onReduceChange = () => {
+      const next = reduceMQ.matches;
+      if (next === reduce) return;
+      reduce = next;
+      if (reduce) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+        window.removeEventListener('pointermove', onPointerMove);
+        sceneGroup.rotation.set(0, 0, 0);
+        ball.rotation.set(0.08, 0.6, 0);
+        poseScene(1, 0);
+        screenMat.opacity = 1;
+        renderer.render(scene, camera);
+      } else {
+        window.addEventListener('pointermove', onPointerMove);
+        clock.start();
+        animate();
+      }
+    };
+    reduceMQ.addEventListener('change', onReduceChange);
+
+    /* ── cleanup ── */
+    return () => {
+      disposed = true;
+      cancelAnimationFrame(raf);
+      reduceMQ.removeEventListener('change', onReduceChange);
+      themeObs.disconnect();
+      ro.disconnect();
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('scroll', onScroll);
+      if (devHook) {
+        delete (window as unknown as { __heroSeek?: (p: number) => void }).__heroSeek;
+      }
+
+      ball.dispose(); // releases the InstancedMesh instanceMatrix GPU buffer
+      voxGeo.dispose();
+      voxMat.dispose();
+      bodyGeo.dispose();
+      bodyMat.dispose();
+      frameGeo.dispose();
+      frameMat.dispose();
+      screenGeo.dispose();
+      screenMat.dispose();
+      screenTex?.dispose();
+      envRT.dispose();
+
+      renderer.dispose();
+      renderer.forceContextLoss();
+      if (renderer.domElement.parentNode) {
+        renderer.domElement.parentNode.removeChild(renderer.domElement);
+      }
+    };
+  }, [wrapperSelector]);
+
+  return <div ref={containerRef} className="absolute inset-0" />;
 }

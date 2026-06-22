@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { BrandMark } from '@/components/BrandMark';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { APP_STORE_URL, DOCS_URL } from '@/src/lib/constants';
 
 type NavItem = { id: string; label: string; Icon: LucideIcon };
@@ -225,7 +226,8 @@ export function SiteHeader() {
               rel="noopener noreferrer"
               className="ml-1 inline-flex min-h-[44px] items-center rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Get the app<span className="sr-only"> (opens in new tab)</span>
+              <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
+              <span className="sr-only"> (opens in new tab)</span>
             </Link>
           </div>
 
