@@ -7,7 +7,6 @@ import { ShimmerText, ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { AppleIcon, DiscordIcon } from '@/components/ui/BrandIcons';
 import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
 import { HERO_BANDS, bandProgress, sampleHeroProgress } from '@/src/lib/heroProgress';
-import { BrandMark } from '@/components/BrandMark';
 
 /**
  * HeroCopy - the pinned-scroll narrative overlay that lives inside the sticky
@@ -94,42 +93,50 @@ export function HeroCopy() {
 
   return (
     <div ref={rootRef} className="pointer-events-none absolute inset-0 z-10">
-      <div ref={introRef} className="absolute inset-0 flex items-start justify-center will-change-[transform,opacity]">
-        <div className="pointer-events-auto mx-auto flex w-full max-w-[780px] flex-col items-center px-6 pt-[16vh] text-center md:pt-[17vh]">
-          <div className="mb-5 animate-fade-in-up">
-            <BrandMark alt="Buzzr" size={62} variant="transparent" priority />
-          </div>
-          <h1
-            id="hero-title"
-            style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
-            className="max-w-[12ch] animate-fade-in-up text-balance text-[clamp(42px,7.6vw,84px)] font-bold leading-[0.96] tracking-[-0.028em] text-white [text-shadow:0_2px_30px_rgba(0,0,0,0.62)]"
-          >
-            The AI-native home for sports fans.
-          </h1>
-          <p className="mt-5 max-w-[30ch] animate-fade-in-up stagger-1 text-pretty text-[16px] leading-[1.5] tracking-[-0.02em] text-white/80 [text-shadow:0_1px_16px_rgba(0,0,0,0.7)] md:text-[18px]">
-            Scroll games, dashboards, friends, leagues, and Buzzr Bets in one sports social app.
-          </p>
+      <div ref={introRef} className="absolute inset-0 will-change-[transform,opacity]">
+        <h1 id="hero-title" className="sr-only">
+          The AI-native home for sports fans.
+        </h1>
 
-          <div className="mt-7 flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3">
-            <MagneticButton
-              href={APP_STORE_URL}
-              external
-              className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-            >
-              <AppleIcon size={17} />
-              <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
-              <span className="sr-only"> (opens in new tab)</span>
-            </MagneticButton>
-            <Link
-              href={DISCORD_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-            >
-              <DiscordIcon size={17} />
-              Join the Discord<span className="sr-only"> (opens in new tab)</span>
-            </Link>
-          </div>
+        {/* Headline wraps the ball on two arcs (Encircle). The dark text outline
+            keeps it legible over the green/molten without a blur scrim. */}
+        <svg
+          aria-hidden
+          viewBox="0 0 600 600"
+          style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
+          className="pointer-events-none absolute left-1/2 top-[49%] h-[min(120vw,104vh)] w-[min(120vw,104vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none"
+        >
+          <defs>
+            <path id="heroArcTop" d="M 92 300 A 208 208 0 0 1 508 300" fill="none" />
+            <path id="heroArcBot" d="M 150 318 Q 300 560 450 318" fill="none" />
+          </defs>
+          <text fontSize="52" fontWeight="800" letterSpacing="-2" fill="#ffffff" stroke="#04120a" strokeWidth="3" strokeLinejoin="round" paintOrder="stroke">
+            <textPath href="#heroArcTop" startOffset="50%" textAnchor="middle">The AI-native home</textPath>
+          </text>
+          <text fontSize="52" fontWeight="800" letterSpacing="-2" fill="#ffffff" stroke="#04120a" strokeWidth="3" strokeLinejoin="round" paintOrder="stroke">
+            <textPath href="#heroArcBot" startOffset="50%" textAnchor="middle">for sports fans.</textPath>
+          </text>
+        </svg>
+
+        <div className="pointer-events-auto absolute inset-x-0 bottom-[12vh] flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3 px-6">
+          <MagneticButton
+            href={APP_STORE_URL}
+            external
+            className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+          >
+            <AppleIcon size={17} />
+            <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
+            <span className="sr-only"> (opens in new tab)</span>
+          </MagneticButton>
+          <Link
+            href={DISCORD_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+          >
+            <DiscordIcon size={17} />
+            Join the Discord<span className="sr-only"> (opens in new tab)</span>
+          </Link>
         </div>
 
         <div className="pointer-events-none absolute bottom-7 left-1/2 flex -translate-x-1/2 animate-fade-in-up stagger-5 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/42">
