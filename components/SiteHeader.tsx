@@ -121,9 +121,6 @@ export function SiteHeader() {
             aria-label="Buzzr home"
           >
             <BrandMark alt="Buzzr" size={40} variant="transparent" priority />
-            <span className="hidden text-[15px] font-semibold leading-none tracking-[-0.01em] text-white sm:inline">
-              Buzzr
-            </span>
           </Link>
 
           <nav aria-label="Primary" className="hidden md:block">
@@ -137,7 +134,7 @@ export function SiteHeader() {
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
                       className={`site-nav-control inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
-                        isActive ? 'bg-white/10 text-[#34d399]' : 'text-white/62 hover:text-white'
+                        isActive ? 'bg-white/10 text-accent-text' : 'text-white/62 hover:text-white'
                       }`}
                     >
                       <Icon size={14} strokeWidth={1.75} aria-hidden />

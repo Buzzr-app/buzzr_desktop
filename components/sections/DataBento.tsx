@@ -109,7 +109,7 @@ export function DataBento() {
 
         <div className="grid gap-12 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16">
           <div className="lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-7rem)] lg:items-center">
-            <div className="relative mx-auto grid w-full max-w-[520px] gap-5 rounded-xl border border-white/10 bg-surface p-4 shadow-[0_32px_100px_-58px_rgba(0,194,100,0.6)]">
+            <div className="relative mx-auto grid w-full max-w-[520px] gap-5 rounded-2xl border border-white/[0.08] bg-surface/55 p-5 shadow-[0_44px_120px_-70px_rgba(0,0,0,0.85)]">
               <div
                 aria-hidden
                 className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/15 to-transparent"
@@ -119,7 +119,6 @@ export function DataBento() {
                   src="/app-screens/dashboard.png"
                   alt="Buzzr dashboard screen with team and league context"
                   priority
-                  aura
                   size="compact"
                   className="mx-auto"
                 />
@@ -154,7 +153,7 @@ export function DataBento() {
 
 function DashboardSignal({ step }: { step: DashboardStep }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.045] p-5 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+    <div className="rounded-2xl border border-border bg-subtle/70 p-5 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
       <div className="flex items-center justify-between gap-4">
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-whisper">
           {step.label}
@@ -178,7 +177,7 @@ function DashboardSignal({ step }: { step: DashboardStep }) {
           {step.detail}
         </span>
       </div>
-      <div className="mt-6 h-2 overflow-hidden rounded-full bg-white/[0.1]">
+      <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
         <div
           aria-hidden
           className="h-full rounded-full bg-accent transition-transform duration-500 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
@@ -201,10 +200,10 @@ function DashboardStepCard({
   return (
     <article
       aria-current={active ? 'true' : undefined}
-      className={`group relative w-full overflow-hidden rounded-xl border p-6 shadow-[var(--shadow-card)] transition-[border-color,background-color,transform,box-shadow] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-safe:active:scale-[0.99] ${
+      className={`group relative w-full overflow-hidden rounded-2xl border p-6 transition-[border-color,background-color,transform] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-safe:active:scale-[0.99] ${
         active
-          ? 'border-accent/45 bg-subtle'
-          : 'border-border bg-surface motion-safe:[@media(hover:hover)]:hover:border-accent/30 motion-safe:[@media(hover:hover)]:hover:bg-subtle/55'
+          ? 'border-accent/40 bg-subtle shadow-[0_24px_70px_-50px_rgba(0,0,0,0.8)]'
+          : 'border-white/[0.06] bg-surface/40 motion-safe:[@media(hover:hover)]:hover:border-white/[0.12] motion-safe:[@media(hover:hover)]:hover:bg-surface/70'
       }`}
     >
       <span

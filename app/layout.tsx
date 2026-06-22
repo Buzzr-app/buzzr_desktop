@@ -12,12 +12,13 @@ import {
   SITE_NAME,
   TWITTER_URL
 } from '@/src/lib/constants';
-import { geistSans, geistMono } from './fonts';
+import { geistSans, geistMono, heroFont } from './fonts';
 import { Analytics } from '@vercel/analytics/next';
 import { BrandMark } from '@/components/BrandMark';
 import { SiteHeader } from '@/components/SiteHeader';
+import { LaunchBanner } from '@/components/LaunchBanner';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
-import { PixelAura } from '@/components/ui/PixelAura';
+import { VideoBackdrop } from '@/components/ui/VideoBackdrop';
 
 export const metadata: Metadata = {
   title: SITE_NAME,
@@ -48,7 +49,7 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  const fontVariables = `${geistSans.variable} ${geistMono.variable}`;
+  const fontVariables = `${geistSans.variable} ${geistMono.variable} ${heroFont.variable}`;
 
   return (
     <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
@@ -67,8 +68,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             {children}
           </main>
 
-          <footer className="relative overflow-hidden border-t border-white/10 bg-[#10161d] text-white">
-            <PixelAura density="footer" className="absolute inset-0 opacity-80" />
+          <footer className="relative overflow-hidden border-t border-white/10 bg-canvas text-white">
+            <VideoBackdrop overlayClassName="bg-canvas/72" />
             <div className="relative mx-auto w-full max-w-[1200px] px-6 py-12">
               <div className="mb-12 flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-3">
@@ -81,6 +82,21 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                   <p className="max-w-[260px] text-[14px] leading-[1.43] tracking-[0.1px] text-white/58">
                     The AI-native sports social app for Scroll, dashboards, friends, leagues, and Buzzr Bets.
                   </p>
+                  <a
+                    href="https://www.producthunt.com/products/buzzr-sports/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-buzzr-sports"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1 inline-block rounded-[10px] transition-opacity duration-200 hover:opacity-90 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="https://api.producthunt.com/widgets/embed-image/v1/product_review.svg?product_id=1220128&theme=dark"
+                      alt="Buzzr Sports - The first AI-native sports social media app | Product Hunt"
+                      width={250}
+                      height={54}
+                      className="h-[54px] w-[250px]"
+                    />
+                  </a>
                 </div>
 
                 <div className="flex flex-wrap gap-x-12 gap-y-8">
@@ -107,6 +123,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                       <li><a href={DISCORD_URL} target="_blank" rel="noopener noreferrer" className="text-white/58 transition-colors hover:text-white link-underline">Discord</a></li>
                       <li><a href={TWITTER_URL} target="_blank" rel="noopener noreferrer" className="text-white/58 transition-colors hover:text-white link-underline">X / Twitter</a></li>
                       <li><a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="text-white/58 transition-colors hover:text-white link-underline">Instagram</a></li>
+                      <li><a href="https://linktr.ee/buzzrsports" target="_blank" rel="noopener noreferrer" className="text-white/58 transition-colors hover:text-white link-underline">Linktree</a></li>
                     </ul>
                   </div>
                 </div>
@@ -120,6 +137,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
             </div>
           </footer>
         </div>
+        <LaunchBanner />
         <Analytics />
       </body>
     </html>

@@ -3,9 +3,9 @@ import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
 const BETS_STEPS = [
-  ['Add', 'Scan a DFS slip or enter picks by hand.'],
-  ['Grade', 'Connect legs to supported game results.'],
-  ['Compare', 'Track history with friends and crews.']
+  ['Add', 'Snap a DFS slip from PrizePicks, Underdog, or Sleeper, or enter picks by hand.'],
+  ['Grade', 'Every leg auto-grades against live box scores as the games finish.'],
+  ['Compare', 'ROI, streaks, and history roll up so your crew sees who actually hits.']
 ] as const;
 
 export function ScrollRail() {
@@ -20,8 +20,8 @@ export function ScrollRail() {
             >
               Buzzr Bets tracks the slips, not the book.
             </h2>
-            <p className="mt-4 max-w-[40ch] text-[16px] leading-[1.5] tracking-[-0.02em] text-muted">
-              DFS slip tracking for picks placed elsewhere. No sportsbook integrations.
+            <p className="mt-4 max-w-[48ch] text-[16px] leading-[1.55] tracking-[-0.02em] text-muted">
+              Track the DFS slips you place elsewhere. Buzzr grades every leg against live results and keeps the receipts next to the game it came from. No sportsbook integrations, no money touched, just the scoreboard. The settlement engine is open source.
             </p>
           </ScrollReveal>
 

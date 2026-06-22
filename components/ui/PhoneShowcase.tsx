@@ -35,6 +35,7 @@ export function PhoneShowcase({
             priority={priority}
           />
         </div>
+        <div aria-hidden className="phone-showcase__island" />
         <div aria-hidden className="phone-showcase__glass" />
         <div aria-hidden className="phone-showcase__edge phone-showcase__edge-left" />
         <div aria-hidden className="phone-showcase__edge phone-showcase__edge-right" />

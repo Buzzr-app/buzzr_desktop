@@ -24,18 +24,16 @@ import { BrandMark } from '@/components/BrandMark';
  */
 export function HeroCopy() {
   const rootRef = useRef<HTMLDivElement>(null);
-  const frostRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
   const wordRef = useRef<HTMLDivElement>(null);
   const taglineRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
-    const frost = frostRef.current;
     const intro = introRef.current;
     const word = wordRef.current;
     const tagline = taglineRef.current;
-    if (!root || !frost || !intro || !word || !tagline) return;
+    if (!root || !intro || !word || !tagline) return;
 
     const pin = root.closest<HTMLElement>('[data-hero-pin]');
     const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -46,8 +44,6 @@ export function HeroCopy() {
       intro.style.opacity = String(1 - out);
       intro.style.transform = `translateY(${-22 * out}px)`;
       intro.style.pointerEvents = out > 0.5 ? 'none' : 'auto';
-      frost.style.opacity = String(0.86 * (1 - out));
-      frost.style.transform = `translate3d(-50%, ${-10 * out}px, 0) scale(${1 + out * 0.06})`;
 
       // Brand wordmark drops in from above (top band).
       const wIn = bandProgress(HERO_BANDS.logo, p);
@@ -98,8 +94,6 @@ export function HeroCopy() {
 
   return (
     <div ref={rootRef} className="pointer-events-none absolute inset-0 z-10">
-      <div ref={frostRef} aria-hidden className="hero-copy-frost" />
-
       <div ref={introRef} className="absolute inset-0 flex items-start justify-center will-change-[transform,opacity]">
         <div className="pointer-events-auto mx-auto flex w-full max-w-[780px] flex-col items-center px-6 pt-[16vh] text-center md:pt-[17vh]">
           <div className="mb-5 animate-fade-in-up">
@@ -107,11 +101,12 @@ export function HeroCopy() {
           </div>
           <h1
             id="hero-title"
-            className="max-w-[11ch] animate-fade-in-up text-balance text-[clamp(40px,7vw,76px)] font-semibold leading-[1.02] tracking-[-0.032em] text-white"
+            style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
+            className="max-w-[12ch] animate-fade-in-up text-balance text-[clamp(42px,7.6vw,84px)] font-bold leading-[0.96] tracking-[-0.028em] text-white [text-shadow:0_2px_30px_rgba(0,0,0,0.62)]"
           >
             The AI-native home for sports fans.
           </h1>
-          <p className="mt-5 max-w-[30ch] animate-fade-in-up stagger-1 text-pretty text-[16px] leading-[1.5] tracking-[-0.02em] text-white/66 md:text-[18px]">
+          <p className="mt-5 max-w-[30ch] animate-fade-in-up stagger-1 text-pretty text-[16px] leading-[1.5] tracking-[-0.02em] text-white/80 [text-shadow:0_1px_16px_rgba(0,0,0,0.7)] md:text-[18px]">
             Scroll games, dashboards, friends, leagues, and Buzzr Bets in one sports social app.
           </p>
 
@@ -119,7 +114,7 @@ export function HeroCopy() {
             <MagneticButton
               href={APP_STORE_URL}
               external
-              className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <AppleIcon size={17} />
               <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
@@ -129,7 +124,7 @@ export function HeroCopy() {
               href={DISCORD_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 rounded-button border border-white/12 bg-white/[0.06] px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-white transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/[0.1] active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="inline-flex items-center gap-2 rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <DiscordIcon size={17} />
               Join the Discord<span className="sr-only"> (opens in new tab)</span>
@@ -151,7 +146,7 @@ export function HeroCopy() {
           kind="ramp"
           duration={2.4}
           pauseBetween={1400}
-          className="select-none text-center text-[clamp(46px,10vw,116px)] font-bold leading-[0.9] tracking-[-0.012em] text-white"
+          className="font-hero select-none text-center text-[clamp(46px,10vw,116px)] font-extrabold leading-[0.9] tracking-[-0.02em] text-white"
         >
           BUZZR
         </ShimmerText>
@@ -171,7 +166,7 @@ export function HeroCopy() {
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Get the app<span className="sr-only"> (opens in new tab)</span>
           </MagneticButton>
@@ -179,7 +174,7 @@ export function HeroCopy() {
             href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded-button border border-white/12 bg-white/[0.06] px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-white transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-white/[0.1] active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Join the Discord<span className="sr-only"> (opens in new tab)</span>
           </Link>

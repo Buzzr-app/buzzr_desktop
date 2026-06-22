@@ -424,7 +424,8 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
     const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
     // A lit graphite slab that reads above the dark canvas without crushing the screen.
-    const phoneBodyColor = () => new THREE.Color(tokens.steelSurface);
+    // Mint clay: brand green lifted toward white for a soft matte mint body.
+    const phoneBodyColor = () => new THREE.Color(tokens.accent).lerp(SHADE_WHITE, 0.52);
     const bodyMat = new THREE.MeshStandardMaterial({
       color: phoneBodyColor(),
       roughness: 0.58,
@@ -536,7 +537,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       applyExplosion(explode);
 
       // The ball starts at visual center. The frosted copy layer handles legibility.
-      const ballScale = lerp(isNarrow ? 0.3 : 0.38, isNarrow ? 0.52 : 0.62, explode);
+      const ballScale = lerp(isNarrow ? 0.6 : 0.76, isNarrow ? 0.78 : 0.95, explode);
       ball.scale.setScalar(ballScale);
       ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
 

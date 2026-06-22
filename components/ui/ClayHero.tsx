@@ -3,7 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Component, useEffect, useState, type ReactNode } from 'react';
 import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
-import { PixelAura } from '@/components/ui/PixelAura';
+import { VideoBackdrop } from '@/components/ui/VideoBackdrop';
 
 /** Static fallback shown while the WebGL chunk loads or if WebGL is unavailable. */
 function Poster() {
@@ -76,7 +76,7 @@ export function ClayHero({
   return (
     <div data-hero-pin className={`relative h-[200vh] motion-reduce:h-auto ${className ?? ''}`}>
       <div className="sticky top-0 h-screen w-full overflow-hidden hero-stage landing-dark">
-        <PixelAura density="hero" className="absolute inset-0" />
+        <VideoBackdrop overlayClassName="bg-gradient-to-b from-canvas/45 via-canvas/40 to-canvas/75" />
         <div aria-hidden className="absolute inset-0 hero-canvas-clip">
           {showScene ? (
             <WebGLBoundary>

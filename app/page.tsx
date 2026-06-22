@@ -22,7 +22,7 @@ import { Faq } from '@/components/sections/Faq';
 import { Reviews, REVIEWS_SUMMARY } from '@/components/sections/Reviews';
 import { FinalCTA } from '@/components/sections/FinalCTA';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
-import { ChangelogPreview } from '@/components/sections/ChangelogPreview';
+import { OpenSource } from '@/components/sections/OpenSource';
 
 const PAGE_TITLE = `${SITE_NAME} · AI-native sports social media`;
 const PAGE_DESCRIPTION = `Buzzr is the AI-native sports social app for Scroll, live game ratings, dashboards, friends and chat, ${LEAGUE_COUNT} leagues, and Buzzr Bets. Free on iOS and Android.`;
@@ -166,7 +166,7 @@ export default function HomePage() {
         <ScrollRail />
       </ScrollReveal>
       <ScrollReveal>
-        <ChangelogPreview />
+        <OpenSource />
       </ScrollReveal>
       <ScrollReveal>
         <Reviews />

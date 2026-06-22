@@ -125,6 +125,11 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: -0.018em;
 }
 
+/* Hero / big-heading display face. next/font sets --ff-hero (Bricolage Grotesque). */
+.font-hero {
+  font-family: var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
 /* ─── Keyframes ─────────────────────────────────────────────────────────────── */
 @keyframes fade-in-up {
   from { opacity: 0; transform: translateY(8px); }
@@ -223,21 +228,30 @@ h1, h2, h3, h4, h5, h6 {
 .site-header {
   background: transparent;
 }
+/* Liquid progressive blur that spreads down from the very top, then dissolves.
+   No pill, no border, no hard edge - the bar reads as part of the page. */
+.site-header::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 150px;
+  z-index: 0;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.16) 48%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 44%, transparent 100%);
+}
 .site-nav-shell {
   --nav-radius: 31px;
   --nav-pad-y: 8px;
   --nav-control-radius: calc(var(--nav-radius) - var(--nav-pad-y));
-  border: 1px solid rgba(255, 255, 255, 0.11);
-  border-radius: var(--nav-radius);
-  background:
-    linear-gradient(180deg, rgba(22, 30, 39, 0.74), rgba(12, 18, 24, 0.58)),
-    rgba(16, 22, 29, 0.52);
-  box-shadow:
-    0 30px 110px -48px rgba(0, 194, 100, 0.74),
-    0 14px 48px -34px rgba(3, 7, 12, 0.92),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
-  -webkit-backdrop-filter: blur(28px) saturate(1.2);
-  backdrop-filter: blur(28px) saturate(1.2);
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  border: none;
+  box-shadow: none;
 }
 .site-nav-brand,
 .site-nav-control {
@@ -377,56 +391,68 @@ h1, h2, h3, h4, h5, h6 {
   z-index: 1;
   width: 100%;
   height: 100%;
-  overflow: hidden;
   border-radius: var(--phone-shell-radius);
   padding: var(--phone-inset);
-  background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04) 32%, rgba(0, 194, 100, 0.18) 100%),
-    #0b0b0d;
+  /* Matte graphite titanium frame from neutral tokens + a faint mint rim light. */
+  background: linear-gradient(157deg, var(--color-subtle) 0%, var(--color-surface) 46%, var(--color-canvas) 100%);
   box-shadow:
-    0 32px 90px -54px rgba(0, 194, 100, 0.95),
-    0 18px 50px -38px rgba(0, 0, 0, 0.92),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.11),
-    inset 0 0 38px rgba(255, 255, 255, 0.06);
+    0 30px 60px -32px rgba(0, 0, 0, 0.9),
+    0 12px 26px -18px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 0 0 2px color-mix(in oklab, var(--color-accent) 9%, transparent);
 }
 .phone-showcase__screen {
   position: relative;
   height: 100%;
   overflow: hidden;
   border-radius: var(--phone-screen-radius);
-  background: #050506;
-  box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
-    inset 0 24px 46px rgba(255, 255, 255, 0.08),
-    inset 0 -28px 44px rgba(0, 0, 0, 0.62);
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.85);
 }
 .phone-showcase__screen img {
   border-radius: inherit;
 }
+/* Dynamic Island, centered over the status bar. */
+.phone-showcase__island {
+  position: absolute;
+  top: calc(var(--phone-inset) + 7px);
+  left: 50%;
+  z-index: 3;
+  width: 32%;
+  height: 4.2%;
+  min-height: 11px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: #000;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
 .phone-showcase__glass {
   position: absolute;
   inset: var(--phone-inset);
+  z-index: 2;
   border-radius: var(--phone-screen-radius);
-  background:
-    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.16) 45%, transparent 58%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 38%);
-  opacity: 0.78;
+  background: linear-gradient(125deg, rgba(255, 255, 255, 0.09) 0%, transparent 24%);
+  opacity: 0.55;
   pointer-events: none;
 }
 .phone-showcase__edge {
   position: absolute;
-  top: 16%;
-  width: 3px;
+  z-index: 2;
+  width: 2.5px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: linear-gradient(var(--color-subtle), var(--color-canvas));
 }
 .phone-showcase__edge-left {
-  left: 2px;
-  height: 12%;
+  left: 0;
+  top: 24%;
+  height: 9%;
 }
 .phone-showcase__edge-right {
-  right: 2px;
-  height: 18%;
+  right: 0;
+  top: 31%;
+  height: 13%;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -586,16 +612,13 @@ h1, h2, h3, h4, h5, h6 {
 .hero-copy-frost {
   position: absolute;
   left: 50%;
-  top: 10vh;
-  width: min(920px, calc(100vw - 20px));
-  height: min(62vh, 520px);
+  top: 12vh;
+  width: min(720px, calc(100vw - 20px));
+  height: min(48vh, 420px);
   transform: translate3d(-50%, 0, 0);
   border-radius: 999px;
-  background:
-    radial-gradient(ellipse at 50% 42%, rgba(7, 12, 16, 0.76), rgba(7, 12, 16, 0.4) 48%, transparent 82%),
-    radial-gradient(ellipse at 50% 48%, rgba(0, 194, 100, 0.14), transparent 66%);
-  -webkit-backdrop-filter: blur(28px) saturate(1.12);
-  backdrop-filter: blur(28px) saturate(1.12);
+  /* No blur - just a soft dark scrim so the headline stays legible over the ball. */
+  background: radial-gradient(ellipse at 50% 44%, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.28) 46%, transparent 72%);
   will-change: transform, opacity;
 }
 
