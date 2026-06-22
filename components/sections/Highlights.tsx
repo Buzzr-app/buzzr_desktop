@@ -27,7 +27,6 @@ export function Highlights() {
     <Section id="highlights" aria-labelledby="highlights-title">
       <header className="mb-10 grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-12">
         <div>
-          <Badge>Highlights</Badge>
           <h2
             id="highlights-title"
             className="mt-3 max-w-[18ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

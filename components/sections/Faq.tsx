@@ -1,5 +1,4 @@
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { FaqAccordion } from '@/components/FaqAccordion';
 import { LEAGUES, LEAGUE_COUNT } from '@/src/lib/constants';
 
@@ -35,7 +34,6 @@ export function Faq() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
 
       <header className="mb-10 max-w-[720px]">
-        <Badge>FAQ</Badge>
         <h2
           id="faq-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

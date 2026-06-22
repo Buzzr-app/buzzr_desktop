@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { Marquee } from '@/components/Marquee';
 import { LEAGUE_COUNT, LEAGUES, SPORT_LABELS, SPORT_ORDER, type League, type LeagueSport } from '@/src/lib/constants';
 import { LeagueChip } from '@/components/sections/LeagueChip';
@@ -25,7 +24,6 @@ export function LeaguesWall() {
 
       <Section className="pt-12 md:pt-[48px]">
         <header className="mb-10 max-w-[52ch]">
-          <Badge>Coverage</Badge>
           <h2
             id="leagues-title"
             className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

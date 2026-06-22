@@ -1,6 +1,5 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { LEAGUE_COUNT } from '@/src/lib/constants';
 
 type Surface = { name: string; blurb: string; shot: string; pos: string };
@@ -18,7 +17,6 @@ export function ScrollRail() {
   return (
     <Section id="rail" aria-labelledby="rail-title">
       <header className="mb-8 max-w-[48ch]">
-        <Badge>The app</Badge>
         <h2
           id="rail-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

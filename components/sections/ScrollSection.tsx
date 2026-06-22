@@ -1,5 +1,4 @@
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { DeviceFrame } from '@/components/ui/DeviceFrame';
 
 export function ScrollSection() {
@@ -7,7 +6,6 @@ export function ScrollSection() {
     <Section id="scroll" aria-labelledby="scroll-title">
       <div className="grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
         <div className="flex flex-col gap-6">
-          <Badge>One feed</Badge>
           <h2
             id="scroll-title"
             className="max-w-[16ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

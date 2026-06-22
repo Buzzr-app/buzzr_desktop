@@ -1,5 +1,4 @@
 import { Section } from '@/components/ui/Section';
-import { Badge } from '@/components/ui/Badge';
 import { DeviceFrame } from '@/components/ui/DeviceFrame';
 
 type Screen = {
@@ -18,7 +17,6 @@ export function Showcase() {
   return (
     <Section id="showcase" aria-labelledby="showcase-title">
       <header className="mb-12 max-w-[48ch]">
-        <Badge>The app</Badge>
         <h2
           id="showcase-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

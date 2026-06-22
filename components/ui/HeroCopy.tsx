@@ -4,6 +4,7 @@ import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { ShimmerText, ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
+import { AppleIcon, DiscordIcon } from '@/components/ui/BrandIcons';
 import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
 
 const clamp01 = (t: number) => Math.max(0, Math.min(1, t));
@@ -103,20 +104,21 @@ export function HeroCopy() {
     <div ref={rootRef} className="pointer-events-none absolute inset-0 z-10">
       {/* ── Intro layer: the quiet opening, left-aligned ── */}
       <div ref={introRef} className="absolute inset-0 flex items-start will-change-[transform,opacity]">
-        <div className="pointer-events-auto mx-auto flex w-full max-w-[1240px] flex-col px-6 pt-32 md:px-10 md:pt-40">
+        <div className="pointer-events-auto mx-auto flex w-full max-w-[1240px] flex-col items-center px-6 pt-32 text-center md:px-10 md:pt-40">
           <h1
             id="hero-title"
-            className="max-w-[18ch] animate-fade-in-up text-[clamp(40px,8vw,72px)] font-semibold leading-[1.04] tracking-[-0.032em] text-foreground"
+            className="mx-auto max-w-[20ch] animate-fade-in-up text-[clamp(40px,8vw,72px)] font-semibold leading-[1.04] tracking-[-0.032em] text-foreground"
           >
             AI-Native Sports Social Media
           </h1>
 
-          <div className="mt-9 flex animate-fade-in-up stagger-2 flex-wrap items-center gap-3">
+          <div className="mt-9 flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3">
             <MagneticButton
               href={APP_STORE_URL}
               external
-              className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
+              <AppleIcon size={17} />
               <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
               <span className="sr-only"> (opens in new tab)</span>
             </MagneticButton>
@@ -124,8 +126,9 @@ export function HeroCopy() {
               href={DISCORD_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center rounded-button border border-border bg-surface px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-foreground transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-subtle active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="inline-flex items-center gap-2 rounded-button border border-border bg-surface px-5 py-3 text-[15px] font-medium tracking-[-0.01em] text-foreground transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-subtle active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
+              <DiscordIcon size={17} />
               Join the Discord<span className="sr-only"> (opens in new tab)</span>
             </Link>
           </div>

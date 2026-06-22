@@ -50,7 +50,6 @@ export function Reviews() {
     <Section id="reviews" aria-labelledby="reviews-title">
       <header className="mb-10 grid gap-8 md:grid-cols-[1fr_1.4fr] md:items-end md:gap-16">
         <div>
-          <Badge>Ratings &amp; Reviews</Badge>
           <h2
             id="reviews-title"
             className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

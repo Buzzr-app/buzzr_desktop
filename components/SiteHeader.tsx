@@ -13,6 +13,7 @@ import {
 import { BrandMark } from '@/components/BrandMark';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
+import { AppleIcon } from '@/components/ui/BrandIcons';
 import { APP_STORE_URL, DOCS_URL } from '@/src/lib/constants';
 
 type NavItem = { id: string; label: string; Icon: LucideIcon };
@@ -131,8 +132,8 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full border-b border-border bg-canvas/80 backdrop-blur-xl">
-        <div className="mx-auto flex w-full max-w-[1200px] items-center justify-between gap-6 px-6 py-3">
+      <header className="sticky top-0 z-40 w-full px-4 pt-3 md:pt-4">
+        <div className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-6 rounded-full border border-border bg-canvas/70 py-2 pl-5 pr-3 shadow-[var(--shadow-card)] backdrop-blur-xl supports-[backdrop-filter]:bg-canvas/60">
           <Link
             href={isHome ? '#top' : '/'}
             onClick={(e) => {
@@ -143,12 +144,10 @@ export function SiteHeader() {
                 setActive(FIRST_SECTION_ID);
               }
             }}
-            className="inline-flex items-center gap-2 transition-opacity hover:opacity-80"
+            className="inline-flex items-center transition-opacity hover:opacity-80"
+            aria-label="Buzzr home"
           >
-            <BrandMark alt="" size={22} priority />
-            <span className="text-[16px] lowercase leading-none tracking-[-0.025em] text-foreground">
-              buzzr<span className="text-accent-text">.</span>
-            </span>
+            <BrandMark alt="Buzzr" size={24} priority />
           </Link>
 
           <nav aria-label="Primary" className="hidden md:block">
@@ -224,8 +223,9 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1 inline-flex min-h-[44px] items-center rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="ml-1 inline-flex min-h-[44px] items-center gap-2 rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
+              <AppleIcon size={15} />
               <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
               <span className="sr-only"> (opens in new tab)</span>
             </Link>

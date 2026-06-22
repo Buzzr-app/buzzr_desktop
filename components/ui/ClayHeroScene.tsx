@@ -117,6 +117,28 @@ const smooth = (e0: number, e1: number, x: number) => {
   return t * t * (3 - 2 * t);
 };
 
+// Neutral shade endpoints (not brand colors) for deriving lighter/darker tints.
+const SHADE_WHITE = new THREE.Color(0xffffff);
+const SHADE_BLACK = new THREE.Color(0x000000);
+
+/**
+ * The voxel ball is "all shades of green": a 6-stop ramp (pole to pole) built
+ * ONLY from the green brand tokens (buzz-peak + buzz-great), shaded light→deep
+ * with neutral white/black lerps — no hardcoded brand hex, re-themeable.
+ */
+function buildGreenRamp(tk: SceneTokens): THREE.Color[] {
+  const bright = new THREE.Color(tk.ramp[0]); // buzz-peak, brightest green
+  const deep = new THREE.Color(tk.ramp[1]); // buzz-great, deeper green
+  return [
+    bright.clone().lerp(SHADE_WHITE, 0.62), // pale mint
+    bright.clone().lerp(SHADE_WHITE, 0.32), // light green
+    bright.clone(), // bright brand green
+    deep.clone().lerp(bright, 0.45), // mid green
+    deep.clone(), // deep green
+    deep.clone().lerp(SHADE_BLACK, 0.42) // forest
+  ];
+}
+
 export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -168,7 +190,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
     /* ── tokens → colors ── */
     let tokens = readTokens();
-    const rampColors = tokens.ramp.map((c) => new THREE.Color(c));
+    const rampColors = buildGreenRamp(tokens);
     const hemi = new THREE.HemisphereLight(
       new THREE.Color(tokens.canvas),
       new THREE.Color(tokens.steel),
@@ -203,7 +225,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       blending: THREE.NormalBlending,
       roughness: 0.42,
       metalness: 0.0,
-      emissive: new THREE.Color(tokens.ramp[2]),
+      emissive: new THREE.Color(tokens.ramp[0]),
       emissiveIntensity: 0.18
     });
 
@@ -387,11 +409,11 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     /* ── token re-theming on .dark flip ── */
     const applyTokens = () => {
       tokens = readTokens();
-      tokens.ramp.forEach((c, i) => rampColors[i].set(c));
+      buildGreenRamp(tokens).forEach((c, i) => rampColors[i].copy(c));
       hemi.color.set(tokens.canvas);
       hemi.groundColor.set(tokens.steel);
       rim.color.set(tokens.accent);
-      voxMat.emissive.set(tokens.ramp[2]);
+      voxMat.emissive.set(tokens.ramp[0]);
       bodyMat.color.copy(phoneBodyColor());
       frameMat.color.set(tokens.accent);
       frameMat.emissive.set(tokens.accent);

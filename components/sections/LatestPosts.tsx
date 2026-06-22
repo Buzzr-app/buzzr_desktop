@@ -11,7 +11,6 @@ export function LatestPosts() {
     if (process.env.NODE_ENV === 'production') return null;
     return (
       <Section id="blog" aria-labelledby="latest-title">
-        <Badge>Blog</Badge>
         <h2
           id="latest-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

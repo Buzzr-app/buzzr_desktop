@@ -1,6 +1,5 @@
 import { Section } from '@/components/ui/Section';
 import { CalloutCard } from '@/components/ui/CalloutCard';
-import { Badge } from '@/components/ui/Badge';
 import { LEAGUE_COUNT } from '@/src/lib/constants';
 import { BuzzSceneProvider } from '@/src/hooks/useBuzzScene';
 import Image from 'next/image';
@@ -16,7 +15,6 @@ export function DataBento() {
   return (
     <Section id="data" aria-labelledby="data-title">
       <header className="mb-10 max-w-[56ch]">
-        <Badge>Anatomy</Badge>
         <h2
           id="data-title"
           className="mt-3 max-w-[22ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

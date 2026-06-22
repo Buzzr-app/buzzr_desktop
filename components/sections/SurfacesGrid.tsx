@@ -24,7 +24,6 @@ export function SurfacesGrid() {
   return (
     <Section id="surfaces" aria-labelledby="surfaces-title">
       <header className="mb-10 max-w-[44ch]">
-        <Badge>Surfaces</Badge>
         <h2
           id="surfaces-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

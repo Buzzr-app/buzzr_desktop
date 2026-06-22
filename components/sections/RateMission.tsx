@@ -43,7 +43,6 @@ export function RateMission() {
     <Section id="mission" aria-labelledby="mission-title">
       <div className="grid items-start gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:gap-16">
         <div className="flex flex-col gap-6">
-          <Badge>The mission</Badge>
           <h2
             id="mission-title"
             className="text-[clamp(36px,5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"

@@ -30,14 +30,13 @@ function readGradients(): BrandGradients {
   const s = getComputedStyle(document.documentElement);
   const g = (n: string) => s.getPropertyValue(n).trim();
   return {
-    // Echoes the hero voxel heat-ball: peak → great → good → mid → bad → garbage.
+    // Echoes the hero voxel ball — now all shades of green (green tokens only).
     ramp: stopsFrom([
+      g('--color-accent-text'),
       g('--color-buzz-peak'),
+      g('--color-accent'),
       g('--color-buzz-great'),
-      g('--color-buzz-good'),
-      g('--color-buzz-mid'),
-      g('--color-buzz-bad'),
-      g('--color-buzz-garbage')
+      g('--color-accent-dim')
     ]),
     // A green-intensity sweep for links + the App Store CTAs.
     accent: stopsFrom([
