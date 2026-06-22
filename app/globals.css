@@ -1,42 +1,30 @@
 @import "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 @source "../app";
 @source "../components";
 @source "../src";
 
-/* ─── Design tokens (Buzzr "Clean Craft") ───────────────────────────────────
-   Light, warm, precise — modelled on interfacecraft.dev. Warm stone neutrals,
-   one restrained brand accent (emerald), soft radii, real shadows for clean
-   elevation. Authority comes from Geist + precise tracking + whitespace, never
-   black weight. Secondary type is warm grey (stone), not opacity-on-void.
-─────────────────────────────────────────────────────────────────────────── */
+/* Buzzr dark editorial tokens. One dark surface, one green accent, no runtime theme branch. */
 @theme {
-  /* Colors — CREAM / LIGHT GREY / STEEL. A warm cream page, light-grey
-     structure, and a cool steel ink. The steel-* tokens are the dark
-     counterpart so sections can flip light↔dark cleanly down the page. */
-  --color-canvas:     #f6f3ec;  /* page: warm cream */
-  --color-surface:    #ffffff;  /* white cards on cream */
-  --color-subtle:     #ece7dd;  /* cream-grey wells / hover */
-  --color-border:     #ddd8cc;  /* warm light-grey hairline */
-  --color-foreground: #232a31;  /* steel ink (cool near-black) */
-  --color-muted:      #5a626b;  /* steel-grey secondary text */
-  --color-whisper:    #9aa1a9;  /* faint light steel */
+  --color-canvas:     #14181d;
+  --color-surface:    #1c222b;
+  --color-subtle:     #252e38;
+  --color-border:     #323b46;
+  --color-foreground: #f1efe9;
+  --color-muted:      #9aa3ad;
+  --color-whisper:    #6b747e;
 
-  /* Steel — the dark surface set (dark sections, inverted blocks) */
-  --color-steel:         #20262d;  /* dark section background */
-  --color-steel-surface: #2a313a;  /* raised card on steel */
-  --color-steel-border:  #3a424c;  /* hairline on steel */
-  --color-on-steel:      #f3f0e9;  /* cream text on steel */
-  --color-on-steel-muted:#a7afb8;  /* secondary text on steel */
+  --color-steel:         #0f1318;
+  --color-steel-surface: #1a2027;
+  --color-steel-border:  #2a323b;
+  --color-on-steel:      #f3f0e9;
+  --color-on-steel-muted:#a7afb8;
 
-  /* One brand accent: emerald. Solid fills carry dark-on-green; green TEXT
-     uses the deeper -text token so it clears AA on the cream canvas. */
   --color-accent:      #00c264;  /* brand green fill */
   --color-accent-dim:  #00a152;
-  --color-accent-text: #047857;  /* green text/links on cream (AA-safe) */
+  --color-accent-text: #34d399;
   --color-on-accent:   #04150b;  /* text on a green fill */
-  --color-live:        #e0322f;  /* live red (AA on cream) */
+  --color-live:        #f0584f;
 
   /* Buzz heat ramp (mirrors app score bands), for meters/data only */
   --color-buzz-peak:    #00c264;
@@ -46,76 +34,54 @@
   --color-buzz-bad:     #dc2626;
   --color-buzz-garbage: #7c3aed;
 
-  /* Type families — Geist (display + body) + Geist Mono (numerals/eyebrows) */
+  /* Type families - Geist (display + body) + Geist Mono (numerals/eyebrows) */
   --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-  /* Type scale — restrained & precise (tracking tightens as size grows) */
+  /* Type scale - restrained & precise (tracking tightens as size grows) */
   --text-caption: 12px;
   --text-caption--line-height: 1.5;
   --text-caption--letter-spacing: 0.01em;
 
   --text-body-sm: 14px;
   --text-body-sm--line-height: 1.5;
-  --text-body-sm--letter-spacing: -0.006em;
+  --text-body-sm--letter-spacing: 0;
 
   --text-body: 16px;
   --text-body--line-height: 1.6;
-  --text-body--letter-spacing: -0.011em;
+  --text-body--letter-spacing: 0;
 
   --text-subheading: 19px;
   --text-subheading--line-height: 1.5;
-  --text-subheading--letter-spacing: -0.02em;
+  --text-subheading--letter-spacing: -0.012em;
 
   --text-heading: 30px;
   --text-heading--line-height: 1.15;
-  --text-heading--letter-spacing: -0.025em;
+  --text-heading--letter-spacing: -0.018em;
 
   --text-heading-lg: 44px;
   --text-heading-lg--line-height: 1.08;
-  --text-heading-lg--letter-spacing: -0.03em;
+  --text-heading-lg--letter-spacing: -0.022em;
 
   --text-display: 64px;
   --text-display--line-height: 1.04;
-  --text-display--letter-spacing: -0.032em;
+  --text-display--letter-spacing: -0.024em;
 
-  /* Radii — soft, on a tight scale */
+  /* Radii - soft, on a tight scale */
   --radius-input:   10px;
   --radius-button:  10px;
-  --radius-callout: 16px;
+  --radius-callout: 8px;
 
-  /* Shadows — clean soft elevation + green focus ring */
-  --shadow-card:  0 1px 2px rgba(28, 25, 23, 0.04), 0 10px 30px -16px rgba(28, 25, 23, 0.18);
+  /* Shadows - clean soft elevation + green focus ring */
+  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
   --shadow-focus: 0 0 0 2px rgba(0, 194, 100, 0.55);
 }
 
-/* ─── Base ──────────────────────────────────────────────────────────────────── */
 :root,
 html {
-  color-scheme: light;
+  color-scheme: dark;
   background-color: var(--color-canvas);
   color: var(--color-foreground);
-}
-
-/* ─── Dark mode ──────────────────────────────────────────────────────────────
-   Token-value overrides only, so every bg-canvas / text-foreground / border-*
-   etc. flips automatically. The no-FOUC script in layout.tsx adds `.dark` to
-   <html> from localStorage or the system preference before first paint. */
-html.dark {
-  color-scheme: dark;
-  --color-canvas:        #14181d;  /* deep warm steel page */
-  --color-surface:       #1c222b;  /* raised cards */
-  --color-subtle:        #252e38;  /* wells / hover */
-  --color-border:        #323b46;  /* hairline */
-  --color-foreground:    #f1efe9;  /* cream-white ink */
-  --color-muted:         #9aa3ad;  /* secondary */
-  --color-whisper:       #6b747e;  /* faint */
-  --color-accent-text:   #34d399;  /* green text/links, AA on dark */
-  --color-live:          #f0584f;  /* live red, brighter on dark */
-  --color-steel:         #0f1318;  /* steel sections sink deeper than canvas */
-  --color-steel-surface: #1a2027;
-  --color-steel-border:  #2a323b;
-  --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
 }
 
 html {
@@ -130,7 +96,10 @@ body {
   min-height: 100vh;
   font-family: var(--font-sans);
   font-weight: 400;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
+  font-kerning: normal;
+  font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+  text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-canvas);
@@ -151,7 +120,7 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-sans);
   font-weight: 600;
-  letter-spacing: -0.025em;
+  letter-spacing: -0.018em;
 }
 
 /* ─── Keyframes ─────────────────────────────────────────────────────────────── */
@@ -224,7 +193,7 @@ h1, h2, h3, h4, h5, h6 {
     font-feature-settings: 'tnum';
   }
 
-  /* Animated link underline — wipes in from the left on hover/focus */
+  /* Animated link underline - wipes in from the left on hover/focus */
   .link-underline {
     background-image: linear-gradient(currentColor, currentColor);
     background-position: 0 100%;
@@ -239,6 +208,227 @@ h1, h2, h3, h4, h5, h6 {
   @media (prefers-reduced-motion: reduce) {
     .link-underline { transition: none; }
   }
+}
+
+/* Shared dark landing surface */
+.landing-dark {
+  background:
+    radial-gradient(circle at 50% 6%, rgba(0, 194, 100, 0.12), transparent 34%),
+    linear-gradient(180deg, #10161d 0%, #111821 52%, #14181d 100%);
+}
+
+/* Header glass and nested control radii. */
+.site-header {
+  background: transparent;
+}
+.site-nav-shell {
+  --nav-radius: 31px;
+  --nav-pad-y: 8px;
+  --nav-control-radius: calc(var(--nav-radius) - var(--nav-pad-y));
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  border-radius: var(--nav-radius);
+  background:
+    linear-gradient(180deg, rgba(22, 30, 39, 0.74), rgba(12, 18, 24, 0.58)),
+    rgba(16, 22, 29, 0.52);
+  box-shadow:
+    0 30px 110px -48px rgba(0, 194, 100, 0.74),
+    0 14px 48px -34px rgba(3, 7, 12, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  -webkit-backdrop-filter: blur(28px) saturate(1.2);
+  backdrop-filter: blur(28px) saturate(1.2);
+}
+.site-nav-brand,
+.site-nav-control {
+  border-radius: calc(var(--nav-control-radius) - 7px);
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.site-nav-cta {
+  position: relative;
+  isolation: isolate;
+  min-width: 132px;
+  height: 44px;
+  overflow: hidden;
+  border-radius: var(--nav-control-radius);
+  box-shadow:
+    0 22px 58px -26px rgba(0, 194, 100, 0.92),
+    0 8px 22px -14px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.34),
+    inset 0 -1px 0 rgba(2, 28, 14, 0.28);
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+  font-kerning: normal;
+}
+.site-nav-cta::before {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  z-index: -1;
+  border-radius: calc(var(--nav-control-radius) - 1px);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28), transparent 44%);
+  opacity: 0.76;
+}
+.site-nav-cta-label {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  line-height: 1;
+}
+.site-nav-cta svg {
+  flex: 0 0 auto;
+}
+.site-nav-cta-mobile {
+  --nav-control-radius: 16px;
+  width: 100%;
+}
+
+/* Seeded pixel aura used by hero, phone panels, and footer. */
+.pixel-aura {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  isolation: isolate;
+}
+.pixel-aura__bloom,
+.pixel-aura__subtract,
+.pixel-aura__grid {
+  position: absolute;
+  inset: 0;
+}
+.pixel-aura__bloom {
+  background:
+    radial-gradient(circle at 50% 42%, rgba(0, 194, 100, 0.3), transparent 40%),
+    radial-gradient(circle at 72% 24%, rgba(52, 211, 153, 0.16), transparent 30%),
+    radial-gradient(circle at 22% 68%, rgba(20, 184, 166, 0.12), transparent 34%);
+  filter: blur(34px);
+  opacity: 0.9;
+}
+.pixel-aura__subtract {
+  background:
+    radial-gradient(circle at 46% 44%, rgba(0, 0, 0, 0.68), transparent 18%),
+    radial-gradient(circle at 68% 52%, rgba(0, 0, 0, 0.42), transparent 16%);
+  mix-blend-mode: multiply;
+  opacity: 0.5;
+}
+.pixel-aura__grid span {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: var(--s);
+  height: var(--s);
+  opacity: var(--o);
+  transform: translate3d(-50%, -50%, 0);
+  background: #34d399;
+  box-shadow:
+    0 0 calc(var(--s) * 2.5) rgba(0, 194, 100, 0.72),
+    calc(var(--s) * 1.8) calc(var(--s) * -0.6) 0 rgba(125, 92, 255, 0.34),
+    calc(var(--s) * -1.5) calc(var(--s) * 0.8) 0 rgba(240, 249, 255, 0.26);
+  animation: pixel-aura-pulse 3.8s ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+.pixel-aura-hero {
+  opacity: 0.78;
+  -webkit-mask-image: radial-gradient(ellipse 78% 76% at 50% 42%, black 0%, transparent 78%);
+          mask-image: radial-gradient(ellipse 78% 76% at 50% 42%, black 0%, transparent 78%);
+}
+.pixel-aura-footer {
+  opacity: 0.72;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 18%, black 88%, transparent);
+          mask-image: linear-gradient(to bottom, transparent, black 18%, black 88%, transparent);
+}
+.pixel-aura-panel {
+  inset: -18%;
+  opacity: 0.64;
+}
+
+@keyframes pixel-aura-pulse {
+  0%, 100% { opacity: calc(var(--o) * 0.72); transform: translate3d(-50%, -50%, 0) scale(0.92); }
+  50% { opacity: var(--o); transform: translate3d(-50%, -50%, 0) scale(1.08); }
+}
+
+.phone-showcase {
+  --phone-max: 360px;
+  --phone-shell-radius: 34px;
+  --phone-inset: 9px;
+  --phone-screen-radius: calc(var(--phone-shell-radius) - var(--phone-inset));
+  position: relative;
+  margin: 0;
+  display: grid;
+  place-items: center;
+  width: min(100%, var(--phone-max), calc(78dvh * 9 / 19));
+  max-width: var(--phone-max);
+  aspect-ratio: 9 / 19;
+  padding: 18px;
+}
+.phone-showcase-compact { --phone-max: 220px; }
+.phone-showcase-medium { --phone-max: 280px; }
+.phone-showcase-standard { --phone-max: 360px; }
+.phone-showcase__aura {
+  z-index: 0;
+}
+.phone-showcase__shell {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--phone-shell-radius);
+  padding: var(--phone-inset);
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04) 32%, rgba(0, 194, 100, 0.18) 100%),
+    #0a0f12;
+  box-shadow:
+    0 32px 90px -54px rgba(0, 194, 100, 0.95),
+    0 18px 50px -38px rgba(0, 0, 0, 0.92),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.11),
+    inset 0 0 38px rgba(255, 255, 255, 0.06);
+}
+.phone-showcase__screen {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: var(--phone-screen-radius);
+  background: #030506;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    inset 0 24px 46px rgba(255, 255, 255, 0.08),
+    inset 0 -28px 44px rgba(0, 0, 0, 0.62);
+}
+.phone-showcase__screen img {
+  border-radius: inherit;
+}
+.phone-showcase__glass {
+  position: absolute;
+  inset: var(--phone-inset);
+  border-radius: var(--phone-screen-radius);
+  background:
+    linear-gradient(115deg, transparent 30%, rgba(255, 255, 255, 0.16) 45%, transparent 58%),
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.12), transparent 38%);
+  opacity: 0.78;
+  pointer-events: none;
+}
+.phone-showcase__edge {
+  position: absolute;
+  top: 16%;
+  width: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.phone-showcase__edge-left {
+  left: 2px;
+  height: 12%;
+}
+.phone-showcase__edge-right {
+  right: 2px;
+  height: 18%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pixel-aura__grid span { animation: none; }
 }
 
 /* ─── Hero clay-phone centerpiece (ScrollClayPhone) ───────────────────────────
@@ -263,7 +453,7 @@ h1, h2, h3, h4, h5, h6 {
   transform-style: preserve-3d;
 }
 
-/* Receding grid floor — warm hairlines on cream, lifted toward mint on dark */
+/* Receding grid floor */
 .cp-floor {
   position: absolute;
   left: 50%;
@@ -273,16 +463,11 @@ h1, h2, h3, h4, h5, h6 {
   transform-origin: 50% 100%;
   transform: translateX(-50%) rotateX(74deg) translateZ(calc(var(--p) * -8px));
   background-image:
-    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-border) 90%, transparent) 0 1px, transparent 1px 60px),
-    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-border) 90%, transparent) 0 1px, transparent 1px 60px);
+    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px),
+    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px);
   -webkit-mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
           mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
   pointer-events: none;
-}
-html.dark .cp-floor {
-  background-image:
-    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px),
-    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px);
 }
 
 /* Single accent horizon glow (non-rotated blur sibling) */
@@ -312,7 +497,7 @@ html.dark .cp-floor {
   pointer-events: none;
 }
 
-/* The rigid clay body — the only 3D-rotated element */
+/* The rigid clay body - the only 3D-rotated element */
 .cp-phone {
   position: absolute;
   inset: 0;
@@ -396,7 +581,23 @@ html.dark .cp-floor {
    only literals allowed here are neutral grain / black-alpha for the mask. */
 .hero-stage { isolation: isolate; }
 
-/* True edge dissolve on the canvas itself — soft elliptical mask, no hard rect. */
+.hero-copy-frost {
+  position: absolute;
+  left: 50%;
+  top: 10vh;
+  width: min(920px, calc(100vw - 20px));
+  height: min(62vh, 520px);
+  transform: translate3d(-50%, 0, 0);
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse at 50% 42%, rgba(7, 12, 16, 0.76), rgba(7, 12, 16, 0.4) 48%, transparent 82%),
+    radial-gradient(ellipse at 50% 48%, rgba(0, 194, 100, 0.14), transparent 66%);
+  -webkit-backdrop-filter: blur(28px) saturate(1.12);
+  backdrop-filter: blur(28px) saturate(1.12);
+  will-change: transform, opacity;
+}
+
+/* True edge dissolve on the canvas itself - soft elliptical mask, no hard rect. */
 .hero-canvas-clip {
   -webkit-mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, #000 58%, transparent 100%);
   mask-image: radial-gradient(ellipse 75% 80% at 50% 45%, #000 58%, transparent 100%);
@@ -407,7 +608,24 @@ html.dark .cp-floor {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 56%, var(--color-canvas) 100%);
+  background: radial-gradient(ellipse at 50% 45%, transparent 56%, #10161d 100%);
+}
+
+.hero-edge-blur {
+  position: absolute;
+  inset: -1px;
+  pointer-events: none;
+  -webkit-backdrop-filter: blur(16px) saturate(1.1);
+  backdrop-filter: blur(16px) saturate(1.1);
+  opacity: 0.78;
+  -webkit-mask-image: radial-gradient(ellipse 74% 78% at 50% 45%, transparent 52%, #000 86%);
+  mask-image: radial-gradient(ellipse 74% 78% at 50% 45%, transparent 52%, #000 86%);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hero-edge-blur {
+    background: radial-gradient(ellipse 72% 76% at 50% 45%, transparent 58%, rgba(16, 22, 29, 0.74) 90%);
+  }
 }
 
 /* Film grain: monochrome turbulence, blend-mode does the theming. */
@@ -415,15 +633,11 @@ html.dark .cp-floor {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: 0.05;
-  mix-blend-mode: multiply;
+  opacity: 0.08;
+  mix-blend-mode: screen;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   background-size: 160px 160px;
   animation: hero-grain-drift 8s steps(6) infinite;
-}
-html.dark .hero-grain {
-  opacity: 0.08;
-  mix-blend-mode: screen;
 }
 
 @keyframes hero-grain-drift {

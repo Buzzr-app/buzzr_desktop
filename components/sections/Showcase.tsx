@@ -1,16 +1,15 @@
 import { Section } from '@/components/ui/Section';
-import { DeviceFrame } from '@/components/ui/DeviceFrame';
+import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 
 type Screen = {
   src: string;
-  eyebrow: string;
-  caption: string;
+  alt: string;
 };
 
 const SCREENS: Screen[] = [
-  { src: '/screenshot-home.png',  eyebrow: 'Feed',  caption: 'Ratings, takes, and news' },
-  { src: '/screenshot-games.png', eyebrow: 'Games', caption: 'Every live game, scored' },
-  { src: '/screenshot-rate.png',  eyebrow: 'Swipe', caption: 'Swipe to score, 1 to 10' }
+  { src: '/app-screens/friends-chat.png', alt: 'Buzzr friends and chat activity' },
+  { src: '/app-screens/feed.png', alt: 'Buzzr AI feed screen' },
+  { src: '/app-screens/rate.png', alt: 'Buzzr game context screen' }
 ];
 
 export function Showcase() {
@@ -19,24 +18,24 @@ export function Showcase() {
       <header className="mb-12 max-w-[48ch]">
         <h2
           id="showcase-title"
-          className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
+          className="text-[clamp(34px,4.8vw,56px)] font-semibold leading-[0.98] tracking-[-0.04em] text-foreground"
         >
-          The whole thing, in your pocket.
+          Friends and chat stay with the game.
         </h2>
-        <p className="mt-5 max-w-[44ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-          Four taps from box score to banter. Here is exactly what you get.
+        <p className="mt-4 max-w-[34ch] text-[16px] leading-[1.5] tracking-[-0.02em] text-muted">
+          Matchups, takes, replies, and DMs stay attached to the moment.
         </p>
       </header>
 
-      <div className="mx-auto grid max-w-[820px] grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-3 sm:gap-8">
+      <div className="mx-auto grid max-w-[900px] grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-3 sm:gap-8">
         {SCREENS.map((s, i) => (
-          <DeviceFrame
+          <PhoneShowcase
             key={s.src}
             src={s.src}
-            alt={`Buzzr ${s.eyebrow} screen`}
-            eyebrow={s.eyebrow}
-            caption={s.caption}
+            alt={s.alt}
             priority={i === 0}
+            size="medium"
+            className="mx-auto"
           />
         ))}
       </div>

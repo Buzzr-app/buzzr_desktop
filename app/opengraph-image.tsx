@@ -3,11 +3,11 @@ import { readFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 /**
- * Auto-generated 1200×630 Open Graph image for `/`.
+ * Auto-generated 1200x630 Open Graph image for `/`.
  * Uses the stored transparent brand mark so social previews match the app.
  */
 
-export const alt = 'Buzzr, Rate sports games by entertainment.';
+export const alt = 'Buzzr, AI-native sports social media.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -51,7 +51,7 @@ export default async function OpengraphImage() {
               buzzr<span style={{ color: '#00e676' }}>.</span>
             </div>
             <div style={{ display: 'flex', fontSize: 18, letterSpacing: '0.16em', textTransform: 'uppercase', color: '#b8c6d0' }}>
-              Rate the game
+              AI-native sports social
             </div>
           </div>
         </div>
@@ -67,7 +67,7 @@ export default async function OpengraphImage() {
               color: '#ffffff'
             }}
           >
-            Scroll<span style={{ color: '#00e676' }}>.</span> Rate<span style={{ color: '#00e676' }}>.</span> Engage<span style={{ color: '#00e676' }}>.</span>
+            Scroll<span style={{ color: '#00e676' }}>.</span> Rate<span style={{ color: '#00e676' }}>.</span> Chat<span style={{ color: '#00e676' }}>.</span>
           </div>
           <div
             style={{
@@ -79,7 +79,7 @@ export default async function OpengraphImage() {
               maxWidth: 880
             }}
           >
-            Rate live sports games by entertainment. Chaos, energy, drama. Not the final score.
+            The AI-native sports app for Scroll, dashboards, friends, leagues, and Buzzr Bets.
           </div>
         </div>
 

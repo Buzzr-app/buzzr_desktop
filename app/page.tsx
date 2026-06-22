@@ -7,7 +7,6 @@ import {
   INSTAGRAM_URL,
   LEAGUE_COUNT,
   SITE_NAME,
-  SITE_TAGLINE,
   TWITTER_URL
 } from '@/src/lib/constants';
 import { ScrollRail } from '@/components/sections/ScrollRail';
@@ -15,27 +14,29 @@ import { ScrollReveal } from '@/components/ScrollReveal';
 import { Hero } from '@/components/sections/Hero';
 import { ScrollSection } from '@/components/sections/ScrollSection';
 import { SurfacesGrid } from '@/components/sections/SurfacesGrid';
-import { Highlights } from '@/components/sections/Highlights';
 import { DataBento } from '@/components/sections/DataBento';
 import { RateMission } from '@/components/sections/RateMission';
 import { Showcase } from '@/components/sections/Showcase';
 import { LeaguesWall } from '@/components/sections/LeaguesWall';
 import { Faq } from '@/components/sections/Faq';
 import { Reviews, REVIEWS_SUMMARY } from '@/components/sections/Reviews';
-import { LatestPosts } from '@/components/sections/LatestPosts';
 import { FinalCTA } from '@/components/sections/FinalCTA';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
+import { ChangelogPreview } from '@/components/sections/ChangelogPreview';
 
-const PAGE_TITLE = `${SITE_NAME} · Rate sports games by entertainment`;
-const PAGE_DESCRIPTION = `Rate live sports games on how good they actually were to watch, not the final score. Swipe through ${LEAGUE_COUNT} leagues across 12 sports, from the NBA Finals and FIFA World Cup to F1, the UFC, esports, and cricket. Free on iOS and Android.`;
+const PAGE_TITLE = `${SITE_NAME} · AI-native sports social media`;
+const PAGE_DESCRIPTION = `Buzzr is the AI-native sports social app for Scroll, live game ratings, dashboards, friends and chat, ${LEAGUE_COUNT} leagues, and Buzzr Bets. Free on iOS and Android.`;
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
   description: PAGE_DESCRIPTION,
   keywords: [
+    'AI sports social app',
     'sports rating app',
     'rate sports games',
-    'Letterboxd for sports',
+    'AI sports feed',
+    'sports dashboards',
+    'sports group chat',
     'entertainment score',
     'Buzzr Score',
     'live game ratings',
@@ -43,11 +44,10 @@ export const metadata: Metadata = {
     'NFL entertainment rating',
     'FIFA World Cup 2026',
     'NBA Playoffs brackets',
-    'DFS bet tracker',
-    'PrizePicks tracker',
-    'Underdog tracker',
+    'Buzzr Bets',
+    'DFS slip tracker',
     'sports social app',
-    'sports group chat'
+    'friends sports chat'
   ],
   alternates: {
     canonical: '/',
@@ -148,34 +148,31 @@ export default function HomePage() {
         <RateMission />
       </ScrollReveal>
       <ScrollReveal>
-        <Showcase />
+        <SurfacesGrid />
       </ScrollReveal>
       <ScrollReveal>
         <ScrollSection />
       </ScrollReveal>
       <ScrollReveal>
-        <SurfacesGrid />
+        <DataBento />
+      </ScrollReveal>
+      <ScrollReveal>
+        <Showcase />
+      </ScrollReveal>
+      <ScrollReveal>
+        <LeaguesWall />
       </ScrollReveal>
       <ScrollReveal>
         <ScrollRail />
       </ScrollReveal>
       <ScrollReveal>
-        <Highlights />
-      </ScrollReveal>
-      <ScrollReveal>
-        <DataBento />
-      </ScrollReveal>
-      <ScrollReveal>
-        <LeaguesWall />
+        <ChangelogPreview />
       </ScrollReveal>
       <ScrollReveal>
         <Reviews />
       </ScrollReveal>
       <ScrollReveal>
         <Faq />
-      </ScrollReveal>
-      <ScrollReveal>
-        <LatestPosts />
       </ScrollReveal>
       <ScrollReveal>
         <FinalCTA />

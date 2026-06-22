@@ -4,34 +4,28 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Activity,
-  HelpCircle,
-  LayoutGrid,
+  Bot,
+  ChartSpline,
+  MessagesSquare,
+  ScrollText,
   Trophy,
+  WalletCards,
   type LucideIcon
 } from 'lucide-react';
 import { BrandMark } from '@/components/BrandMark';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { AppleIcon } from '@/components/ui/BrandIcons';
-import { APP_STORE_URL, DOCS_URL } from '@/src/lib/constants';
+import { APP_STORE_URL } from '@/src/lib/constants';
 
 type NavItem = { id: string; label: string; Icon: LucideIcon };
 
 const SECTIONS: NavItem[] = [
-  { id: 'rail',     label: 'Surfaces', Icon: LayoutGrid },
-  { id: 'data',     label: 'Anatomy',  Icon: Activity },
-  { id: 'leagues',  label: 'Leagues',  Icon: Trophy },
-  { id: 'faq',      label: 'FAQ',      Icon: HelpCircle }
-];
-
-// The app's surfaces (its bottom-nav tabs), surfaced as a Product dropdown.
-const FEATURES: { label: string; blurb: string; id: string }[] = [
-  { label: 'Swipe',     blurb: 'Rate live games',       id: 'scroll' },
-  { label: 'Swarm',     blurb: 'The community feed',     id: 'showcase' },
-  { label: 'Crews',     blurb: 'Compete with friends',   id: 'surfaces' },
-  { label: 'Bets',      blurb: 'Track DFS slips',        id: 'rail' },
-  { label: 'Dashboard', blurb: 'Your widgets, your way', id: 'data' }
+  { id: 'mission', label: 'AI', Icon: Bot },
+  { id: 'scroll', label: 'Scroll', Icon: ScrollText },
+  { id: 'data', label: 'Dashboards', Icon: ChartSpline },
+  { id: 'showcase', label: 'Friends', Icon: MessagesSquare },
+  { id: 'leagues', label: 'Leagues', Icon: Trophy },
+  { id: 'rail', label: 'Bets', Icon: WalletCards }
 ];
 
 const FIRST_SECTION_ID = SECTIONS[0].id;
@@ -41,9 +35,6 @@ export function SiteHeader() {
   const isHome = pathname === '/';
   const [active, setActive] = useState<string>(FIRST_SECTION_ID);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [productOpen, setProductOpen] = useState(false);
-  const productRef = useRef<HTMLLIElement>(null);
-  const productTriggerRef = useRef<HTMLButtonElement>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -70,16 +61,15 @@ export function SiteHeader() {
     return () => observer.disconnect();
   }, [isHome]);
 
-  useEffect(() => { setMenuOpen(false); setProductOpen(false); }, [pathname]);
+  useEffect(() => { setMenuOpen(false); }, [pathname]);
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  // Keep the closed drawer out of the tab order + a11y tree. `inert` preserves
-  // the open/close animation (unlike visibility:hidden) and neutralizes the
-  // always-mounted aria-modal dialog while it is closed.
+  // Keep the closed drawer out of the tab order and a11y tree while preserving
+  // the open animation.
   useEffect(() => {
     if (drawerRef.current) drawerRef.current.inert = !menuOpen;
   }, [menuOpen]);
@@ -92,27 +82,6 @@ export function SiteHeader() {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [menuOpen]);
-
-  useEffect(() => {
-    if (!productOpen) return;
-    const onPointerDown = (event: PointerEvent) => {
-      if (productRef.current && !productRef.current.contains(event.target as Node)) {
-        setProductOpen(false);
-      }
-    };
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setProductOpen(false);
-        productTriggerRef.current?.focus();
-      }
-    };
-    document.addEventListener('pointerdown', onPointerDown);
-    document.addEventListener('keydown', onKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', onPointerDown);
-      document.removeEventListener('keydown', onKeyDown);
-    };
-  }, [productOpen]);
 
   const handleAnchor = useCallback(
     (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
@@ -132,8 +101,12 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 w-full px-4 pt-3 md:pt-4">
-        <div className="mx-auto flex w-full max-w-[1080px] items-center justify-between gap-6 rounded-full border border-border bg-canvas/70 py-2 pl-5 pr-3 shadow-[var(--shadow-card)] backdrop-blur-xl supports-[backdrop-filter]:bg-canvas/60">
+      <header
+        className={`site-header top-0 z-40 w-full px-4 pb-2 pt-3 md:pt-4 ${
+          isHome ? 'fixed pointer-events-none' : 'sticky'
+        }`}
+      >
+        <div className="site-nav-shell pointer-events-auto mx-auto flex w-full max-w-[1180px] items-center justify-between gap-3 py-2 pl-3 pr-2 sm:gap-4 sm:pr-3">
           <Link
             href={isHome ? '#top' : '/'}
             onClick={(e) => {
@@ -144,46 +117,17 @@ export function SiteHeader() {
                 setActive(FIRST_SECTION_ID);
               }
             }}
-            className="inline-flex items-center transition-opacity hover:opacity-80"
+            className="site-nav-brand inline-flex min-h-[44px] items-center gap-2.5 px-1.5 pr-3 transition-[background-color,opacity] duration-200 hover:bg-white/[0.08] hover:opacity-95 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             aria-label="Buzzr home"
           >
-            <BrandMark alt="Buzzr" size={24} priority />
+            <BrandMark alt="Buzzr" size={40} variant="transparent" priority />
+            <span className="hidden text-[15px] font-semibold leading-none tracking-[-0.01em] text-white sm:inline">
+              Buzzr
+            </span>
           </Link>
 
           <nav aria-label="Primary" className="hidden md:block">
             <ul className="flex items-center gap-1">
-              {/* Product dropdown — the app's surfaces */}
-              <li ref={productRef} className="group relative">
-                <button
-                  ref={productTriggerRef}
-                  type="button"
-                  aria-haspopup="true"
-                  aria-expanded={productOpen}
-                  onClick={() => setProductOpen((v) => !v)}
-                  className="inline-flex min-h-[44px] items-center gap-1 rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted transition-colors hover:text-foreground focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
-                >
-                  Product
-                  <svg width="11" height="11" viewBox="0 0 24 24" className={`opacity-60 transition-transform duration-200 group-hover:rotate-180 ${productOpen ? 'rotate-180' : ''}`} aria-hidden>
-                    <path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </button>
-                <div className={`absolute left-0 top-full z-50 pt-2 transition-all duration-150 group-hover:visible group-hover:opacity-100 ${productOpen ? 'visible opacity-100' : 'invisible opacity-0'}`}>
-                  <div className="w-[260px] rounded-2xl border border-border bg-surface p-2 shadow-[var(--shadow-card)]">
-                    {FEATURES.map((f) => (
-                      <Link
-                        key={f.label}
-                        href={hrefFor(f.id)}
-                        onClick={(e) => { handleAnchor(e, f.id); setProductOpen(false); }}
-                        className="flex items-center justify-between gap-3 rounded-button px-3 py-2.5 transition-colors hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none"
-                      >
-                        <span className="text-[14px] tracking-[-0.015em] text-foreground">{f.label}</span>
-                        <span className="text-[12px] tracking-[-0.01em] text-muted">{f.blurb}</span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </li>
-
               {SECTIONS.map(({ id, label, Icon }) => {
                 const isActive = isHome && active === id;
                 return (
@@ -192,8 +136,8 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`inline-flex min-h-[44px] items-center gap-1.5 rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
-                        isActive ? 'bg-subtle text-accent-text' : 'text-muted hover:text-foreground'
+                      className={`site-nav-control inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
+                        isActive ? 'bg-white/10 text-[#34d399]' : 'text-white/62 hover:text-white'
                       }`}
                     >
                       <Icon size={14} strokeWidth={1.75} aria-hidden />
@@ -206,16 +150,15 @@ export function SiteHeader() {
           </nav>
 
           <div className="hidden md:flex items-center gap-1">
-            <ThemeToggle />
             <Link
               href="/blog"
-              className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Blog
             </Link>
             <Link
               href="/changelog"
-              className="inline-flex min-h-[44px] items-center rounded-lg px-3 py-2.5 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Changelog
             </Link>
@@ -223,10 +166,10 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="ml-1 inline-flex min-h-[44px] items-center gap-2 rounded-button bg-accent px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-cta ml-1 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-[18px] text-[14px] font-semibold text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <AppleIcon size={15} />
-              <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
+              <ShimmerHoverLabel className="site-nav-cta-label">Get the app</ShimmerHoverLabel>
               <span className="sr-only"> (opens in new tab)</span>
             </Link>
           </div>
@@ -266,21 +209,7 @@ export function SiteHeader() {
         >
           <nav aria-label="Site" className="mx-auto w-full max-w-[1200px] px-6 py-6">
             <p className="mb-2 font-mono text-[11px] uppercase tracking-[0.12em] text-muted">Product</p>
-            <ul className="mb-4 grid grid-cols-2 gap-2">
-              {FEATURES.map((f) => (
-                <li key={f.label}>
-                  <Link
-                    href={hrefFor(f.id)}
-                    onClick={(e) => handleAnchor(e, f.id)}
-                    className="block rounded-button border border-border bg-subtle px-3 py-2.5 text-[14px] tracking-[-0.015em] text-foreground transition-colors hover:border-accent"
-                  >
-                    {f.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-
-            <ul className="flex flex-col">
+            <ul className="grid grid-cols-2 gap-2">
               {SECTIONS.map(({ id, label, Icon }) => {
                 const isActive = isHome && active === id;
                 return (
@@ -288,14 +217,12 @@ export function SiteHeader() {
                     <Link
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
-                      className={`flex items-center justify-between border-b border-border py-3 text-[14px] tracking-[-0.015em] transition-colors ${
-                        isActive ? 'text-accent-text' : 'text-muted hover:text-foreground'
+                      className={`flex min-h-[48px] items-center gap-2 rounded-button border px-3 py-2.5 text-[14px] tracking-[-0.015em] transition-colors ${
+                        isActive ? 'border-accent/45 bg-accent/10 text-accent-text' : 'border-border bg-subtle text-foreground hover:border-accent/40'
                       }`}
                     >
-                      <span className="inline-flex items-center gap-2.5">
-                        <Icon size={16} strokeWidth={1.75} aria-hidden />
-                        {label}
-                      </span>
+                      <Icon size={16} strokeWidth={1.75} aria-hidden />
+                      {label}
                     </Link>
                   </li>
                 );
@@ -303,26 +230,22 @@ export function SiteHeader() {
             </ul>
 
             <ul className="mt-4 flex flex-col">
-              <li><a href={DOCS_URL} target="_blank" rel="noopener noreferrer" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Docs</a></li>
               <li><Link href="/changelog" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Changelog</Link></li>
               <li><Link href="/blog" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Blog</Link></li>
               <li><Link href="/support" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Support</Link></li>
               <li><Link href="/privacy" className="block border-b border-border py-3 text-[14px] tracking-[-0.015em] text-muted hover:text-foreground transition-colors">Privacy</Link></li>
             </ul>
 
-            <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
-              <span className="text-[14px] tracking-[-0.015em] text-muted">Theme</span>
-              <ThemeToggle />
-            </div>
-
             <div className="mt-6">
               <Link
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center rounded-button bg-accent px-3 py-3 text-[14px] font-medium tracking-[-0.01em] text-on-accent transition-colors duration-200 hover:bg-accent-dim"
+                className="site-nav-cta site-nav-cta-mobile inline-flex items-center justify-center gap-2 bg-accent px-4 text-[14px] font-semibold text-on-accent transition-colors duration-200 hover:bg-accent-dim"
               >
-                Get the app<span className="sr-only"> (opens in new tab)</span>
+                <AppleIcon size={16} />
+                <span className="site-nav-cta-label">Get the app</span>
+                <span className="sr-only"> (opens in new tab)</span>
               </Link>
             </div>
           </nav>

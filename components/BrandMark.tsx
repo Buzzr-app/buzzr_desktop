@@ -25,7 +25,10 @@ export function BrandMark({
       height={size}
       sizes={`${size}px`}
       priority={priority}
-      className={cn('shrink-0 object-contain', className)}
+      className={cn(
+        'shrink-0 object-contain drop-shadow-[0_0_18px_rgba(0,194,100,0.52)]',
+        className
+      )}
     />
   );
 }

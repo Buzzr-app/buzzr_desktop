@@ -1,67 +1,61 @@
 # Buzzr
 
-**Rate sports games by entertainment.**
+**The AI-native sports social app.**
 
-Buzzr is the Letterboxd for sports games. See which games were actually worth watching, track everything you watch, see what other fans loved, and never miss a classic again. This repository contains the Next.js landing page for the Buzzr mobile app.
-
----
+Buzzr brings Scroll, live game ratings, dashboards, friends and chat, leagues, and Buzzr Bets into one dark sports social surface. This repository contains the Next.js landing page, blog, changelog, and legal pages for the Buzzr mobile app.
 
 ## Design System
 
-This landing page strictly adheres to the Buzzr design system:
-- **Primary Accent**: Teal / Cyan (`#07beb8`)
-- **Theme**: Forced Dark Mode for a premium, cinematic feel.
-- **Typography**: Acworth (headings) and Inter (body text).
-- **Aesthetic**: Ultra-modern, minimal, and dynamic with subtle micro-interactions and vector backgrounds.
+- **Visible mark**: transparent metallic green Buzzr B with no background shell.
+- **Theme**: dark-only app shell and browser chrome.
+- **Typography**: Geist Sans and Geist Mono with zero letter-spacing for product UI.
+- **Interface**: compact premium surfaces, real app screenshots, focused motion, and restrained green aura.
 
-## Features
+## Product Taxonomy
 
-- Fully responsive, mobile-first design built with Tailwind CSS.
-- Smooth CSS and Framer Motion-style animations (`ScrollReveal`, `TrendingPulse`).
-- Abstract CSS-only glassmorphism phone mockups.
-- Dynamic floating sports icon backgrounds.
+- AI Feed
+- Scroll
+- Dashboards
+- Friends and Chat
+- Leagues
+- Buzzr Bets
+
+Buzzr Bets tracks DFS slips placed elsewhere. Buzzr does not integrate sportsbooks, place wagers, or sell odds.
 
 ## Tech Stack
 
-- **Framework**: [Next.js](https://nextjs.org/) (App Router)
+- **Framework**: [Next.js](https://nextjs.org/) App Router
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/) & [FontAwesome](https://fontawesome.com/)
-- **Deployment**: Vercel (Recommended)
-
----
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **3D hero**: raw [Three.js](https://threejs.org/)
+- **Deployment**: Vercel
 
 ## Getting Started
 
-First, install the dependencies:
+Install dependencies:
 
 ```bash
-npm install
+npm ci
 ```
 
-Then, run the development server:
+Run the development server:
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-## Build and Deploy
-
-To create an optimized production build:
+## Verification
 
 ```bash
+npx tsc --noEmit -p tsconfig.json
+npm test -- --runInBand
 npm run build
 ```
 
-You can then start the production server:
+## Branding And Legal
 
-```bash
-npm run start
-```
+Product naming must use **Buzzr**.
 
-## Branding & Legal
-
-Product naming must exclusively use **Buzzr** (not Buzzr Sports).
-
-**Disclaimer**: Buzzr is not affiliated with BUZZR TV (Fremantle).
+Buzzr is not affiliated with BUZZR TV (Fremantle).

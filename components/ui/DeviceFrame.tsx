@@ -19,7 +19,7 @@ export function DeviceFrame({ src, alt, eyebrow, caption, className, priority }:
   return (
     <figure className={cn('flex flex-col items-center gap-4', className)}>
       <div className="relative aspect-[9/19] w-full max-w-[240px]">
-        {/* Outer soft shadow for elevation off the cream canvas */}
+        {/* Outer soft shadow for elevation off the dark canvas */}
         <div
           aria-hidden
           className="absolute -inset-[6px] rounded-[18px] shadow-[var(--shadow-card)]"

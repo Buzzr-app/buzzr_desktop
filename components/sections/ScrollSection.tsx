@@ -1,41 +1,33 @@
 import { Section } from '@/components/ui/Section';
-import { DeviceFrame } from '@/components/ui/DeviceFrame';
+import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 
 export function ScrollSection() {
   return (
-    <Section id="scroll" aria-labelledby="scroll-title">
-      <div className="grid items-center gap-12 lg:grid-cols-[1fr_1fr] lg:gap-16">
-        <div className="flex flex-col gap-6">
+    <Section id="scroll" aria-labelledby="scroll-title" className="py-16 md:py-20">
+      <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,0.92fr)_minmax(340px,0.86fr)] lg:gap-10">
+        <div className="mx-auto flex max-w-[520px] flex-col gap-5 text-center lg:mx-0 lg:text-left">
           <h2
             id="scroll-title"
-            className="max-w-[16ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
+            className="max-w-[13ch] text-[clamp(34px,4.8vw,56px)] font-semibold leading-[0.98] tracking-[-0.032em] text-foreground"
           >
-            Scroll the whole sports universe.
+            Scroll knows what games are becoming.
           </h2>
 
-          <p className="max-w-[36ch] text-[20px] leading-[1.4] tracking-[-0.025em] text-muted">
-            Games, news, players. One card at a time.
-          </p>
-
-          <p className="max-w-[48ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-            Buzzr is a sports rating app built for fans, not fantasy managers. Every live game gets a 1 to 10 entertainment score, the Buzzr Score, built from star power, rivalry, and stakes. Not the final margin. A 40-point blowout and a triple-overtime thriller aren&apos;t the same game, and your feed shouldn&apos;t treat them like they are.
+          <p className="max-w-[34ch] text-[16px] leading-[1.5] text-muted">
+            A fast stream tuned by game state, stakes, and your leagues.
           </p>
         </div>
 
-        <div className="relative flex justify-center lg:justify-end">
-          <div className="relative mx-auto h-[470px] w-[330px]">
-            <div
-              aria-hidden
-              className="absolute left-1/2 top-1/2 h-[320px] w-[320px] -translate-x-1/2 -translate-y-1/2 rounded-full blur-2xl"
-              style={{ background: 'radial-gradient(circle, rgba(0,194,100,0.14), transparent 70%)' }}
-            />
-            <div className="absolute left-1 top-10 w-[176px] -rotate-[5deg]">
-              <DeviceFrame src="/screenshot-rate.png" alt="Rating a live game in the Buzzr app" />
-            </div>
-            <div className="absolute right-0 top-0 w-[214px] rotate-[3deg]">
-              <DeviceFrame src="/screenshot-games.png" alt="The Buzzr games feed" priority />
-            </div>
-          </div>
+        <div className="relative mx-auto grid w-full max-w-[430px] place-items-center lg:mx-0 lg:justify-self-end">
+          <div className="absolute inset-6 rounded-[32px] bg-[#00c264]/10 blur-3xl" aria-hidden />
+          <PhoneShowcase
+            src="/app-screens/games.png"
+            alt="Buzzr Scroll game stream"
+            priority
+            aura
+            size="medium"
+            className="mx-auto"
+          />
         </div>
       </div>
     </Section>

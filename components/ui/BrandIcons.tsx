@@ -2,7 +2,7 @@ import type { SVGProps } from 'react';
 
 /**
  * Brand glyphs for CTA buttons. lucide-react dropped brand logos, so these are
- * inline single-path SVGs that inherit `currentColor` (token-driven — no
+ * inline single-path SVGs that inherit `currentColor` (token-driven - no
  * hardcoded brand hex). Decorative by default (`aria-hidden`); the button text
  * carries the accessible label.
  */

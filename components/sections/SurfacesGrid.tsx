@@ -1,71 +1,102 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
-import { CalloutCard } from '@/components/ui/CalloutCard';
-import { Badge } from '@/components/ui/Badge';
 
-type Tile = {
-  number: string;
+type Surface = {
   title: string;
   body: string;
   shot: string;
-  pos: string;
+  className?: string;
+  imageClassName?: string;
 };
 
-const TILES: readonly Tile[] = [
-  { number: '01', title: 'News & ratings in one feed.', body: 'News, ratings, leaderboards.',           shot: '/screenshot-home.png',  pos: 'object-top' },
-  { number: '02', title: 'Your sports, your widgets.',  body: 'Drag-and-drop widgets per league.',       shot: '/screenshot-home.png',  pos: 'object-center' },
-  { number: '03', title: 'Every stat, one tap deep.',   body: 'Box score to odds, stacked.',             shot: '/screenshot-games.png', pos: 'object-top' },
-  { number: '04', title: 'Yell about it together.',     body: 'DMs, crews, live per-game threads.',       shot: '/screenshot-home.png',  pos: 'object-center' },
-  { number: '05', title: 'Crews for bracket warfare.',  body: 'Invite-only crews and squads, shared leaderboards.',   shot: '/screenshot-games.png', pos: 'object-bottom' },
-  { number: '06', title: 'Brackets you can’t put down.', body: 'Madness, playoffs, World Cup.',          shot: '/screenshot-games.png', pos: 'object-bottom' }
+const SURFACES: readonly Surface[] = [
+  {
+    title: 'AI Feed',
+    body: 'Ratings, recaps, news, and friend signals in one sports graph.',
+    shot: '/app-screens/feed.png',
+    className: 'md:col-span-2 md:row-span-2',
+    imageClassName: 'object-top'
+  },
+  {
+    title: 'Scroll',
+    body: 'A fast stream tuned by game state and your leagues.',
+    shot: '/app-screens/games.png',
+    imageClassName: 'object-top'
+  },
+  {
+    title: 'Dashboards',
+    body: 'Teams, scores, standings, and context in one place.',
+    shot: '/app-screens/dashboard.png',
+    imageClassName: 'object-top'
+  },
+  {
+    title: 'Friends and Chat',
+    body: 'Threads, crews, replies, and reactions attached to the game.',
+    shot: '/app-screens/friends-chat.png',
+    imageClassName: 'object-center'
+  },
+  {
+    title: 'Leagues',
+    body: 'Verified marks where assets exist, clean chips where they do not.',
+    shot: '/app-screens/leagues.png',
+    imageClassName: 'object-bottom'
+  },
+  {
+    title: 'Buzzr Bets',
+    body: 'DFS slip tracking for picks placed elsewhere.',
+    shot: '/app-screens/bets.png',
+    imageClassName: 'object-top'
+  }
 ];
 
 export function SurfacesGrid() {
   return (
     <Section id="surfaces" aria-labelledby="surfaces-title">
-      <header className="mb-10 max-w-[44ch]">
+      <header className="mx-auto mb-10 max-w-[680px] text-center">
         <h2
           id="surfaces-title"
-          className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
+          className="text-[clamp(34px,5vw,56px)] font-semibold leading-[1] tracking-[-0.04em] text-foreground"
         >
-          One app. Six ways in.
+          The app map, without the clutter.
         </h2>
       </header>
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
-        {TILES.map((t) => (
-          <TileCard key={t.title} tile={t} />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+        {SURFACES.map((surface) => (
+          <SurfaceCard key={surface.title} surface={surface} />
         ))}
       </div>
     </Section>
   );
 }
 
-function TileCard({ tile }: { tile: Tile }) {
-  const { number, title, body, shot, pos } = tile;
+function SurfaceCard({ surface }: { surface: Surface }) {
   return (
-    <CalloutCard className="group flex h-full flex-col gap-5">
-      <div className="flex items-baseline gap-3">
-        <Badge>{number}</Badge>
-      </div>
-      <div className="flex flex-col gap-2">
-        <h3 className="text-[20px] font-semibold leading-[1.4] tracking-[-0.02em] text-foreground">{title}</h3>
-        <p className="text-[14px] leading-[1.43] tracking-[0.1px] text-muted">{body}</p>
-      </div>
-      <div className="relative mt-auto aspect-[5/4] w-full overflow-hidden border border-border bg-canvas">
+    <article
+      className={`group flex min-h-[320px] flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-[var(--shadow-card)] transition-[border-color,background-color,transform] duration-200 ease-out hover:border-accent/35 hover:bg-subtle/55 active:scale-[0.995] ${surface.className ?? ''}`}
+    >
+      <div className="relative min-h-[210px] flex-1 overflow-hidden bg-[#050706]">
         <Image
-          src={shot}
-          alt={`Buzzr app: ${title}`}
+          src={surface.shot}
+          alt={`Buzzr ${surface.title} screen`}
           fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className={`object-cover ${pos} transition-transform duration-500 group-hover:scale-[1.04]`}
+          sizes="(max-width: 768px) 100vw, 25vw"
+          className={`object-cover ${surface.imageClassName ?? ''}`}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, transparent 50%, rgba(8,9,11,0.88))' }}
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2"
+          style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.72), transparent)' }}
         />
       </div>
-    </CalloutCard>
+      <div className="border-t border-border p-5">
+        <h3 className="text-[18px] font-semibold leading-[1.25] tracking-[-0.025em] text-foreground">
+          {surface.title}
+        </h3>
+        <p className="mt-2 max-w-[32ch] text-[14px] leading-[1.45] tracking-[-0.01em] text-muted">
+          {surface.body}
+        </p>
+      </div>
+    </article>
   );
 }

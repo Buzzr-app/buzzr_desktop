@@ -18,10 +18,10 @@ import matter from 'gray-matter';
  *   author:      "Buzzr Editorial"
  *   tags:        ["Esports", "Industry"]
  *   cover:
- *     src:   "https://images.unsplash.com/photo-..."
+ *     src:   "/app-screens/feed.png"
  *     alt:   "Alt text describing the image"
- *     credit: "Photographer Name on Unsplash"
- *     creditUrl: "https://unsplash.com/@handle"
+ *     credit: "Optional credit"
+ *     creditUrl: "https://example.com"
  *   ---
  *
  * Add a new post: drop a new `.mdx` file in `/content/blog/` with valid

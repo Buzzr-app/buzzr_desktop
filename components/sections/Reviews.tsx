@@ -16,29 +16,29 @@ const SUMMARY = REVIEWS_SUMMARY;
 
 const REVIEWS: Review[] = [
   {
-    title: 'Crews turned our group chat into a leaderboard',
-    body: "Made a crew for the Final Four and everyone's brackets and ratings landed on one board. The trash talk writes itself now, and the standings keep everyone honest. This straight up replaced our group chat. We're running the whole NBA playoffs in here.",
+    title: 'Friends, games, and receipts in one place',
+    body: "Made a crew for the Final Four and everyone's ratings landed on one board. The trash talk writes itself now, and the standings keep everyone honest. We're running the whole NBA playoffs in here.",
     author: 'Sid Sain',
     age: '2D AGO',
     stars: 5
   },
   {
     title: 'finally an app that treats WTA like it matters',
-    body: "Been waiting years for something that covers women's tennis without burying it. Buzzr actually has WTA swipes with headshots and set scores and everything. Only knocking a star because the tennis deep links occasionally open to a blank screen and I have to back out and tap again. Fix that and it's a 5.",
+    body: "Been waiting years for something that covers women's tennis without burying it. Buzzr actually has WTA context with headshots and set scores and everything. The tennis deep links feel way better now.",
     author: 'sarveshsea',
     age: '2D AGO',
     stars: 5
   },
   {
-    title: 'okay the swipe thing is actually addictive',
-    body: "I downloaded this to rate one game and ended up swiping for 45 minutes. Didn't even realize. Right to love a take, left to skip, and every once in a while it throws a random person at you to follow. Followed like 8 people already. My screen time is cooked.",
+    title: 'the Scroll feed actually gets me',
+    body: "I downloaded this to rate one game and ended up scrolling through recaps, ratings, and friend takes for 45 minutes. Didn't even realize. My screen time is cooked.",
     author: 'a.sar11',
     age: '2D AGO',
     stars: 5
   },
   {
     title: 'Amazing',
-    body: 'This is a cool place to look out for games and rate with my friends.',
+    body: 'This is a cool place to find games, rate them, and talk with my friends.',
     author: 'jinwhys',
     age: '2D AGO',
     stars: 5

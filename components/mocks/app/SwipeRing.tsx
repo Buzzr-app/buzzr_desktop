@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useBuzzScene } from '@/src/hooks/useBuzzScene';
 
 /**
- * SwipeRing, web port of `SwipeStatsBar`. SVG daily-goal ring that fills
- * toward 25 swipes. Pulses when the scene's `final` beat ticks up +1.
+ * ScrollRing, web port of `SwipeStatsBar`. SVG daily-goal ring that fills
+ * toward 25 scroll actions. Pulses when the scene's `final` beat ticks up +1.
  */
 const DAILY_GOAL = 25;
 const RING_SIZE = 56;
@@ -77,7 +77,7 @@ export function SwipeRing() {
         </div>
         <div className="min-w-0 flex flex-col gap-1">
           <span className="truncate font-sans text-[18px] font-light leading-tight text-foreground">
-            {isComplete ? 'Goal reached.' : 'Keep swiping.'}
+            {isComplete ? 'Goal reached.' : 'Keep scrolling.'}
           </span>
           <span className="text-[11px] font-light text-muted">
             {todayCount} / {DAILY_GOAL} today

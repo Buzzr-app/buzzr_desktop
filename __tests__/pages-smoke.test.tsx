@@ -8,8 +8,18 @@ test('placeholder smoke test', () => {
   expect(true).toBe(true);
 });
 
-test('root layout includes the Product Hunt launch embed for all pages', () => {
+test('root layout uses the premium footer without stale launch embeds', () => {
   const rootLayout = readFileSync(path.join(process.cwd(), 'app/layout.tsx'), 'utf8');
 
-  expect(rootLayout).toContain('<ProductHuntLaunchEmbed />');
+  expect(rootLayout).not.toContain(['Product', 'HuntLaunchEmbed'].join(''));
+  expect(rootLayout).toContain('BUZZR_TV_DISCLAIMER');
+});
+
+test('root layout has no light-mode bootstrap script', () => {
+  const rootLayout = readFileSync(path.join(process.cwd(), 'app/layout.tsx'), 'utf8');
+
+  expect(rootLayout).not.toContain('localStorage.getItem');
+  expect(rootLayout).not.toContain('prefers-color-scheme');
+  expect(rootLayout).not.toContain("classList.add('dark'");
+  expect(rootLayout).toContain("themeColor: '#14181d'");
 });

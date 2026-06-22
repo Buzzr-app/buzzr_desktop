@@ -2,14 +2,14 @@ export const COMPANY_NAME = 'Humyn LLC';
 
 export const SITE_NAME = 'Buzzr';
 
-/** Used in schema `alternateName` + brand copy to disambiguate from
- *  BUZZR TV (Fremantle) and cement the "sports rating app" identity. */
+/** Used in schema `alternateName` and brand copy to disambiguate from
+ *  BUZZR TV (Fremantle) and cement the sports social app identity. */
 export const ALTERNATE_NAME = 'Buzzr Sports';
 
-export const SITE_TAGLINE = 'Rate sports games by entertainment.';
+export const SITE_TAGLINE = 'AI-native sports social media.';
 
 export const SITE_DESCRIPTION =
-  'Buzzr is the Letterboxd for sports, rate live games by entertainment across 49 leagues, from NBA Finals and FIFA World Cup 2026 to F1, ATP, WTA, esports, and cricket. No spreads, no sportsbooks. Just the games that actually delivered.';
+  'Buzzr is the AI-native sports social app for Scroll, live game ratings, dashboards, friends and chat, leagues, and Buzzr Bets. Track the sports universe without sportsbook integrations.';
 
 export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.getbuzzr.online';
 
@@ -62,7 +62,7 @@ export const BUZZR_TV_DISCLAIMER =
   'Buzzr is not affiliated with BUZZR TV (Fremantle).';
 
 export const TRUST_STRIP =
-  'NBA Finals · FIFA World Cup 2026 · UCL · EPL · F1 · MLB · NFL · UFC · and every game that actually delivers.';
+  'AI feed · Scroll · Dashboards · Friends and Chat · Leagues · Buzzr Bets';
 
 /** Leagues & competitions Buzzr covers. 49 leagues across 12 sports.
  *  Single source of truth, mirrored from the mobile app's league-coverage.ts.
@@ -192,7 +192,7 @@ export const SPORT_ORDER: readonly LeagueSport[] = [
   'rugby'
 ];
 
-/** Social – overridable via env */
+/** Social, overridable via env */
 export const TWITTER_URL =
   process.env.NEXT_PUBLIC_TWITTER_URL ?? 'https://x.com/the_real_buzzr';
 export const INSTAGRAM_URL =

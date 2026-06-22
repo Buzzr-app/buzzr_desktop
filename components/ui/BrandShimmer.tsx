@@ -4,16 +4,16 @@ import { useEffect, useRef, useState } from 'react';
 import { GradientShimmer, type GradientStop } from 'gradient-shimmer';
 
 /**
- * Brand shimmer — gradient-shimmer wired to Buzzr the way a design engineer
+ * Brand shimmer - gradient-shimmer wired to Buzzr the way a design engineer
  * would: token-driven (no hardcoded brand hex), restrained, and accessible.
  *
- *  • The sweep colors are read from CSS tokens at runtime — the Buzz heat ramp
+ *  • The sweep colors are read from CSS tokens at runtime - the Buzz heat ramp
  *    for the brand wordmark (it echoes the hero voxel ball) and an accent-green
  *    sweep for links/CTAs. The ramp + accent tokens are theme-stable (only
  *    canvas/foreground/steel flip on `.dark`), and `baseColor` stays
  *    `currentColor`, so the effect re-themes for free across light/dark.
  *  • Text renders plain on the server and the first client paint, then upgrades
- *    to the shimmer after mount — identical first markup on both sides, so no
+ *    to the shimmer after mount - identical first markup on both sides, so no
  *    hydration mismatch (and graceful when the tokens can't be read).
  *  • gradient-shimmer already pauses off-screen and honours
  *    prefers-reduced-motion, so motion stays tasteful and considerate.
@@ -30,7 +30,7 @@ function readGradients(): BrandGradients {
   const s = getComputedStyle(document.documentElement);
   const g = (n: string) => s.getPropertyValue(n).trim();
   return {
-    // Echoes the hero voxel ball — now all shades of green (green tokens only).
+    // Echoes the hero voxel ball - now all shades of green (green tokens only).
     ramp: stopsFrom([
       g('--color-accent-text'),
       g('--color-buzz-peak'),
@@ -55,7 +55,7 @@ let cached: BrandGradients | null = null;
 function useBrandGradients(): BrandGradients | null {
   // Always null for the server + first client render so both paint plain text
   // (no hydration mismatch); the shimmer upgrades after mount. `cached` only
-  // memoizes the token read across instances — it is never the initial state.
+  // memoizes the token read across instances - it is never the initial state.
   const [grads, setGrads] = useState<BrandGradients | null>(null);
   useEffect(() => {
     if (!cached) cached = readGradients();

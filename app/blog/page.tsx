@@ -1,12 +1,14 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { BASE_URL, SITE_NAME } from '@/src/lib/constants';
 import { getAllPosts, getAllTagSlugs, tagLabelFromSlug } from '@/src/lib/blog';
 import { PostCard } from '@/components/blog/PostCard';
+import { EditorialShell } from '@/components/blog/EditorialShell';
+import { EditorialPill } from '@/components/blog/EditorialPill';
+import { EditorialTagRail } from '@/components/blog/EditorialTagRail';
 
 const PAGE_TITLE = `Blog · ${SITE_NAME}`;
 const PAGE_DESCRIPTION =
-  'Essays and reporting on the state of sports fandom: esports, betting fatigue, second-screen culture, and how fans actually watch today.';
+  'Essays on AI-native sports social media, Scroll, dashboards, friends, leagues, and Buzzr Bets.';
 const URL = `${BASE_URL}/blog`;
 
 export const metadata: Metadata = {
@@ -36,6 +38,7 @@ export const metadata: Metadata = {
 export default function BlogIndexPage() {
   const posts = getAllPosts();
   const tagSlugs = getAllTagSlugs();
+  const [leadPost, ...restPosts] = posts;
 
   const blogLd = {
     '@context': 'https://schema.org',
@@ -89,59 +92,67 @@ export default function BlogIndexPage() {
   };
 
   return (
-    <section
-      aria-labelledby="blog-title"
-      className="mx-auto w-full max-w-[1200px] px-6 pt-24 pb-[48px] md:pt-32"
+    <EditorialShell
+      labelledBy="blog-title"
+      eyebrow="Buzzr editorial"
+      title="The sports social notebook."
+      description="Short product essays on Scroll, Buzzr Score, crews, dashboards, leagues, and DFS slip tracking."
+      breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Blog' }]}
+      prelude={
+        <>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+        </>
+      }
+      headerAside={
+        <div className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5">
+          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+            Field notes
+          </p>
+          <p className="mt-3 text-[15px] leading-[1.6] tracking-[0] text-white/68">
+            {posts.length} dispatches for fans building a smarter postgame habit.
+          </p>
+          <a
+            href="/blog/rss.xml"
+            className="mt-5 inline-flex min-h-[40px] items-center rounded-full border border-white/14 px-3.5 py-2 text-[13px] font-medium leading-none tracking-[0] text-white transition-colors hover:border-white/32"
+          >
+            RSS feed
+          </a>
+        </div>
+      }
     >
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-
-      <nav aria-label="Breadcrumb" className="mb-10 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
-          <li aria-hidden>·</li>
-          <li className="text-foreground" aria-current="page">Blog</li>
-        </ol>
-      </nav>
-
-      <header className="mb-12 max-w-[52ch]">
-        <span className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Blog</span>
-        <h1
-          id="blog-title"
-          className="mt-3 text-[clamp(36px,5vw,52px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
-        >
-          The state of fandom.
-        </h1>
-        <p className="mt-5 text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-          Dispatches from inside the sports-media shift. What fans actually watch, how they rate it, and why the box score stopped being the point.
-        </p>
-      </header>
 
       {tagSlugs.length > 0 && (
-        <nav aria-label="Tags" className="mb-10 flex flex-wrap gap-2 border-y border-surface py-4">
-          <span className="mr-2 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Topics</span>
+        <EditorialTagRail label="Topics" className="mb-8">
           {tagSlugs.map((slug) => (
-            <Link
+            <EditorialPill
               key={slug}
               href={`/blog/tag/${slug}`}
-              className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] uppercase text-muted transition-colors hover:border-accent hover:text-foreground"
             >
               {tagLabelFromSlug(slug)}
-            </Link>
+            </EditorialPill>
           ))}
-        </nav>
+        </EditorialTagRail>
       )}
 
-      {posts.length === 0 ? (
-        <p className="text-[14px] leading-[1.43] tracking-[0.1px] text-muted">No posts yet.</p>
+      {!leadPost ? (
+        <p className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5 text-[15px] leading-[1.6] tracking-[0] text-white/62">
+          No posts yet.
+        </p>
       ) : (
-        <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-          {posts.map((post, i) => (
-            <PostCard key={post.slug} post={post} priority={i < 3} />
-          ))}
-        </div>
+        <>
+          <PostCard post={leadPost} priority variant="lead" />
+
+          {restPosts.length > 0 ? (
+            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {restPosts.map((post, i) => (
+                <PostCard key={post.slug} post={post} priority={i < 2} />
+              ))}
+            </div>
+          ) : null}
+        </>
       )}
-    </section>
+    </EditorialShell>
   );
 }

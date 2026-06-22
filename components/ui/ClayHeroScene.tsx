@@ -4,8 +4,9 @@ import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { HERO_BANDS, bandProgress, sampleHeroProgress } from '@/src/lib/heroProgress';
 
-/* ── theme tokens (read at mount, re-read on .dark mutation) ──────────────────── */
+/* Scene tokens are read once from the dark landing surface at mount. */
 type SceneTokens = {
   canvas: string;
   steel: string;
@@ -17,8 +18,8 @@ type SceneTokens = {
 
 function readTokens(): SceneTokens {
   // Neutral, non-brand fallbacks: only reached if getComputedStyle yields empty
-  // (CSS not yet applied / token renamed). Kept theme-blind-neutral so a token
-  // read failure is visibly grey rather than a wrong-theme brand impostor.
+  // (CSS not yet applied / token renamed). Neutral fallbacks make failures
+  // visibly grey rather than a wrong brand impostor.
   const fallback: SceneTokens = {
     canvas: '#808080',
     steel: '#404040',
@@ -50,10 +51,10 @@ function readTokens(): SceneTokens {
 /* ── translucent voxel heat-ball: a fine, dense spherical shell ───────────────── */
 // Each voxel carries a base position, an outward radial direction (drives both
 // the heat ramp and the explosion vector), a tumble axis, a per-voxel random,
-// and a base scale jitter — so the shell reads as crafted, not procedural-flat.
+// and a base scale jitter - so the shell reads as crafted, not procedural-flat.
 function buildVoxels() {
   const R = 1.42;
-  const g = 0.123; // grid spacing — smaller = denser, finer cubes
+  const g = 0.123; // grid spacing - smaller = denser, finer cubes
   const size = g * 0.9;
   const inner = 0.82 * R;
   const outer = 1.0 * R;
@@ -117,14 +118,45 @@ const smooth = (e0: number, e1: number, x: number) => {
   return t * t * (3 - 2 * t);
 };
 
+function roundedScreenGeometry(width: number, height: number, radius: number) {
+  const x = -width / 2;
+  const y = -height / 2;
+  const r = Math.min(radius, width / 2, height / 2);
+  const shape = new THREE.Shape();
+
+  shape.moveTo(x + r, y);
+  shape.lineTo(x + width - r, y);
+  shape.quadraticCurveTo(x + width, y, x + width, y + r);
+  shape.lineTo(x + width, y + height - r);
+  shape.quadraticCurveTo(x + width, y + height, x + width - r, y + height);
+  shape.lineTo(x + r, y + height);
+  shape.quadraticCurveTo(x, y + height, x, y + height - r);
+  shape.lineTo(x, y + r);
+  shape.quadraticCurveTo(x, y, x + r, y);
+
+  const geometry = new THREE.ShapeGeometry(shape, 18);
+  const positions = geometry.getAttribute('position');
+  const uvs = new Float32Array(positions.count * 2);
+
+  for (let i = 0; i < positions.count; i++) {
+    const px = positions.getX(i);
+    const py = positions.getY(i);
+    uvs[i * 2] = (px + width / 2) / width;
+    uvs[i * 2 + 1] = (py + height / 2) / height;
+  }
+
+  geometry.setAttribute('uv', new THREE.BufferAttribute(uvs, 2));
+  return geometry;
+}
+
 // Neutral shade endpoints (not brand colors) for deriving lighter/darker tints.
 const SHADE_WHITE = new THREE.Color(0xffffff);
 const SHADE_BLACK = new THREE.Color(0x000000);
 
 /**
  * The voxel ball is "all shades of green": a 6-stop ramp (pole to pole) built
- * ONLY from the green brand tokens (buzz-peak + buzz-great), shaded light→deep
- * with neutral white/black lerps — no hardcoded brand hex, re-themeable.
+ * ONLY from the green brand tokens (buzz-peak + buzz-great), shaded bright to
+ * deep with neutral white/black lerps.
  */
 function buildGreenRamp(tk: SceneTokens): THREE.Color[] {
   const bright = new THREE.Color(tk.ramp[0]); // buzz-peak, brightest green
@@ -149,7 +181,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
     let reduce = reduceMQ.matches;
     // Guards async callbacks (texture load) against a unmount that already ran
-    // cleanup — StrictMode tears the first mount down before the image resolves.
+    // cleanup - StrictMode tears the first mount down before the image resolves.
     let disposed = false;
 
     /* ── renderer ── */
@@ -218,7 +250,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
     const voxMat = new THREE.MeshStandardMaterial({
       transparent: true,
-      opacity: 0.78,
+      opacity: 0.62,
       depthWrite: false,
       depthTest: true,
       side: THREE.FrontSide,
@@ -233,7 +265,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       uTime: { value: 0 },
       uRamp: { value: rampColors },
       uExplode: { value: 0 },
-      uFresnel: { value: 0.9 }
+      uFresnel: { value: 0.85 },
+      uRadialAlpha: { value: 0.55 },
+      uBurstFade: { value: 1 }
     };
 
     voxMat.onBeforeCompile = (shader) => {
@@ -241,13 +275,15 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       shader.uniforms.uRamp = ballUniforms.uRamp;
       shader.uniforms.uExplode = ballUniforms.uExplode;
       shader.uniforms.uFresnel = ballUniforms.uFresnel;
+      shader.uniforms.uRadialAlpha = ballUniforms.uRadialAlpha;
+      shader.uniforms.uBurstFade = ballUniforms.uBurstFade;
 
       // Heat ramp + fresnel + per-voxel alpha all resolved in the vertex stage
-      // (voxels are tiny — per-vertex is indistinguishable from per-fragment and
+      // (voxels are tiny - per-vertex is indistinguishable from per-fragment and
       // far cheaper / version-robust). Anchors used are stable three includes.
       shader.vertexShader =
         'attribute vec3 aBaseDir;\nattribute float aRand;\n' +
-        'uniform float uTime;\nuniform float uExplode;\nuniform vec3 uRamp[6];\n' +
+        'uniform float uTime;\nuniform float uExplode;\nuniform float uRadialAlpha;\nuniform float uBurstFade;\nuniform vec3 uRamp[6];\n' +
         'varying vec3 vBuzz;\nvarying float vFresnel;\nvarying float vFade;\nvarying float vRand;\n' +
         'vec3 buzzRamp(float t){ t = clamp(t,0.0,1.0)*5.0; float i = floor(t);\n' +
         '  int idx = int(i); float f = smoothstep(0.0,1.0, t - i);\n' +
@@ -263,7 +299,8 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
             '  vec3 viewV = normalize(-mvPosition.xyz);\n' +
             '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.4);\n' +
             '  float w = aRand * 0.42;\n' +
-            '  vFade = 1.0 - smoothstep(w, w + 0.5, uExplode);\n'
+            '  float radialAlpha = mix(1.0, smoothstep(0.08, 0.72, abs(vd.z)), uRadialAlpha);\n' +
+            '  vFade = radialAlpha * uBurstFade * (1.0 - smoothstep(w, w + 0.5, uExplode));\n'
         );
 
       shader.fragmentShader =
@@ -285,7 +322,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     ball.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
     ball.frustumCulled = false; // voxels fly far out during the burst
     ball.renderOrder = 2;
-    ball.position.y = 0.12;
+    ball.position.set(0, -1.05, -0.18);
     sceneGroup.add(ball);
 
     // Reusable scratch + per-instance writer for the explosion.
@@ -294,7 +331,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const pTmp = new THREE.Vector3();
     const sTmp = new THREE.Vector3();
     const axTmp = new THREE.Vector3();
-    const BURST = 3.4;
+    const BURST = 2.15;
 
     const writeInstance = (i: number, explode: number) => {
       const local = clamp01((explode - vox.rand[i] * 0.16) / 0.84);
@@ -320,7 +357,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     let prevExplode = -1;
     const EXPLODE_EPS = 1e-4;
     const applyExplosion = (explode: number) => {
-      // Only rewrite instances when the explode value actually moved — a held
+      // Only rewrite instances when the explode value actually moved - a held
       // value (e.g. progress pinned at 1) shouldn't re-pose ~2.3k matrices/frame.
       if (Math.abs(explode - prevExplode) < EXPLODE_EPS) return;
       for (let i = 0; i < vox.count; i++) writeInstance(i, explode);
@@ -338,8 +375,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     phoneGroup.add(phone);
 
     const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
-    // A lit graphite slab that reads against BOTH themes: steel-surface sits a
-    // touch above the canvas in dark mode, and is a deep slab on cream in light.
+    // A lit graphite slab that reads above the dark canvas without crushing the screen.
     const phoneBodyColor = () => new THREE.Color(tokens.steelSurface);
     const bodyMat = new THREE.MeshStandardMaterial({
       color: phoneBodyColor(),
@@ -350,7 +386,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     body.renderOrder = 0;
     phone.add(body);
 
-    // Subtle accent frame just inside the body edge — premium device bezel glow.
+    // Subtle accent frame just inside the body edge - premium device bezel glow.
     const frameGeo = new RoundedBoxGeometry(1.5, 3.13, 0.355, 4, 0.19);
     const frameMat = new THREE.MeshStandardMaterial({
       color: new THREE.Color(tokens.accent),
@@ -365,7 +401,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     frame.renderOrder = 0;
     phone.add(frame);
 
-    const screenGeo = new THREE.PlaneGeometry(1.34, 2.86);
+    const screenGeo = roundedScreenGeometry(1.34, 2.86, 0.105);
     const screenMat = new THREE.MeshBasicMaterial({
       // Dark token slab before the dashboard texture arrives, so a map-less
       // frame (e.g. the reduced-motion first paint) is never an opaque white quad.
@@ -382,10 +418,10 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const texLoader = new THREE.TextureLoader();
     let screenTex: THREE.Texture | null = null;
     texLoader.load(
-      '/screenshot-dashboard.png',
+      '/app-screens/dashboard.png',
       (tex) => {
         // The component may already have unmounted (StrictMode dev double-mount,
-        // or a fast nav) — don't touch a disposed material / lost GL context.
+        // or a fast nav) - don't touch a disposed material / lost GL context.
         if (disposed) {
           tex.dispose();
           return;
@@ -406,25 +442,6 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       }
     );
 
-    /* ── token re-theming on .dark flip ── */
-    const applyTokens = () => {
-      tokens = readTokens();
-      buildGreenRamp(tokens).forEach((c, i) => rampColors[i].copy(c));
-      hemi.color.set(tokens.canvas);
-      hemi.groundColor.set(tokens.steel);
-      rim.color.set(tokens.accent);
-      voxMat.emissive.set(tokens.ramp[0]);
-      bodyMat.color.copy(phoneBodyColor());
-      frameMat.color.set(tokens.accent);
-      frameMat.emissive.set(tokens.accent);
-      if (reduce) renderer.render(scene, camera);
-    };
-    const themeObs = new MutationObserver(applyTokens);
-    themeObs.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['class']
-    });
-
     /* ── progress source: the pin wrapper ── */
     const wrapper =
       (wrapperSelector && document.querySelector<HTMLElement>(wrapperSelector)) ||
@@ -433,11 +450,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     let progress = 0;
 
     const sampleProgress = () => {
-      if (!wrapper) return reduce ? 1 : 0;
-      const rect = wrapper.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-      if (total <= 0) return reduce ? 1 : 0;
-      return clamp01(-rect.top / total);
+      return sampleHeroProgress(wrapper, reduce);
     };
 
     /* ── pointer parallax ── */
@@ -467,23 +480,31 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
     /* ── pose: ball detonates while the phone rises forward into center stage ── */
     const poseScene = (p: number, t: number) => {
-      const explode = smooth(0.16, 0.62, p);
+      const isNarrow = camera.aspect < 0.72;
+      const explode = bandProgress(HERO_BANDS.burst, p);
+      const burstFade = 1 - bandProgress(HERO_BANDS.burstFade, p) * 0.9;
       ballUniforms.uExplode.value = explode;
       ballUniforms.uTime.value = t;
+      ballUniforms.uFresnel.value = lerp(0.72, 1.28, explode);
+      ballUniforms.uRadialAlpha.value = lerp(0.55, 0.2, explode);
+      ballUniforms.uBurstFade.value = burstFade * lerp(0.85, 0.48, explode);
+      voxMat.opacity = lerp(0.62, 0.46, explode);
       applyExplosion(explode);
 
-      // ball gently shrinks as it scatters
-      const ballScale = lerp(1, 0.86, explode);
+      // The ball starts at visual center. The frosted copy layer handles legibility.
+      const ballScale = lerp(isNarrow ? 0.3 : 0.38, isNarrow ? 0.52 : 0.62, explode);
       ball.scale.setScalar(ballScale);
+      ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
 
-      const rise = easeOutCubic(smooth(0.3, 0.9, p));
-      phone.position.y = lerp(-4.2, -0.05, rise);
-      phone.position.z = lerp(-0.5, 0.4, rise); // pulled forward, in front of where the ball was
-      const sc = lerp(0.9, 1.0, rise);
+      const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
+      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.42 : -0.5, rise);
+      phone.position.z = lerp(-0.45, 0.18, rise); // pulled forward, in front of where the ball was
+      const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.54 : 0.64, rise);
       phone.scale.setScalar(sc);
 
-      screenMat.opacity = smooth(0.4, 0.64, p);
-      frameMat.opacity = smooth(0.42, 0.72, p) * 0.55;
+      const surface = bandProgress(HERO_BANDS.phoneSurface, p);
+      screenMat.opacity = surface;
+      frameMat.opacity = surface * 0.48;
     };
 
     /* ── reduced-motion: single static pose, one frame ── */
@@ -580,7 +601,6 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       disposed = true;
       cancelAnimationFrame(raf);
       reduceMQ.removeEventListener('change', onReduceChange);
-      themeObs.disconnect();
       ro.disconnect();
       window.removeEventListener('pointermove', onPointerMove);
       window.removeEventListener('scroll', onScroll);

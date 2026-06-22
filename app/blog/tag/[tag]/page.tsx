@@ -8,15 +8,18 @@ import {
   tagLabelFromSlug
 } from '@/src/lib/blog';
 import { PostCard } from '@/components/blog/PostCard';
+import { EditorialShell } from '@/components/blog/EditorialShell';
+import { EditorialPill } from '@/components/blog/EditorialPill';
+import { EditorialTagRail } from '@/components/blog/EditorialTagRail';
 
-type PageProps = { params: { tag: string } };
+type PageProps = { params: Promise<{ tag: string }> };
 
 export function generateStaticParams() {
   return getAllTagSlugs().map((tag) => ({ tag }));
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const slug = params.tag;
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { tag: slug } = await params;
   const posts = getPostsByTagSlug(slug);
   if (posts.length === 0) {
     return { title: `Not found · ${SITE_NAME}` };
@@ -50,13 +53,14 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function TagPage({ params }: PageProps) {
-  const slug = params.tag;
+export default async function TagPage({ params }: PageProps) {
+  const { tag: slug } = await params;
   const posts = getPostsByTagSlug(slug);
   if (posts.length === 0) notFound();
 
   const label = tagLabelFromSlug(slug);
   const url = `${BASE_URL}/blog/tag/${slug}`;
+  const tagSlugs = getAllTagSlugs();
 
   const collectionLd = {
     '@context': 'https://schema.org',
@@ -90,37 +94,48 @@ export default function TagPage({ params }: PageProps) {
   };
 
   return (
-    <section
-      aria-labelledby="tag-title"
-      className="mx-auto w-full max-w-[1200px] px-6 pt-24 pb-[48px] md:pt-32"
+    <EditorialShell
+      labelledBy="tag-title"
+      eyebrow="Topic dossier"
+      title={label}
+      description={`${posts.length} ${posts.length === 1 ? 'dispatch' : 'dispatches'} on ${label.toLowerCase()} in the AI-native sports social shift.`}
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+        { label }
+      ]}
+      prelude={
+        <>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+        </>
+      }
+      headerAside={
+        <div className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5">
+          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+            Filter
+          </p>
+          <p className="mt-3 text-[15px] leading-[1.6] tracking-[0] text-white/68">
+            A focused reading list for fans tracking how Buzzr turns live sports into a social graph.
+          </p>
+        </div>
+      }
     >
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
 
-      <nav aria-label="Breadcrumb" className="mb-10 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
-          <li aria-hidden>·</li>
-          <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-          <li aria-hidden>·</li>
-          <li className="text-foreground" aria-current="page">{label}</li>
-        </ol>
-      </nav>
+      <EditorialTagRail label="Topics" className="mb-8">
+        <EditorialPill href="/blog">All</EditorialPill>
+        {tagSlugs.map((tagSlug) => (
+          <EditorialPill
+            key={tagSlug}
+            href={`/blog/tag/${tagSlug}`}
+            isActive={tagSlug === slug}
+          >
+            {tagLabelFromSlug(tagSlug)}
+          </EditorialPill>
+        ))}
+      </EditorialTagRail>
 
-      <header className="mb-12 max-w-[52ch]">
-        <span className="font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">Topic</span>
-        <h1
-          id="tag-title"
-          className="mt-3 text-[clamp(36px,5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground"
-        >
-          {label}.
-        </h1>
-        <p className="mt-5 text-[16px] leading-[1.5] tracking-[-0.025em] text-muted">
-          {posts.length} {posts.length === 1 ? 'post' : 'posts'} on {label.toLowerCase()}.
-        </p>
-      </header>
-
-      <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post, i) => (
           <PostCard key={post.slug} post={post} priority={i < 3} />
         ))}
@@ -129,11 +144,11 @@ export default function TagPage({ params }: PageProps) {
       <div className="mt-12 flex justify-center">
         <Link
           href="/blog"
-          className="inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-[14px] tracking-[-0.025em] text-foreground transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
+          className="inline-flex min-h-[44px] items-center rounded-full border border-white/16 px-4 py-2.5 text-[14px] font-medium leading-none tracking-[0] text-white transition-colors hover:border-white/35 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
-          ← All posts
+          All posts
         </Link>
       </div>
-    </section>
+    </EditorialShell>
   );
 }

@@ -13,7 +13,7 @@ export type Author = {
 const EDITORIAL: Author = {
   name: 'Buzzr Editorial',
   url: `${BASE_URL}/about`,
-  bio: `The Buzzr Editorial team, engineers, product designers, and sports fans at ${COMPANY_NAME} writing about how we built the Letterboxd for sports and what we learn shipping live to fans every week.`,
+  bio: `The Buzzr Editorial team, engineers, product designers, and sports fans at ${COMPANY_NAME} writing about the AI-native sports social app we ship every week.`,
   sameAs: [TWITTER_URL, INSTAGRAM_URL]
 };
 

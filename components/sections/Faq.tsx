@@ -5,16 +5,16 @@ import { LEAGUES, LEAGUE_COUNT } from '@/src/lib/constants';
 const LEAGUE_LIST = LEAGUES.map((l) => l.long).join(', ');
 
 const FAQS = [
-  { q: 'What is a Buzzr Score?', a: 'A single 1 to 10 entertainment rating for every live game. 9 and up is Peak, 8 to 8.9 is Great, 6.5 to 7.9 is Good, 5 to 6.4 is Mid, 3 to 4.9 is Bad, below 3 is Garbage. Built from star power, rivalry, and stakes, not the final score.' },
-  { q: 'Is Buzzr a betting app?', a: 'No. Zero spreads, zero sportsbooks, zero affiliate odds. Buzzr is entertainment tracking. (You can log DFS picks from PrizePicks or Underdog for personal bookkeeping, see below.)' },
+  { q: 'What is Buzzr?', a: 'Buzzr is the AI-native sports social app. Scroll live games, rate the action, follow dashboards, chat with friends, track leagues, and keep DFS slips in Buzzr Bets.' },
+  { q: 'What is a Buzzr Score?', a: 'A single 1 to 10 signal for how alive a game feels. 9 and up is Peak, 8 to 8.9 is Great, 6.5 to 7.9 is Good, 5 to 6.4 is Mid, 3 to 4.9 is Bad, below 3 is Garbage. It blends star power, rivalry, stakes, game state, and fan reaction.' },
+  { q: 'Is Buzzr a betting app?', a: 'No. Buzzr does not integrate sportsbooks, place wagers, or sell odds. Buzzr Bets is personal DFS slip tracking for picks placed elsewhere.' },
   { q: 'Which sports and leagues does it cover?', a: `Buzzr covers ${LEAGUE_COUNT} leagues across 12 sports: ${LEAGUE_LIST}. Live scores update in under 30 seconds where available; coverage tier varies by league.` },
-  { q: 'What are Crews?', a: 'Invite-only groups for your people. A shared bracket, a private leaderboard, and a group chat that runs the whole season. Spin one up for the playoffs, March Madness, or the World Cup and let the standings settle the arguments.' },
-  { q: 'What is the Swarm?', a: 'Your community feed. Who just rated what, who joined a crew, who advanced in a bracket. Chat streaks and stacked message timestamps live here too. React with fire, open the game, keep scrolling.' },
-  { q: 'Can I track DFS bets in Buzzr?', a: 'Yes. Snap a PrizePicks or Underdog slip and Buzzr OCRs it, links each leg to the right game, and auto-grades the bet as scores come in across NBA, NFL, MLB, and NHL. You can also enter bets manually with the player + game pickers, get a no-vig fair-line edge calculation, and follow public leaderboards or your crew bet pool. No sportsbooks are integrated, Buzzr just tracks what you placed elsewhere.' },
-  { q: 'What sport brackets does Buzzr run?', a: 'NBA Playoffs (Play-In + series brackets), FIFA World Cup 2026, March Madness when in-season, plus per-tournament brackets for UFC and tennis Slams. Squad mode lets a crew share one leaderboard, with confidence weighting, series-script predictions, and Pollen rewards.' },
-  { q: 'What is Pollen?', a: 'In-app points. You start with 1,000 Pollen and earn 100 daily for checking in, with bonuses at 3, 7, 14, and 30-day streaks. Spend it on predictions, crew entries, and bracket entries. Pollen is purely an engagement metric, so there is no wagering and no way to go bankrupt. No paywall, no purchases.' },
+  { q: 'How do friends and chat work?', a: 'Open a game, react, reply, and keep the take where the context lives. Friend threads, crews, and shared dashboards keep the conversation tied to the matchup instead of floating in a random group text.' },
+  { q: 'Can I track DFS picks in Buzzr?', a: 'Yes. Buzzr Bets can track DFS slips from PrizePicks or Underdog and connect legs to game results where supported. You can also enter picks manually, compare history with friends, and review patterns. No sportsbooks are integrated.' },
+  { q: 'What are Leagues?', a: 'Leagues are the app surface for the competitions you follow. Each league can expose schedules, scores, standings, recaps, dashboard widgets, and social activity depending on coverage status.' },
+  { q: 'What is Pollen?', a: 'In-app points for engagement. Earn it through check-ins, predictions, crew entries, brackets, and activity. Pollen is not money, has no cash value, and is not a wager.' },
   { q: 'How do I get the app?', a: 'Buzzr is live on the iOS App Store and Google Play. Free on both.' },
-  { q: 'Can I rate games from the past?', a: 'Yes. Search any game in the catalog, log it, rate it, and add it to your history. Last night or 2008 Finals.' },
+  { q: 'Can I rate past games?', a: 'Yes. Search the catalog, log a game, score it, and add the memory to your profile.' },
   { q: 'How do I delete my account or data?', a: 'Settings → Delete account inside the app, or visit getbuzzr.online/delete-account from any browser. Full data export available on request via support.' }
 ];
 

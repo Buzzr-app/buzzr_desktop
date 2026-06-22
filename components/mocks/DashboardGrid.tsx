@@ -1,6 +1,6 @@
 /** Static mock of the multi-league Dashboard surface.
  *  2×2 widget grid: hero number · sparkline · donut · progress bar.
- *  Pager dots hint at the multi-league swipe-between-pages model. */
+ *  Pager dots hint at the multi-league page model. */
 export function DashboardGrid() {
   return (
     <div aria-hidden className="flex flex-col gap-3">
@@ -28,7 +28,7 @@ export function DashboardGrid() {
         {/* Sparkline */}
         <div className="bg-canvas border border-surface rounded-md p-3">
           <div className="mb-2 font-medium text-[8px] uppercase tracking-[0.22em] text-muted">
-            Swipes · 7 d
+            Scrolls · 7 d
           </div>
           <svg viewBox="0 0 80 28" className="h-10 w-full">
             <polyline

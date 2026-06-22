@@ -4,12 +4,12 @@ import { join } from 'node:path';
 import { getAllPostSlugs, getPostBySlug } from '@/src/lib/blog';
 
 /**
- * Per-post 1200×630 Open Graph image. Renders the post title + tag + Buzzr
+ * Per-post 1200x630 Open Graph image. Renders the post title + tag + Buzzr
  * brand strip on the same midnight-canvas / emerald-glow gradient as the
  * homepage OG, so every share preview is recognizably Buzzr.
  */
 
-export const alt = 'Buzzr, Rate sports games by entertainment.';
+export const alt = 'Buzzr, AI-native sports social media.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -48,7 +48,6 @@ export default async function BlogOpengraphImage({ params }: { params: { slug: s
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={logoSrc} alt="" width={48} height={48} style={{ display: 'block' }} />
             <div
               style={{
@@ -101,7 +100,7 @@ export default async function BlogOpengraphImage({ params }: { params: { slug: s
             letterSpacing: '-0.025em'
           }}
         >
-          <div style={{ display: 'flex' }}>Rate the game. Not the score.</div>
+          <div style={{ display: 'flex' }}>AI-native sports social media.</div>
           <div
             style={{
               display: 'flex',

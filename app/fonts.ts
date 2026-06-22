@@ -1,4 +1,4 @@
-// Geist (Vercel) — the clean, engineered grotesque the redesign is built on.
+// Geist (Vercel) - the clean, engineered grotesque the redesign is built on.
 // Self-hosted via the `geist` package (no Google FOUT), exposing the CSS
 // variables --font-geist-sans and --font-geist-mono.
 //   - GeistSans: display + body. Authority comes from size + precise tracking,

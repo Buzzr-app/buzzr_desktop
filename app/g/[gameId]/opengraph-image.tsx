@@ -8,7 +8,7 @@ import {
   formatGameDate,
 } from '@/src/lib/share';
 
-export const alt = 'Buzzr, rate this matchup by entertainment.';
+export const alt = 'Buzzr, open this matchup in the AI-native sports social app.';
 export const size = { width: 1200, height: 630 };
 export const contentType = 'image/png';
 
@@ -142,12 +142,12 @@ export default async function GameOpengraphImage({ params }: Props) {
           {showScore ? (
             <div style={{ display: 'flex', fontSize: 64, fontWeight: 500, letterSpacing: '-0.03em', color: '#ffffff' }}>
               {game!.away_score}
-              <span style={{ color: '#3a3f48', margin: '0 18px' }}>–</span>
+              <span style={{ color: '#3a3f48', margin: '0 18px' }}>-</span>
               {game!.home_score}
             </div>
           ) : (
             <div style={{ display: 'flex', fontSize: 20, color: '#8391a0', letterSpacing: '0.08em', textTransform: 'uppercase' }}>
-              Rate the game
+              Open in Buzzr
             </div>
           )}
         </div>

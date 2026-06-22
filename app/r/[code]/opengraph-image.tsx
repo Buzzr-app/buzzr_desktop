@@ -81,7 +81,7 @@ export default async function ReferralOpengraphImage({ params }: Props) {
           }}
         >
           <div style={{ display: 'flex', letterSpacing: '0.08em' }}>
-            Rate sports games by entertainment.
+            AI-native sports social media.
           </div>
           <div
             style={{

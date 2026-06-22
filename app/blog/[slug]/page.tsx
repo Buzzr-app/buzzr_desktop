@@ -2,9 +2,6 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { MDXRemote } from 'next-mdx-remote/rsc';
-import rehypeSlug from 'rehype-slug';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import { SITE_NAME, BASE_URL, COMPANY_NAME } from '@/src/lib/constants';
 import {
   getAllPostSlugs,
@@ -15,15 +12,20 @@ import {
 } from '@/src/lib/blog';
 import { authorJsonLd, getAuthor } from '@/src/lib/authors';
 import { Prose } from '@/components/blog/Prose';
+import { EditorialShell } from '@/components/blog/EditorialShell';
+import { EditorialPill } from '@/components/blog/EditorialPill';
+import { EditorialTagRail } from '@/components/blog/EditorialTagRail';
+import { MarkdownArticle } from '@/components/blog/MarkdownArticle';
 
-type PageProps = { params: { slug: string } };
+type PageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
   return getAllPostSlugs().map((slug) => ({ slug }));
 }
 
-export function generateMetadata({ params }: PageProps): Metadata {
-  const post = getPostBySlug(params.slug);
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   if (!post) return { title: `Not found · ${SITE_NAME}` };
 
   const url = `${BASE_URL}/blog/${post.slug}`;
@@ -58,8 +60,9 @@ export function generateMetadata({ params }: PageProps): Metadata {
   };
 }
 
-export default function BlogPostPage({ params }: PageProps) {
-  const post = getPostBySlug(params.slug);
+export default async function BlogPostPage({ params }: PageProps) {
+  const { slug } = await params;
+  const post = getPostBySlug(slug);
   if (!post) notFound();
 
   const url = `${BASE_URL}/blog/${post.slug}`;
@@ -108,133 +111,135 @@ export default function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <article className="relative mx-auto w-full max-w-[860px] px-6 pt-16 pb-24 md:pt-20 md:pb-28">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
-
-      <nav aria-label="Breadcrumb" className="mb-10 font-mono text-[12px] uppercase tracking-[0.1em] leading-[2] text-muted">
-        <ol className="flex flex-wrap items-center gap-2">
-          <li><Link href="/" className="hover:text-foreground transition-colors">Home</Link></li>
-          <li aria-hidden>·</li>
-          <li><Link href="/blog" className="hover:text-foreground transition-colors">Blog</Link></li>
-          <li aria-hidden>·</li>
-          <li className="text-foreground" aria-current="page">{post.tags[0] ?? 'Post'}</li>
-        </ol>
-      </nav>
-
-      <header className="mb-12">
-        <div className="mb-5 flex flex-wrap items-center gap-2 font-mono text-[12px] tracking-[0.1em] leading-[2] text-muted">
+    <EditorialShell
+      labelledBy="post-title"
+      eyebrow={post.tags[0] ?? 'Buzzr editorial'}
+      title={post.title}
+      description={post.description}
+      breadcrumbs={[
+        { label: 'Home', href: '/' },
+        { label: 'Blog', href: '/blog' },
+        { label: post.tags[0] ?? 'Post' }
+      ]}
+      prelude={
+        <>
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(blogPostingLd) }} />
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }} />
+        </>
+      }
+      titleClassName="md:text-[58px]"
+      headerAside={
+        <div className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5">
+          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+            Dispatch file
+          </p>
+          <dl className="mt-4 grid grid-cols-2 gap-4 text-[14px] leading-[1.45] tracking-[0]">
+            <div>
+              <dt className="font-mono text-[11px] uppercase leading-[2] tracking-[0.12em] text-white/38">Date</dt>
+              <dd className="text-white/76">{formatPublishedDate(post.publishedAt)}</dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] uppercase leading-[2] tracking-[0.12em] text-white/38">Read</dt>
+              <dd className="text-white/76">{post.readingTime} min</dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] uppercase leading-[2] tracking-[0.12em] text-white/38">Words</dt>
+              <dd className="text-white/76">{words.toLocaleString('en-US')}</dd>
+            </div>
+            <div>
+              <dt className="font-mono text-[11px] uppercase leading-[2] tracking-[0.12em] text-white/38">By</dt>
+              <dd>
+                <Link href={author.url} className="text-white underline decoration-white/30 underline-offset-4 transition-colors hover:decoration-accent">
+                  {post.author}
+                </Link>
+              </dd>
+            </div>
+          </dl>
+        </div>
+      }
+    >
+      <article aria-labelledby="post-title" className="mx-auto w-full max-w-[1040px]">
+        <EditorialTagRail label="Tagged" className="mb-8">
           {post.tags.map((tag) => (
-            <Link
-              key={tag}
-              href={`/blog/tag/${tagSlug(tag)}`}
-              className="uppercase hover:text-foreground transition-colors"
-            >
+            <EditorialPill key={tag} href={`/blog/tag/${tagSlug(tag)}`}>
               {tag}
-            </Link>
+            </EditorialPill>
           ))}
-          <span aria-hidden>·</span>
-          <time dateTime={post.publishedAt} className="uppercase">
-            {formatPublishedDate(post.publishedAt)}
-          </time>
-          <span aria-hidden>·</span>
-          <span className="uppercase">{post.readingTime} MIN</span>
+        </EditorialTagRail>
+
+        <figure className="relative mb-12 aspect-[16/10] w-full overflow-hidden rounded-[8px] border border-white/10 bg-[#121820]">
+          <Image
+            src={post.cover.src}
+            alt={post.cover.alt}
+            fill
+            priority
+            sizes="(max-width: 1100px) 100vw, 1040px"
+            className="object-cover opacity-[0.86] saturate-[0.9]"
+          />
+          {post.cover.credit ? (
+            <figcaption className="absolute bottom-0 right-0 max-w-[90%] bg-[#090e13]/88 px-3 py-1.5 font-mono text-[11px] uppercase leading-[1.6] tracking-[0.1em] text-white/48 backdrop-blur-sm">
+              Photo:{' '}
+              {post.cover.creditUrl ? (
+                <a
+                  href={post.cover.creditUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-white/62 underline decoration-white/25 underline-offset-2 hover:text-white"
+                >
+                  {post.cover.credit}
+                </a>
+              ) : (
+                post.cover.credit
+              )}
+            </figcaption>
+          ) : null}
+        </figure>
+
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,720px)_220px] lg:items-start">
+          <Prose>
+            <MarkdownArticle source={post.body} />
+          </Prose>
+
+          <aside className="border-y border-white/10 py-5 lg:sticky lg:top-28" aria-label="Article context">
+            <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+              Why it matters
+            </p>
+            <p className="mt-3 text-[14px] leading-[1.6] tracking-[0] text-white/58">
+              Buzzr connects live games, AI context, crews, dashboards, and DFS tracking into one sports social loop.
+            </p>
+          </aside>
         </div>
 
-        <h1 className="text-[clamp(36px,5vw,48px)] font-normal leading-[1.11] tracking-[-0.025em] text-foreground">
-          {post.title}
-        </h1>
+        {author.bio ? (
+          <aside className="mt-14 border-t border-white/10 pt-8" aria-labelledby="author-bio-heading">
+            <span id="author-bio-heading" className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+              About the author
+            </span>
+            <p className="mt-2 text-[18px] font-semibold leading-[1.4] tracking-[0] text-white">
+              {author.name}
+            </p>
+            <p className="mt-2 max-w-[72ch] text-[15px] leading-[1.65] tracking-[0] text-white/58">
+              {author.bio}
+            </p>
+          </aside>
+        ) : null}
 
-        <p className="mt-5 text-[20px] leading-[1.4] tracking-[-0.025em] text-muted">
-          {post.description}
-        </p>
-
-        <p className="mt-4 font-mono text-[12px] tracking-[0.1em] leading-[2] text-muted uppercase">
-          By <Link href={author.url} className="text-foreground hover:opacity-80 transition-opacity">{post.author}</Link>
-        </p>
-      </header>
-
-      <figure className="relative mb-12 aspect-[16/9] w-full overflow-hidden border border-surface">
-        <Image
-          src={post.cover.src}
-          alt={post.cover.alt}
-          fill
-          priority
-          sizes="(max-width: 1024px) 100vw, 860px"
-          className="object-cover"
-        />
-        {post.cover.credit && (
-          <figcaption className="absolute bottom-0 right-0 bg-canvas/85 px-3 py-1.5 font-mono text-[12px] tracking-[0.1em] text-muted backdrop-blur-sm">
-            Photo:{' '}
-            {post.cover.creditUrl ? (
-              <a
-                href={post.cover.creditUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted underline underline-offset-2 hover:text-foreground"
-              >
-                {post.cover.credit}
-              </a>
-            ) : (
-              post.cover.credit
-            )}
-          </figcaption>
-        )}
-      </figure>
-
-      <Prose>
-        <MDXRemote
-          source={post.body}
-          options={{
-            mdxOptions: {
-              rehypePlugins: [
-                rehypeSlug,
-                [
-                  rehypeAutolinkHeadings,
-                  {
-                    behavior: 'wrap',
-                    properties: {
-                      className: 'no-underline hover:underline underline-offset-4'
-                    }
-                  }
-                ]
-              ]
-            }
-          }}
-        />
-      </Prose>
-
-      {author.bio && (
-        <aside className="mt-14 border border-surface p-6" aria-labelledby="author-bio-heading">
-          <span id="author-bio-heading" className="font-mono text-[12px] tracking-[0.1em] leading-[2] uppercase text-muted">
-            About the author
-          </span>
-          <p className="mt-2 text-[16px] leading-[1.5] tracking-[-0.025em] text-foreground">
-            {author.name}
+        <div className="mt-14 rounded-[8px] border border-white/10 bg-white/[0.04] p-6">
+          <span className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-accent-text">{SITE_NAME}</span>
+          <p className="mt-2 max-w-[48ch] text-[24px] font-semibold leading-[1.2] tracking-[0] text-white">
+            The AI-native sports social app for the whole game night.
           </p>
-          <p className="mt-1 text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
-            {author.bio}
+          <p className="mt-3 max-w-[58ch] text-[15px] leading-[1.6] tracking-[0] text-white/58">
+            Scroll, rate, recap, track DFS slips, and keep the group chat attached to the game. Built by {COMPANY_NAME}.
           </p>
-        </aside>
-      )}
-
-      <hr className="my-14 border-surface" />
-
-      <div className="bg-canvas border border-surface p-6">
-        <span className="font-mono text-[12px] tracking-[0.1em] leading-[2] uppercase text-muted">{SITE_NAME}</span>
-        <p className="mt-2 text-[20px] leading-[1.4] tracking-[-0.025em] text-foreground">
-          Rate every live game by entertainment. Chaos, energy, drama.
-        </p>
-        <p className="mt-3 text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
-          Free on iOS and Android. Built by {COMPANY_NAME}.
-        </p>
-        <Link
-          href="/"
-          className="mt-5 inline-flex min-h-[44px] items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-[14px] tracking-[-0.025em] text-foreground transition-colors hover:border-white/50 focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,230,118,0.55)]"
-        >
-          See the app
-        </Link>
-      </div>
-    </article>
+          <Link
+            href="/"
+            className="mt-5 inline-flex min-h-[44px] items-center rounded-full border border-white/16 px-4 py-2.5 text-[14px] font-medium leading-none tracking-[0] text-white transition-colors hover:border-white/35 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+          >
+            See the app
+          </Link>
+        </div>
+      </article>
+    </EditorialShell>
   );
 }

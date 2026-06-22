@@ -1,65 +1,49 @@
 ---
-title: "Swipe to rate: why one gesture changed how we watch sports"
-description: "The scoreboard tells you who won. It never tells you if the game was worth watching. One swipe fixes that. Here's the case for rating by entertainment."
+title: "Scroll to rate: why the sports feed needs a verdict"
+description: "The scoreboard tells you who won. Buzzr tells you whether the game was worth your night, then turns that signal into a social feed."
 publishedAt: "2026-06-19"
-readingTime: 7
+readingTime: 6
 author: "Buzzr Editorial"
 tags: ["Product", "Culture"]
 cover:
-  src: "https://images.unsplash.com/photo-1543351611-58f69d7c1781?w=1600&auto=format&fit=crop&q=80"
-  alt: "A close-up of a person holding a phone with a sports broadcast on a television in the background."
-  credit: "Mika Baumeister on Unsplash"
-  creditUrl: "https://unsplash.com/@mbaumi"
+  src: "/app-screens/rate.png"
+  alt: "Buzzr rating surface for reacting to a live game."
 ---
 
-The final score is a liar. Not about who won, it gets that right. It lies about whether the game was any good. A 31-28 thriller and a 31-28 snoozefest read identically on the box score. One of them had four lead changes and a goal-line stand. The other was 28-3 with garbage time inflating the loser. The scoreboard cannot tell you which was which. Nothing in the entire sports-media stack can tell you which was which, not the spread, not the highlight package, not the recap headline.
+The final score is precise and incomplete. It tells you who won, but it does not tell you whether the game was worth your night.
 
-That gap is the whole reason swipe-to-rate exists. Buzzr asks a question the scoreboard refuses to: **was this worth your two hours?** And the answer comes out as a single number between 1 and 10, the Buzzr Score, built on entertainment, not outcome.
+Buzzr starts from that gap. A game can be close and boring. A blowout can still be culturally loud. A random tennis match can become the best thing on a Tuesday because the crowd, stakes, and momentum all snapped into place.
 
-The interesting part is not the number. It's how you give it. You swipe.
+Scroll exists so those signals do not disappear.
 
-## The friction problem nobody solved
+## Rating should be lightweight
 
-Here's the thing about asking fans to rate games. They will do it exactly once, in a burst of enthusiasm, and then never again, if you make it cost anything. A star rating widget with a "submit" button and a confirmation modal is three taps and a decision. Multiply that by the eleven games on a Saturday slate and you have built a chore. Chores don't get done.
+Fans already deliver verdicts all night. They say a game was unreal, flat, chaotic, cursed, electric, or unwatchable. The product challenge is not convincing fans to have opinions. It is making the opinion cheap enough to record.
 
-Every rating product that came before fell into the same trap. They treated the rating like a form submission, a discrete transaction with a beginning, a middle, and a "thanks for your feedback." Forms are where intent goes to die. The gap between "I have an opinion about this game" and "I have logged an opinion about this game in your database" is where you lose 90% of people.
+Buzzr keeps the rating loop close to the feed. See the card. Read the context. Score the energy. Drop the take if you have one. Move on.
 
-The fix is not a better form. The fix is no form. A gesture you already know, that your thumb already does a thousand times a day, that carries the verdict and commits it in one motion. That is what the swipe is for. It collapses opinion and action into the same physical event.
+That matters because a sports night is high frequency. If rating feels like paperwork, fans will do it once and quit. If rating feels like part of the stream, the signal compounds.
 
-## What the swipe actually does
+## The score is social
 
-Open the deck and you get one card at a time, full screen. A live game. A take from someone you follow. A breaking-news card. A highlight pulled from a game you already cared about. The Buzz Score sits right on the game card so you see the verdict before you decide what to do with it.
+One rating is an opinion. Thousands become a crowd signal. Buzzr uses that signal to help fans understand which games were truly alive.
 
-Then your thumb does the talking. Internally the whole system runs on a tiny type, `SwipeDirection = 'right' | 'left'`, and that binary is the entire vocabulary. **Right is a commit.** Swipe a game right and it lands on your wishlist, the app calls `setMyInterest` with intent `wishlist` and a confirmation banner slides up with an Undo button already wired. **Left is a pass.** Scroll past and the card is gone, logged as a skip, feeding the signal quietly. No modal. No submit. No "are you sure."
+The number is not the whole product. The social context around the number is what makes it useful. Who rated it? What did your friends say? Did the AI recap agree with the room? Which league dashboard changed because of it?
 
-The right-swipe is deliberately heavier than the left. When you commit, the phone answers back with a medium haptic, a firmer thump than the light tick a skip gives you. That is not decoration. Commit-style actions earn the stronger tactile weight on purpose, so your hand learns the difference between "yes, this one" and "next" without your eyes leaving the card. The gesture has texture. It feels like a decision because it is one.
+That is the loop Scroll is built around.
 
-And because a single wrong flick should never cost you anything, every commit is reversible. The confirmation banner holds exactly one action at a time, so a fast-swiping fan on a twelve-game night never stacks a tower of toasts, and the Undo button can always reverse the last thing your thumb did. Low stakes is the point. Low stakes is what keeps you swiping.
+## AI belongs in the feed
 
-## Why entertainment is the right axis
+AI in Buzzr is not a floating chatbot bolted to the corner. It helps the app decide what context belongs on the card.
 
-You could rate a game on a lot of things. Quality of play. Star power. Defensive discipline. We rate it on one: did it entertain you. That choice is the soul of the product, and the swipe is built to serve it.
+The same game can need a rivalry note, injury context, standings stakes, fan heat, or a quick recap. Scroll should surface the one that helps you understand the moment fastest.
 
-Entertainment is a gut call. You don't need a spreadsheet to know a triple-overtime Game 7 was a 10 and a 40-point blowout with the starters resting was a 3. You knew it while it was happening. The swipe meets that instinct where it lives, in the gut, in the thumb, in the half-second after the buzzer when you turn to whoever is next to you and say "that was unreal" or "that was unwatchable." It does not ask you to justify the score. It asks you to register the feeling before it fades.
+Good sports AI should feel like a sharp friend watching with you. Present, useful, and out of the way when the game speaks for itself.
 
-That is why the Buzzr Score lands in bands, not just digits. **Peak. Great. Good. Mid. Bad. Garbage.** A band is a feeling with a name. When you swipe, you are not solving for a decimal, you are pointing at a band you already feel, and the system handles the math underneath. The number is exact. The band is what you remember and what you text a friend.
+## Why Buzzr keeps the verdict
 
-## The swipe is a vote, and votes compound
+Sports memory is messy. Fans remember the feeling, not only the box score. Buzzr turns that feeling into something you can revisit, compare, and argue about with friends.
 
-One person swiping is an opinion. Ten thousand people swiping is a signal nobody else has. Every commit and every skip is a `card_interaction`, a vote, and those votes pile up into something the scoreboard can never produce: a live, crowd-sourced read on which games are actually worth your night.
+That is the thesis: the scoreboard rates outcomes, Buzzr rates experiences, and the feed gets better every time fans weigh in.
 
-This is the quiet payoff. The same gesture that costs you nothing builds the discovery layer for everyone. You swipe right because you want the game on your wishlist. As a side effect, you just told the room it was good. Multiply that across a Saturday and the Buzz Score stops being one algorithm's guess and becomes a verdict the crowd helped reach. Skip Game 5, rave about Game 6, and three months later when someone asks "was that series any good," there is an answer to point at instead of a shrug.
-
-The swipe also teaches the feed. Swipe a highlight right and similar content gets boosted in the Swarm. Swipe it left and it gets demoted. The gesture is doing double duty, registering your verdict on this game and tuning what the next card will be. You are training your own feed with the same flick that logs your opinion, and you never had to open a settings menu to do it.
-
-## One gesture, the whole thesis
-
-Strip Buzzr down to a single sentence and it is this: the scoreboard rates outcomes, we rate experiences, and the swipe is how a feeling becomes a number without ever feeling like work.
-
-That is not a small claim. The reason fans never had a real entertainment rating for games is not that nobody thought of the idea. It is that nobody made it cheap enough to do every night, for every game, on instinct. Forms were too expensive. Stars-and-submit was too expensive. The swipe is free, in the only currency that matters, your attention and your thumb.
-
-We did not invent the verdict. You have been delivering it for years, out loud, to whoever was on the couch next to you. We just gave your thumb a way to log it, and gave everyone else a way to read it back.
-
----
-
-**Further reading:** [What makes a 9.8: how the Buzzr Score works](/blog/how-the-buzzr-score-works) · [How the group chat ate the sports bar](/blog/group-chat-ate-the-sports-bar) · [Esports isn't eating traditional sports](/blog/esports-and-the-sports-world) · [Building Buzzr](/blog/building-buzzr) · [Changelog](/changelog)
+**Further reading:** [What makes a 9.8: how the Buzzr Score works](/blog/how-the-buzzr-score-works) · [How the group chat ate the sports bar](/blog/group-chat-ate-the-sports-bar) · [Esports and the sports world](/blog/esports-and-the-sports-world) · [Building Buzzr](/blog/building-buzzr) · [Changelog](/changelog)

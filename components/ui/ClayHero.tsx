@@ -1,20 +1,20 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import Image from 'next/image';
 import { Component, useEffect, useState, type ReactNode } from 'react';
+import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
+import { PixelAura } from '@/components/ui/PixelAura';
 
 /** Static fallback shown while the WebGL chunk loads or if WebGL is unavailable. */
 function Poster() {
   return (
     <div className="flex h-full w-full items-center justify-center">
-      <Image
-        src="/screenshot-dashboard.png"
+      <PhoneShowcase
+        src="/app-screens/dashboard.png"
         alt=""
-        width={300}
-        height={652}
         priority
-        className="h-[64%] w-auto rounded-[2rem] border border-border object-contain shadow-[var(--shadow-card)]"
+        aura
+        size="standard"
       />
     </div>
   );
@@ -38,7 +38,7 @@ class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
 }
 
-/** Cheap synchronous probe — avoids constructing the renderer (and its throw path). */
+/** Cheap synchronous probe - avoids constructing the renderer (and its throw path). */
 function hasWebGL(): boolean {
   if (typeof window === 'undefined') return false;
   try {
@@ -75,7 +75,8 @@ export function ClayHero({
   }, []);
   return (
     <div data-hero-pin className={`relative h-[200vh] motion-reduce:h-auto ${className ?? ''}`}>
-      <div className="sticky top-0 h-screen w-full overflow-hidden hero-stage">
+      <div className="sticky top-0 h-screen w-full overflow-hidden hero-stage landing-dark">
+        <PixelAura density="hero" className="absolute inset-0" />
         <div aria-hidden className="absolute inset-0 hero-canvas-clip">
           {showScene ? (
             <WebGLBoundary>
@@ -86,6 +87,7 @@ export function ClayHero({
           )}
         </div>
         <div aria-hidden className="hero-vignette" />
+        <div aria-hidden className="hero-edge-blur" />
         <div aria-hidden className="hero-grain" />
         {children}
       </div>

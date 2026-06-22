@@ -17,7 +17,7 @@ type MarqueeProps = {
 function MarqueeRow({ items, speed }: { items: MarqueeItem[]; speed: number }) {
   return (
     <div
-      className="flex shrink-0 items-center gap-10 whitespace-nowrap pr-10 [animation-name:marquee-scroll] [animation-timing-function:linear] [animation-iteration-count:infinite] hover:[animation-play-state:paused]"
+      className="flex shrink-0 items-center gap-10 whitespace-nowrap pr-10 [animation-name:marquee-scroll] [animation-timing-function:linear] [animation-iteration-count:infinite] hover:[animation-play-state:paused] motion-reduce:[animation-name:none]"
       style={{ animationDuration: `${speed}s` }}
     >
       {items.map((item, i) => (

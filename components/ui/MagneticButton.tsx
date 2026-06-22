@@ -13,7 +13,7 @@ type MagneticButtonProps = {
 };
 
 /**
- * MagneticButton — a Link that subtly pulls toward the cursor and snaps back,
+ * MagneticButton - a Link that subtly pulls toward the cursor and snaps back,
  * the signature interface-craft micro-interaction. Movement is driven by an
  * inline transform with a spring-ish ease; hover color/shadow stay on the
  * className. Fully no-ops under prefers-reduced-motion.

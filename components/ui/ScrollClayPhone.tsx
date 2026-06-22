@@ -80,7 +80,7 @@ export function ScrollClayPhone({ className }: { className?: string }) {
           <div className="cp-bezel">
             <div className="cp-screen">
               <Image
-                src="/screenshot-dashboard.png"
+                src="/app-screens/dashboard.png"
                 alt="The Buzzr My Teams dashboard"
                 fill
                 sizes="(max-width: 1024px) 0px, 280px"

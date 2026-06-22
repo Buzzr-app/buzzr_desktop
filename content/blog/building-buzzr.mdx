@@ -1,117 +1,69 @@
 ---
-title: "Building Buzzr: how we shipped the Letterboxd for sports in 12 weeks"
-description: "From a Notion doc in February to 47 leagues live in May, the engineering, design, and product calls behind a multi-sport rating app built by a small team."
+title: "Building Buzzr: the AI-native sports social app"
+description: "How Buzzr turned live games, AI context, dashboards, friends, leagues, and DFS slip tracking into one sports social product."
 publishedAt: "2026-05-08"
-readingTime: 11
+readingTime: 7
 author: "Buzzr Editorial"
 tags: ["Product", "Engineering"]
 cover:
-  src: "https://images.unsplash.com/photo-1483382769995-7621d1ce4dad?w=1600&auto=format&fit=crop&q=80"
-  alt: "An empty floodlit basketball court at night, viewed from above."
-  credit: "Element5 Digital on Unsplash"
-  creditUrl: "https://unsplash.com/@element5digital"
+  src: "/app-screens/feed.png"
+  alt: "Buzzr AI Feed app surface with live games, leagues, and social context."
 ---
 
-Buzzr started as a one-line idea in a Notion doc in February: **a Letterboxd for live sports**. By early May we had 47 leagues live, group chat v2, brackets for the NBA Playoffs and the FIFA World Cup, and a DFS bet tracker that auto-grades itself. Twelve weeks. Three engineers. A small TestFlight cohort that grew into a real audience.
+Buzzr started with a simpler question than the scoreboard ever answers: what should a fan open after the game ends?
 
-This post is the engineering and product side of that story, what we built, what we cut, and the calls that turned out to matter.
+The answer became the AI-native sports social app. Scroll shows the live sports stream. The Buzzr Score ranks the action. Dashboards keep your leagues close. Friends and Chat keep the take next to the game. Buzzr Bets tracks DFS slips placed elsewhere, without sportsbook integrations.
 
-## The pitch, in one paragraph
+This is the product story behind that shape.
 
-Every sports app today either treats games as outcomes (box scores, win probabilities, lines, parlays) or as content (highlights, takes, talking heads). None of them answer the question fans actually ask each other on Monday morning: *was that game worth watching?* Buzzr's whole product is the answer to that question, a 1-to-10 entertainment score for every live game, plus the social layer to argue about it. Letterboxd had this exact insight for movies a decade ago. Sports never got it.
+## The product sentence
 
-That's the elevator. The hard part is everything underneath.
+Sports apps usually split the fan experience into separate rooms. Scores in one app. Group chat somewhere else. Social clips in another feed. DFS slips in a separate tracker. The fan has to stitch the night together manually.
 
-## Week 1–2: pick the smallest possible MVP that's still a product
+Buzzr makes one sports graph out of those pieces. A game card can hold the score, context, ratings, reactions, recap, league surface, and friend thread. AI is not a side panel. It is the connective layer that decides what context belongs in the moment.
 
-The first decision was the worst possible to get wrong: how much surface area do we ship?
+## The first surface: Scroll
 
-The temptation in sports apps is to do too much. Live scores. Standings. News. Picks. Brackets. Player pages. Watch parties. Even if any one of them is good, the app reads as a generic ESPN clone.
+Scroll is the fastest way into Buzzr. It is built around one card at a time: a live game, a recap, a highlight, a friend take, a league signal, or a game worth saving for later.
 
-We picked **rate, scroll, and chat**. That's it. A live game card you can rate 1–10. A vertical scroll feed of games and news. A Swarm, our community feed, for posting takes and reactions on individual games. Everything else (brackets, parties, dashboards, prop research) waited for v1.1+.
+The important product decision was to keep Scroll lightweight. You should be able to open Buzzr during halftime, between pitches, or while walking out of the arena. The app should know which sports are hot without making you build a settings dashboard first.
 
-This sounds obvious. It wasn't. Every meeting in week 1 had someone arguing for a different "must-have." The thing that broke the tie was reframing the question: **what would make a fan tell a friend about Buzzr in one sentence?** "It's the Letterboxd for sports, you rate games by entertainment, not the score." Rate, scroll, chat are the three verbs that justify that one sentence. Anything else was tier 2.
+That is where AI matters. It reads the mix of league priority, stakes, fan reaction, and your own behavior so the next card feels sports-native instead of generic.
 
-## Week 3–5: the Buzzr Score model
+## The Buzzr Score
 
-The product hinges on a single number. If the number isn't credible, nothing else matters.
+The Buzzr Score is a 1 to 10 signal for how alive a game feels. It is not a final score clone. It blends star power, rivalry, stakes, game state, lead changes, comeback energy, and fan reaction.
 
-We knew from day one we didn't want a black box. The Buzzr Score is built from three dimensions, **chaos, energy, drama**, each computed from per-league signals (lead changes, score velocity, comeback magnitude, win-probability shifts, late-game leverage, crowd-readable narrative beats). The math behind it is in [What makes a 9.8: how the Buzzr Score works](/blog/how-the-buzzr-score-works). The interesting part wasn't the math. It was the *honesty curve*.
+The hardest part was calibration. If every busy night turns into a wall of 9s, fans stop trusting the system. We tuned the median game into the middle bands and reserved 9+ for games that actually become group chat evidence.
 
-Early models were too generous. Too many 9.0+ games. Fans don't trust a system where every Tuesday Cavs–Pistons is "elite." We retuned twice in the first month to push the median game into the 5–7 range and reserve 9+ for genuine classics. The gut-check that confirmed we got it right: a 7-game stretch in late March where the model called the only 9.6 of the week on a #13 vs #4 NCAAM upset that was decided by a buzzer-beater. Beat reporters who watched it tweeted "instant classic" within minutes.
+The score is useful because it stays readable. Peak. Great. Good. Mid. Bad. Garbage. Fans do not need a model card during the fourth quarter. They need a verdict that matches the room.
 
-Lesson: a rating system is only as good as the worst rating it gives. Every model has to be calibrated by humans who watched the games.
+## Dashboards and leagues
 
-## Week 4–6: data infrastructure
+Buzzr covers a wide sports map, with league status tracked from the same source of truth that powers the site. League pages and dashboards make that coverage legible: schedules, scores, standings, forms, widgets, and social activity where support exists.
 
-The other thing that has to be credible day one: live scores. If a fan opens the app during a game and sees a stale score, they're gone.
+The principle is honesty. If a verified league mark exists locally, we show it. If it does not, we use a text chip. If a league is still hardening, the app should say so instead of pretending coverage is perfect.
 
-We built a polymorphic games schema with a `BallSportLeague` discriminated union, every league gets the right shape (NBA, NFL, MLB, NHL, MLS, EPL, etc.) but the rest of the app can treat them generically. Per-league sync crons run on a mix of Supabase Edge Functions (for the big four), GitHub Actions (for cricket, where CricAPI blocks Supabase IPs), and direct hits to ESPN, MLB Stats API, NHL API, OpenF1 for Formula 1, and PandaScore for esports.
+## Friends and Chat
 
-The hard part wasn't connecting to the APIs. It was **freshness contracts**. We built a `league-coverage.ts` table that tags each league as `healthy` (live + schedule + standings), `beta` (live + schedule, still hardening), or `news-only` (no live scores yet). The app surfaces this via tier badges so we never lie about coverage. When a CDN goes down, the badge flips and the user knows. When we add a new league, it ships in `beta` until we've validated three weeks of clean syncs.
+The sports group chat should not be detached from the game. In Buzzr, a take can sit next to the matchup that caused it. Friends can react, reply, compare ratings, and carry a thread through the night.
 
-If you're building anything with third-party sports data: **assume your providers will degrade and design for the degradation explicitly.** A "best-effort" sync sounds fine in your team's RFC and looks negligent in a TestFlight review.
+This product surface got better when we stopped scattering social features everywhere. One loop matters: see the game, react to the game, bring the people in, and let the app remember what happened.
 
-## Week 6–8: the design system rewrite
+## Buzzr Bets
 
-Around week 6 the app looked like the average of every sports product on the App Store. Emerald accent everywhere. Three glass tiers. Pixel borders. Three different button shapes per screen. We had no design system; we had *vibes*.
+Buzzr Bets is a tracker for DFS picks placed elsewhere. It can help you record slips, connect legs to games where supported, review results, and compare with friends.
 
-We did a full consolidation pass against the principles we admire, xAI, Linear, OpenAI, Apple Developer Documentation. Dark canvas (`#0c0c0b`), faded steel surface (`#1f2228`), frost-white type, muted-ash secondary, **one** chromatic accent (emerald, reserved for live moments and focus states). One sans (Inter), one mono (Space Mono). One callout-card surface treatment. One pill-button system. 48px section rhythm.
+It is not a sportsbook. Buzzr does not place wagers, integrate sportsbook accounts, or sell odds. That boundary is part of the product. Fans can track what they already did without turning Buzzr into a betting marketplace.
 
-Result: the app reads as itself. Every section is now an instance of the same system instead of a bespoke composition. We also stripped about 700 lines of CSS (gradient meshes, accent glows, pixel filmstrips, twelve different shadow utilities) and saved meaningful bundle size.
+## What we learned
 
-The lesson: a design system is not a luxury you earn after MVP. It's a forcing function for product clarity. Once we had it, every new screen took half as long to ship.
+The best version of Buzzr is not more screens. It is a tighter sports social loop.
 
-## Week 8–10: the social layer
+1. Scroll should always explain why this card is here.
+2. Dashboards should reduce work, not add knobs.
+3. Friends and Chat should stay attached to the game context.
+4. League coverage should be honest and visible.
+5. Buzzr Bets should remain tracking, not sportsbook integration.
 
-This is where the product almost died.
-
-The original spec had four separate social surfaces: Pulse feed, Takes, Buzz Cards, badges. The team built all of them. Then we used the app for two weeks and realized **none of them were getting opened**. The feed was lifeless because the takes were locked behind a separate composer. Badges were lifeless because earning them required navigating into a section nobody opened. Buzz Cards were a collectible mechanic that didn't connect to anything anyone cared about.
-
-We deleted all four within 48 hours.
-
-What we kept: a single feed (rebranded **Swarm**, closer to "the buzz around a game") where ratings, takes, replies, and game cards co-exist. Takes inline with the rate sheet, if you rated a game, the same screen lets you drop a one-liner. No badges, no cards, no separate composer. The feed sorts by recency and league boost; you see the game your friend just rated and you tap straight into your own rate sheet.
-
-In the next two weeks of TestFlight, daily-active sessions per user roughly doubled. The product wasn't worse with fewer features. It was **better, because it had focus.**
-
-If you're building social in your product: the surface that matters is the one that closes the loop in two taps. Cut the rest.
-
-## Week 10–11: brackets, dashboards, and the multi-team unlock
-
-By April we had a stable core. The next bet was on the calendar tentpoles. NBA Play-In and Playoffs were starting. March Madness was wrapping. World Cup 2026 was visible on the horizon.
-
-We built a **bracket pick'em** with confidence weighting, series-script predictions (the order of wins, not just the winner), MVP Oracle, and Game 7 Frenzy as in-bracket events. Every bracket has a leaderboard; squads share one. We learned the hard way that bracket lock UX is the single most fraught moment in any predictive product, if a user thinks they had time to lock in a pick and the API says they didn't, they will rage. We built a server-authoritative lock with a 30-second client-side warning toast and an amnesty window for the first three games of each round to soften early bugs.
-
-The dashboard re-architecture in v1.3 was the other big bet. Until then, dashboards were locked to a single team. We rewrote them around an `EntityRef` discriminated union, pages can mix teams, players, leagues, and games heterogeneously. A user can pin Steph + the Warriors + the Western Conf. standings on one page. This sounds obvious; it required a six-day migration and a backward-compatibility shim because the old config shape was already in production.
-
-Both shipped. Both are core to retention now.
-
-## Week 11–12: bets, OCR, and Claude Vision
-
-The last big v1.4 push was DFS bet tracking. Fans on Buzzr were already taking screenshots of PrizePicks and Underdog slips and posting them to the Swarm. We watched that behavior for three weeks before building anything.
-
-The product turned out to be: **you snap a slip, we OCR every leg, link it to the right game, and grade the bet automatically as scores come in.**
-
-OCR is the hard part. We piped slip images through Claude Vision via OpenRouter, with strict zod schemas on the parse output (`bookClassification ∈ {PrizePicks, Underdog}`, never anything else). The pipeline tightened over four iterations, we caught hallucinations, hardened against weird crop orientations, and constrained the model to a small JSON shape.
-
-The trickier part was **linkage**. A leg says "Curry over 27.5 points." Which game? We built a same-teams + same-date + closest-time matcher (Linkage v2), so a leg lands on the actual game even when slips don't include game IDs. Once a leg has a `gameId` and a `gameStartsAt`, the settlement watcher polls the scoreboard and grades. Auto-grading is live across NBA, NFL, MLB, NHL, the Waves 1–5 in our changelog.
-
-We deliberately don't integrate any sportsbook. **Buzzr is not a betting app.** It's a tracker for what users are already doing on other apps. That distinction is small in code, big in product positioning, and meaningful for App Store review. The full breakdown of the OCR + auto-grading pipeline is in [Shipping Buzzr Bets: how we OCR'd every PrizePicks and Underdog slip](/blog/shipping-buzzr-bets).
-
-## What we'd do differently
-
-Three honest reflections:
-
-1. **Pick the data providers earlier.** We migrated cricket from Supabase Edge Functions to GitHub Actions in week 11 because CricAPI blocks Supabase IPs. Two days lost to a problem we could have caught in week 4 with one curl request.
-2. **Cut the social surface area sooner.** We probably could have deleted Takes / Buzz Cards / Badges in week 8 instead of week 10. We spent two weeks polishing surfaces that were going to get deleted.
-3. **Wire telemetry day one.** We rolled Sentry in week 7 and a real product analytics layer in week 9. Every TestFlight crash report we got in week 1–6 was a paper bug, we couldn't tell which screen, which build, which device. Cheapest possible thing to add early; we delayed it because "MVP."
-
-## Where this goes
-
-v1.5 lands this month with league-safe detail tables, 47 leagues parity, and a deeper game page (per-team leaders, soccer XI, F1 driver records, tennis tournaments, UFC fight cards). v1.6 is queued: web PWA out of beta, Android general availability, deeper crews, brackets, and roast reels.
-
-The product is not done. It's a credible v1 of a Letterboxd for sports, on the App Store and Google Play, with a small audience that opens it on Saturday mornings. That's what we wanted twelve weeks ago when this was a Notion doc.
-
-Build small. Ship the smallest thing that closes the loop. Cut the parts of the product that exist because the team is proud of building them rather than because users open them. Tune the math by the worst rating it gives, not the best. Wire telemetry on day one.
-
-We'll keep shipping. **The full git log is in [the changelog](/changelog)** if you're curious what the last 271 commits looked like.
+We keep shipping toward that version. The current release notes live in [the changelog](/changelog).

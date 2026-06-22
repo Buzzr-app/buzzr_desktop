@@ -1,57 +1,64 @@
-import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
-import { LEAGUE_COUNT } from '@/src/lib/constants';
+import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 
-type Surface = { name: string; blurb: string; shot: string; pos: string };
-
-const SURFACES: Surface[] = [
-  { name: 'Swipe',     blurb: 'Swipe through live games and score the show 1 to 10.',                 shot: '/screenshot-rate.png',  pos: 'object-top' },
-  { name: 'Games',     blurb: `Every live game across ${LEAGUE_COUNT} leagues, scored in real time.`,              shot: '/screenshot-games.png', pos: 'object-top' },
-  { name: 'Swarm',     blurb: 'The community feed of ratings, takes, and reactions.',                 shot: '/screenshot-home.png',  pos: 'object-top' },
-  { name: 'Crews',     blurb: 'Invite-only crews with shared brackets and a private leaderboard.',    shot: '/screenshot-home.png',  pos: 'object-center' },
-  { name: 'Bets',      blurb: 'Snap a PrizePicks or Underdog slip and auto-grade it. No sportsbooks.', shot: '/screenshot-games.png', pos: 'object-center' },
-  { name: 'Dashboard', blurb: 'Drag-and-drop widgets for the teams and leagues you actually follow.', shot: '/screenshot-home.png',  pos: 'object-bottom' }
-];
+const BETS_STEPS = [
+  ['Add', 'Scan a DFS slip or enter picks by hand.'],
+  ['Grade', 'Connect legs to supported game results.'],
+  ['Compare', 'Track history with friends and crews.']
+] as const;
 
 export function ScrollRail() {
   return (
     <Section id="rail" aria-labelledby="rail-title">
-      <header className="mb-8 max-w-[48ch]">
-        <h2
-          id="rail-title"
-          className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
-        >
-          Built for every way you watch.
-        </h2>
-        <p className="mt-4 text-[14px] tracking-[-0.01em] text-muted">Scroll across the surfaces.</p>
-      </header>
-
-      <div className="-mx-6 flex snap-x snap-mandatory gap-4 overflow-x-auto px-6 pb-4 md:-mx-10 md:px-10 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {SURFACES.map((s) => (
-          <article
-            key={s.name}
-            className="group w-[280px] shrink-0 snap-start overflow-hidden rounded-2xl border border-border bg-surface transition-colors hover:border-accent/40"
+      <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
+        <div>
+          <h2
+            id="rail-title"
+            className="max-w-[14ch] text-[clamp(34px,4.8vw,56px)] font-semibold leading-[0.98] tracking-[-0.04em] text-foreground"
           >
-            <div className="relative aspect-[4/5] w-full overflow-hidden bg-canvas">
-              <Image
-                src={s.shot}
-                alt={`Buzzr ${s.name} screen`}
-                fill
-                sizes="280px"
-                className={`object-cover ${s.pos} transition-transform duration-500 group-hover:scale-[1.04]`}
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-0"
-                style={{ background: 'linear-gradient(to bottom, transparent 52%, rgba(8,9,11,0.92))' }}
-              />
-              <span className="score-mono absolute bottom-3 left-4 text-[11px] uppercase tracking-[0.2em] text-accent">
-                {s.name}
+            Buzzr Bets tracks the slips, not the book.
+          </h2>
+          <p className="mt-4 max-w-[40ch] text-[16px] leading-[1.5] tracking-[-0.02em] text-muted">
+            DFS slip tracking for picks placed elsewhere. No sportsbook integrations.
+          </p>
+
+          <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+            {BETS_STEPS.map(([title, body], index) => (
+              <div key={title} className="rounded-lg border border-border bg-surface p-4 shadow-[var(--shadow-card)]">
+                <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-3 text-[18px] font-semibold leading-[1.25] tracking-[-0.025em] text-foreground">
+                  {title}
+                </h3>
+                <p className="mt-1 text-[14px] leading-[1.45] tracking-[-0.01em] text-muted">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="relative mx-auto w-full max-w-[460px]">
+          <PhoneShowcase
+            src="/app-screens/bets.png"
+            alt="Buzzr Bets game context and rating screen"
+            aura
+            size="standard"
+            className="mx-auto"
+          />
+          <div className="absolute bottom-10 left-4 right-4 rounded-lg border border-white/10 bg-black/72 p-4 text-white backdrop-blur-md">
+            <div className="flex items-center justify-between gap-4">
+              <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
+                Slip status
+              </span>
+              <span className="rounded-full bg-[#00c264] px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-black">
+                Tracking
               </span>
             </div>
-            <p className="p-4 text-[14px] leading-[1.5] tracking-[-0.01em] text-muted">{s.blurb}</p>
-          </article>
-        ))}
+            <p className="mt-3 text-[22px] font-semibold leading-[1.08] tracking-[-0.03em]">
+              Picks stay with the game context.
+            </p>
+          </div>
+        </div>
       </div>
     </Section>
   );
