@@ -18,7 +18,7 @@ export function RateMission() {
         </div>
 
         <div className="relative mx-auto grid w-full max-w-[430px] place-items-center lg:mx-0 lg:justify-self-end">
-          <div className="absolute inset-6 rounded-[32px] bg-[#00c264]/10 blur-3xl" aria-hidden />
+          <div className="absolute inset-6 rounded-[32px] bg-accent/10 blur-3xl" aria-hidden />
           <PhoneShowcase
             src="/app-screens/feed.png"
             alt="Buzzr AI feed with games, leagues, and friend signals"

@@ -107,11 +107,11 @@ export function HeroCopy() {
           </div>
           <h1
             id="hero-title"
-            className="max-w-[11ch] animate-fade-in-up text-[clamp(40px,7vw,76px)] font-semibold leading-[1.02] tracking-[-0.032em] text-white"
+            className="max-w-[11ch] animate-fade-in-up text-balance text-[clamp(40px,7vw,76px)] font-semibold leading-[1.02] tracking-[-0.032em] text-white"
           >
             The AI-native home for sports fans.
           </h1>
-          <p className="mt-5 max-w-[30ch] animate-fade-in-up stagger-1 text-[16px] leading-[1.5] tracking-[-0.02em] text-white/66 md:text-[18px]">
+          <p className="mt-5 max-w-[30ch] animate-fade-in-up stagger-1 text-pretty text-[16px] leading-[1.5] tracking-[-0.02em] text-white/66 md:text-[18px]">
             Scroll games, dashboards, friends, leagues, and Buzzr Bets in one sports social app.
           </p>
 
@@ -161,7 +161,7 @@ export function HeroCopy() {
         ref={taglineRef}
         className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[25vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[26vh]"
       >
-        <p className="max-w-[28ch] text-[clamp(16px,2.1vw,24px)] font-medium leading-[1.24] tracking-[-0.015em] text-white">
+        <p className="max-w-[28ch] text-balance text-[clamp(16px,2.1vw,24px)] font-medium leading-[1.24] tracking-[-0.015em] text-white">
           <ShimmerText kind="accent" className="text-accent-text">
             AI-Native
           </ShimmerText>{' '}

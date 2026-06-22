@@ -48,15 +48,42 @@ function readTokens(): SceneTokens {
   };
 }
 
-/* ── translucent voxel heat-ball: a fine, dense spherical shell ───────────────── */
+/* ── solid voxel basketball: a thick, dense, seamed sphere ───────────────── */
 // Each voxel carries a base position, an outward radial direction (drives both
-// the heat ramp and the explosion vector), a tumble axis, a per-voxel random,
-// and a base scale jitter - so the shell reads as crafted, not procedural-flat.
+// the panel/seam shading and the explosion vector), a tumble axis, a per-voxel
+// random, and a base scale jitter - so the surface reads as crafted, not flat.
+// Density is perf-tiered and the shell is thick + nearly gap-free so the ball
+// reads as a SOLID basketball, not a translucent fuzz.
+function pickDensityTier() {
+  // SSR / no-window guard -> mid tier.
+  if (typeof window === 'undefined') {
+    return { g: 0.066, pixelRatioCap: 1.6 };
+  }
+  const w = window.innerWidth || 1280;
+  const dpr = window.devicePixelRatio || 1;
+  const cores = (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 4;
+  const coarse =
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(pointer: coarse)').matches;
+
+  const mobile = coarse || w < 760;
+  const lowPower = cores <= 4 || dpr >= 2.5;
+
+  if (mobile || (lowPower && w < 1100)) {
+    return { g: 0.092, pixelRatioCap: 1.3 }; // mobile / low  -> ~4-7k cubes
+  }
+  if (w >= 1500 && cores >= 8 && dpr <= 2) {
+    return { g: 0.057, pixelRatioCap: 1.8 }; // desktop high -> ~16-20k cubes
+  }
+  return { g: 0.066, pixelRatioCap: 1.6 };   // desktop mid  -> ~11-14k cubes
+}
+
 function buildVoxels() {
   const R = 1.42;
-  const g = 0.123; // grid spacing - smaller = denser, finer cubes
-  const size = g * 0.9;
-  const inner = 0.82 * R;
+  const tier = pickDensityTier();
+  const g = tier.g;            // perf-gated grid spacing
+  const size = g * 0.96;       // cubes nearly touch -> solid, gap-free surface
+  const inner = 0.74 * R;      // THICK shell (was 0.82R) so the burst reads solid
   const outer = 1.0 * R;
   const lim = Math.ceil(outer / g) + 1;
 
@@ -66,8 +93,7 @@ function buildVoxels() {
   const rand: number[] = [];
   const scl: number[] = [];
 
-  // Deterministic hash so the look is stable across reloads (no Math.random
-  // dependency on first-paint timing); cheap and good enough for jitter.
+  // Deterministic hash so the look is stable across reloads.
   let seed = 1;
   const rng = () => {
     seed = (seed * 1103515245 + 12345) & 0x7fffffff;
@@ -82,9 +108,16 @@ function buildVoxels() {
         const pz = z * g;
         const d = Math.hypot(px, py, pz);
         if (d < inner || d > outer) continue;
+
+        // Density gate: only the OUTERMOST ~18% of shell depth is fully packed;
+        // deeper voxels are kept at 34% (they only flash briefly during burst).
+        const depth = (outer - d) / (outer - inner); // 0 at surface, 1 at core
+        if (depth > 0.18 && rng() > 0.34) continue;
+
         base.push(px, py, pz);
         const inv = 1 / (d || 1e-5);
         dir.push(px * inv, py * inv, pz * inv);
+
         // random unit tumble axis
         let ax = rng() * 2 - 1;
         let ay = rng() * 2 - 1;
@@ -94,8 +127,9 @@ function buildVoxels() {
         ay /= al;
         az /= al;
         axis.push(ax, ay, az);
+
         rand.push(rng());
-        scl.push(0.78 + rng() * 0.34); // per-voxel size variation
+        scl.push(0.92 + rng() * 0.16); // tight jitter -> surface stays watertight
       }
     }
   }
@@ -106,7 +140,8 @@ function buildVoxels() {
     rand: new Float32Array(rand),
     scl: new Float32Array(scl),
     count: base.length / 3,
-    size
+    size,
+    pixelRatioCap: tier.pixelRatioCap
   };
 }
 
@@ -249,25 +284,24 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     voxGeo.setAttribute('aRand', new THREE.InstancedBufferAttribute(vox.rand, 1));
 
     const voxMat = new THREE.MeshStandardMaterial({
-      transparent: true,
-      opacity: 0.62,
-      depthWrite: false,
+      transparent: false, // opaque kills the z-fight shimmer
+      opacity: 1.0,
+      depthWrite: true, // the #1 fix vs the old translucent shell
       depthTest: true,
       side: THREE.FrontSide,
-      blending: THREE.NormalBlending,
-      roughness: 0.42,
+      roughness: 0.6, // matte rubber, not plastic-shiny
       metalness: 0.0,
-      emissive: new THREE.Color(tokens.ramp[0]),
-      emissiveIntensity: 0.18
+      emissive: new THREE.Color(tokens.ramp[1]), // deep green base lift
+      emissiveIntensity: 0.1
     });
 
     const ballUniforms = {
       uTime: { value: 0 },
       uRamp: { value: rampColors },
       uExplode: { value: 0 },
-      uFresnel: { value: 0.85 },
-      uRadialAlpha: { value: 0.55 },
-      uBurstFade: { value: 1 }
+      uFresnel: { value: 0.6 }, // rim now feeds emissive only
+      uSeamW: { value: 0.052 }, // seam half-width (arc radians) - TUNABLE
+      uSeamDark: { value: 0.86 } // how near-black the seam goes 0..1 - TUNABLE
     };
 
     voxMat.onBeforeCompile = (shader) => {
@@ -275,48 +309,58 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       shader.uniforms.uRamp = ballUniforms.uRamp;
       shader.uniforms.uExplode = ballUniforms.uExplode;
       shader.uniforms.uFresnel = ballUniforms.uFresnel;
-      shader.uniforms.uRadialAlpha = ballUniforms.uRadialAlpha;
-      shader.uniforms.uBurstFade = ballUniforms.uBurstFade;
+      shader.uniforms.uSeamW = ballUniforms.uSeamW;
+      shader.uniforms.uSeamDark = ballUniforms.uSeamDark;
 
-      // Heat ramp + fresnel + per-voxel alpha all resolved in the vertex stage
-      // (voxels are tiny - per-vertex is indistinguishable from per-fragment and
-      // far cheaper / version-robust). Anchors used are stable three includes.
+      // Solid basketball: panel green + recessed 8-panel seams (three mutually
+      // perpendicular great circles, |n.x|/|n.y|/|n.z|) resolved in the vertex
+      // stage. All colour derives from the green token ramp - no hardcoded hex.
       shader.vertexShader =
         'attribute vec3 aBaseDir;\nattribute float aRand;\n' +
-        'uniform float uTime;\nuniform float uExplode;\nuniform float uRadialAlpha;\nuniform float uBurstFade;\nuniform vec3 uRamp[6];\n' +
-        'varying vec3 vBuzz;\nvarying float vFresnel;\nvarying float vFade;\nvarying float vRand;\n' +
-        'vec3 buzzRamp(float t){ t = clamp(t,0.0,1.0)*5.0; float i = floor(t);\n' +
-        '  int idx = int(i); float f = smoothstep(0.0,1.0, t - i);\n' +
-        '  vec3 a = uRamp[idx]; vec3 b = uRamp[idx>=5?5:idx+1]; return mix(a,b,f); }\n' +
+        'uniform float uTime;\nuniform float uExplode;\nuniform float uSeamW;\nuniform float uSeamDark;\nuniform vec3 uRamp[6];\n' +
+        'varying vec3 vPanel;\nvarying vec3 vSeamCol;\nvarying float vSeam;\nvarying float vSeamCore;\nvarying float vSeamAO;\nvarying float vFresnel;\nvarying float vRand;\n' +
+        'float bSeam(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
+        '  return 1.0 - smoothstep(w, w + max(w * 0.6, 0.012), dG); }\n' +
+        'float bSeamCore(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
+        '  return 1.0 - smoothstep(0.0, w * 0.5, dG); }\n' +
+        'float bSeamAO(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
+        '  return 1.0 - smoothstep(w + w * 0.6, w + w * 0.6 + 0.05, dG); }\n' +
         shader.vertexShader.replace(
           '#include <project_vertex>',
           '#include <project_vertex>\n' +
             '  vec3 vd = normalize(aBaseDir + vec3(1e-5));\n' +
-            '  float hh = fract(vd.y * 0.5 + 0.5 + uTime * 0.05);\n' +
-            '  vBuzz = buzzRamp(hh);\n' +
             '  vRand = aRand;\n' +
+            '  float tone = 0.18 + aRand * 0.20;\n' +
+            '  vPanel = mix(uRamp[2], uRamp[4], tone);\n' +
+            '  vSeamCol = mix(vPanel, vec3(0.0), uSeamDark);\n' +
+            '  vSeam = bSeam(vd, uSeamW);\n' +
+            '  vSeamCore = bSeamCore(vd, uSeamW);\n' +
+            '  vSeamAO = max(vSeam, bSeamAO(vd, uSeamW) * 0.55);\n' +
             '  vec3 nrmV = normalize(transformedNormal);\n' +
             '  vec3 viewV = normalize(-mvPosition.xyz);\n' +
-            '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.4);\n' +
-            '  float w = aRand * 0.42;\n' +
-            '  float radialAlpha = mix(1.0, smoothstep(0.08, 0.72, abs(vd.z)), uRadialAlpha);\n' +
-            '  vFade = radialAlpha * uBurstFade * (1.0 - smoothstep(w, w + 0.5, uExplode));\n'
+            '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.6);\n'
         );
 
       shader.fragmentShader =
         'uniform float uFresnel;\n' +
-        'varying vec3 vBuzz;\nvarying float vFresnel;\nvarying float vFade;\nvarying float vRand;\n' +
+        'varying vec3 vPanel;\nvarying vec3 vSeamCol;\nvarying float vSeam;\nvarying float vSeamCore;\nvarying float vSeamAO;\nvarying float vFresnel;\nvarying float vRand;\n' +
         shader.fragmentShader
           .replace(
-            'vec3 totalEmissiveRadiance = emissive;',
-            'vec3 totalEmissiveRadiance = emissive + vBuzz * (0.10 + vRand * 0.06 + vFresnel * uFresnel);'
+            '#include <color_fragment>',
+            '#include <color_fragment>\n' +
+              '  vec3 ballCol = mix(vPanel, vSeamCol, vSeam);\n' +
+              '  ballCol = mix(ballCol, vSeamCol, vSeamCore * 0.55);\n' +
+              '  ballCol *= (1.0 - vSeamAO * 0.30);\n' +
+              '  diffuseColor.rgb = ballCol;\n' +
+              '  diffuseColor.a = 1.0;\n'
           )
           .replace(
-            '#include <color_fragment>',
-            '#include <color_fragment>\n  diffuseColor.rgb = vBuzz;\n  diffuseColor.a *= vFade;'
+            'vec3 totalEmissiveRadiance = emissive;',
+            'float panelLit = 1.0 - vSeam;\n' +
+              '  vec3 totalEmissiveRadiance = emissive + vPanel * (0.05 + vRand * 0.03 + vFresnel * uFresnel * 0.5) * panelLit;'
           );
     };
-    voxMat.customProgramCacheKey = () => 'voxelBuzzExplode';
+    voxMat.customProgramCacheKey = () => 'voxelBasketballSolid';
 
     const ball = new THREE.InstancedMesh(voxGeo, voxMat, vox.count);
     ball.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -344,7 +388,11 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       const angle = local * (2.0 + vox.rand[i] * 3.2);
       axTmp.set(vox.axis[i * 3], vox.axis[i * 3 + 1], vox.axis[i * 3 + 2]);
       qTmp.setFromAxisAngle(axTmp, angle);
-      const s = vox.scl[i] * (1 - local * 0.45);
+      // SHRINK-TO-ZERO burst: opaque voxels cannot alpha-fade, so each holds
+      // size through early flight then smoothsteps its scale to exactly 0.
+      const start = 0.35 + vox.rand[i] * 0.15;
+      const shrink = 1 - smooth(start, 1, local);
+      const s = vox.scl[i] * shrink;
       sTmp.set(s, s, s);
       m4.compose(pTmp, qTmp, sTmp);
       ball.setMatrixAt(i, m4);
@@ -466,7 +514,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const resize = () => {
       const w = container.clientWidth || 1;
       const h = container.clientHeight || 1;
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, vox.pixelRatioCap));
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
@@ -482,13 +530,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const poseScene = (p: number, t: number) => {
       const isNarrow = camera.aspect < 0.72;
       const explode = bandProgress(HERO_BANDS.burst, p);
-      const burstFade = 1 - bandProgress(HERO_BANDS.burstFade, p) * 0.9;
       ballUniforms.uExplode.value = explode;
       ballUniforms.uTime.value = t;
-      ballUniforms.uFresnel.value = lerp(0.72, 1.28, explode);
-      ballUniforms.uRadialAlpha.value = lerp(0.55, 0.2, explode);
-      ballUniforms.uBurstFade.value = burstFade * lerp(0.85, 0.48, explode);
-      voxMat.opacity = lerp(0.62, 0.46, explode);
+      ballUniforms.uFresnel.value = lerp(0.6, 0.95, explode);
       applyExplosion(explode);
 
       // The ball starts at visual center. The frosted copy layer handles legibility.

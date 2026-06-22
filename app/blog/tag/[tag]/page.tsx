@@ -96,7 +96,7 @@ export default async function TagPage({ params }: PageProps) {
   return (
     <EditorialShell
       labelledBy="tag-title"
-      eyebrow="Topic dossier"
+      eyebrow="By topic"
       title={label}
       description={`${posts.length} ${posts.length === 1 ? 'dispatch' : 'dispatches'} on ${label.toLowerCase()} in the AI-native sports social shift.`}
       breadcrumbs={[

@@ -33,20 +33,11 @@ export function EditorialShell({
     <section
       aria-labelledby={labelledBy}
       className={cn(
-        'relative isolate overflow-hidden bg-[#090e13] text-white',
+        'relative isolate bg-canvas text-foreground',
         className
       )}
     >
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,#0f151c_0%,#090e13_46%,#11161d_100%)]"
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 opacity-[0.18] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]"
-      />
-
-      <div className={cn('mx-auto w-full max-w-[1200px] px-6 pb-20 pt-24 md:pb-28 md:pt-32', contentClassName)}>
+      <div className={cn('mx-auto w-full max-w-[1200px] px-6 pb-24 pt-24 md:pb-32 md:pt-32', contentClassName)}>
         {prelude}
 
         <div className="mb-10">
@@ -61,13 +52,13 @@ export function EditorialShell({
             <h1
               id={labelledBy}
               className={cn(
-                'mt-4 text-[40px] font-semibold leading-[1.02] tracking-[0] text-white md:text-[64px]',
+                'mt-4 text-[40px] font-semibold leading-[1.02] tracking-[-0.02em] text-foreground md:text-[64px]',
                 titleClassName
               )}
             >
               {title}
             </h1>
-            <p className="mt-5 max-w-[680px] text-[17px] leading-[1.6] tracking-[0] text-white/62 md:text-[19px]">
+            <p className="mt-5 max-w-[680px] text-[17px] leading-[1.6] tracking-[0] text-muted md:text-[19px]">
               {description}
             </p>
           </div>

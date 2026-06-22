@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import { type CSSProperties, useState } from 'react';
 import { Section } from '@/components/ui/Section';
-import { VideoSurface } from '@/components/ui/VideoSurface';
 import { cn } from '@/components/utils';
 import { LEAGUE_COUNT, type LeagueStatus } from '@/src/lib/constants';
 import { LEAGUE_ORBIT_ITEMS, type LeagueOrbitItem } from '@/src/lib/leagueMedia';
@@ -40,13 +39,16 @@ function getOrbitRing(index: number) {
   return ORBIT_RINGS.find((ring) => index >= ring.start && index < ring.start + ring.count) ?? ORBIT_RINGS[ORBIT_RINGS.length - 1];
 }
 
+// Position a node on its ring. The enclosing .orbit-spin layer rotates the whole
+// ring; this only places the node at its fixed angle and radius. The node's own
+// upright correction is handled by the .orbit-node-counter wrapper inside.
 function getOrbitStyle(index: number): OrbitNodeStyle {
   const ring = getOrbitRing(index);
   const position = index - ring.start;
   const angle = -90 + ring.offset + (position / ring.count) * 360;
 
   return {
-    transform: `translate(-50%, -50%) rotate(${angle}deg) translateX(${ring.radius}) rotate(${-angle}deg)`,
+    transform: `rotate(${angle}deg) translateX(${ring.radius}) rotate(${-angle}deg)`,
     '--orbit-delay': `${index * 18}ms`
   };
 }
@@ -58,7 +60,7 @@ function OrbitRingLines() {
         <div
           key={ring.ring}
           aria-hidden
-          className="absolute left-1/2 top-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle,rgba(0,194,100,0.045),transparent_64%)]"
+          className="orbit-ring-line absolute left-1/2 top-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle,rgba(0,194,100,0.045),transparent_64%)]"
           style={{
             height: `calc(${ring.radius} * 2)`,
             transform: 'translate(-50%, -50%)',
@@ -74,51 +76,56 @@ function LeagueNode({
   index,
   isActive,
   item,
-  onActivate
+  onActivate,
+  ring
 }: {
   index: number;
   isActive: boolean;
   item: LeagueOrbitItem;
   onActivate: () => void;
+  ring: number;
 }) {
   const hasLogo = Boolean(item.logo);
 
   return (
-    <li className="absolute left-1/2 top-1/2 z-20" style={getOrbitStyle(index)}>
-      <button
-        type="button"
-        aria-pressed={isActive}
-        aria-label={`${item.league.long}, ${item.sportLabel}`}
-        className={cn(
-          'group flex h-[58px] items-center justify-center rounded-[16px] border px-2 text-center transition-[border-color,background-color,box-shadow,color] duration-200 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
-          hasLogo ? 'w-[58px]' : 'w-[86px]',
-          isActive
-            ? 'border-accent/80 bg-accent/14 text-white shadow-[0_0_34px_rgba(0,194,100,0.28)]'
-            : 'border-white/10 bg-white/[0.055] text-white/72 shadow-[0_16px_40px_rgba(0,0,0,0.28)] hover:border-accent/50 hover:bg-white/[0.08] hover:text-white'
-        )}
-        data-testid={`league-orbit-trigger-${item.league.label}`}
-        onClick={onActivate}
-        onFocus={onActivate}
-        onMouseEnter={onActivate}
-      >
-        {item.logo ? (
-          <>
-            <Image
-              src={item.logo}
-              alt=""
-              width={34}
-              height={34}
-              sizes="34px"
-              className="h-[34px] w-[34px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]"
-            />
-            <span className="sr-only">{item.league.label}</span>
-          </>
-        ) : (
-          <span className="line-clamp-2 font-mono text-[9px] font-semibold uppercase leading-[1.05] tracking-[0.06em]">
-            {item.fallbackLabel}
-          </span>
-        )}
-      </button>
+    <li className="absolute left-0 top-0 z-20" style={getOrbitStyle(index)}>
+      {/* Counter-rotates against the ring's spin layer so the button stays upright. */}
+      <div className={cn('orbit-node-counter -translate-x-1/2 -translate-y-1/2', `orbit-node-counter-${ring}`)}>
+        <button
+          type="button"
+          aria-pressed={isActive}
+          aria-label={`${item.league.long}, ${item.sportLabel}`}
+          className={cn(
+            'orbit-node group flex h-[58px] items-center justify-center rounded-[16px] border px-2 text-center focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
+            hasLogo ? 'w-[58px]' : 'w-[86px]',
+            isActive
+              ? 'orbit-node--active border-accent/80 bg-accent/14 text-foreground shadow-[0_0_34px_rgba(0,194,100,0.28)]'
+              : 'border-white/10 bg-white/[0.055] text-muted shadow-[0_16px_40px_rgba(0,0,0,0.28)]'
+          )}
+          data-testid={`league-orbit-trigger-${item.league.label}`}
+          onClick={onActivate}
+          onFocus={onActivate}
+          onMouseEnter={onActivate}
+        >
+          {item.logo ? (
+            <>
+              <Image
+                src={item.logo}
+                alt=""
+                width={34}
+                height={34}
+                sizes="34px"
+                className="h-[34px] w-[34px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]"
+              />
+              <span className="sr-only">{item.league.label}</span>
+            </>
+          ) : (
+            <span className="line-clamp-2 font-mono text-[9px] font-semibold uppercase leading-[1.05] tracking-[0.06em]">
+              {item.fallbackLabel}
+            </span>
+          )}
+        </button>
+      </div>
     </li>
   );
 }
@@ -134,16 +141,35 @@ function MobileLeagueRail({
 }) {
   return (
     <div className="mt-8 lg:hidden">
-      <VideoSurface
-        key={activeItem.league.label}
-        description={activeItem.media.description}
-        eyebrow={activeItem.media.eyebrow}
-        fallbackUrl={activeItem.media.fallbackUrl}
-        posterAlt={activeItem.media.posterAlt}
-        posterSrc={activeItem.media.posterSrc}
-        title={activeItem.media.title}
-        youtubeId={activeItem.media.youtubeId}
-      />
+      <div className="orbit-aura mx-auto aspect-square w-[min(280px,72vw)]">
+        <div aria-hidden className="orbit-aura__bloom" />
+        <div aria-hidden className="orbit-aura__core" />
+        <div aria-hidden className="orbit-aura__grain" />
+        <div aria-hidden className="orbit-aura__vignette" />
+        <div className="orbit-aura__logo text-center">
+          {activeItem.logo ? (
+            <Image
+              src={activeItem.logo}
+              alt=""
+              width={72}
+              height={72}
+              sizes="72px"
+              className="h-[72px] w-[72px] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.5)]"
+            />
+          ) : (
+            <span className="font-mono text-[18px] font-semibold uppercase tracking-[0.04em] text-foreground">
+              {activeItem.league.label}
+            </span>
+          )}
+          <p className="mt-3 text-[15px] font-semibold leading-none tracking-[0] text-foreground">
+            {activeItem.league.long}
+          </p>
+          <span className="mt-2 inline-flex items-center gap-1.5 rounded-full border border-accent/35 bg-accent/10 px-2.5 py-1 font-mono text-[10px] uppercase leading-none tracking-[0.12em] text-accent-text">
+            <span aria-hidden className="orbit-live-dot" />
+            {STATUS_LABEL[activeItem.league.status]}
+          </span>
+        </div>
+      </div>
 
       <div className="-mx-6 mt-5 overflow-x-auto px-6 pb-2">
         <ul className="flex snap-x gap-2">
@@ -156,10 +182,10 @@ function MobileLeagueRail({
                   type="button"
                   aria-pressed={isActive}
                   className={cn(
-                    'flex min-h-[58px] min-w-[118px] items-center gap-2 rounded-[16px] border px-3 text-left transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
+                    'orbit-rail-node flex min-h-[58px] min-w-[118px] items-center gap-2 rounded-[16px] border px-3 text-left focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
                     isActive
                       ? 'border-accent/80 bg-accent text-on-accent'
-                      : 'border-white/10 bg-white/[0.055] text-white/72'
+                      : 'border-white/10 bg-white/[0.055] text-muted'
                   )}
                   data-testid={`league-orbit-mobile-trigger-${item.league.label}`}
                   onClick={() => setActiveLabel(item.league.label)}
@@ -178,7 +204,7 @@ function MobileLeagueRail({
                     <span className="block truncate font-mono text-[11px] font-semibold uppercase tracking-[0.08em]">
                       {item.league.label}
                     </span>
-                    <span className={cn('mt-1 block text-[11px]', isActive ? 'text-on-accent/70' : 'text-white/46')}>
+                    <span className={cn('mt-1 block text-[11px]', isActive ? 'text-on-accent/70' : 'text-muted/70')}>
                       {STATUS_LABEL[item.league.status]}
                     </span>
                   </span>
@@ -224,50 +250,63 @@ export function LeagueOrbit() {
         </p>
       </header>
 
-      <div className="relative mt-12 hidden min-h-[920px] lg:block">
-        <div
-          aria-hidden
-          className="absolute left-1/2 top-1/2 h-[520px] w-[520px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/12 blur-[92px]"
-        />
+      <div className="orbit-stage relative mt-12 hidden min-h-[920px] lg:block">
+        <div aria-hidden className="orbit-core-glow" />
         <OrbitRingLines />
 
-        <div className="absolute left-1/2 top-1/2 z-10 w-[min(456px,38vw)] -translate-x-1/2 -translate-y-1/2">
-          <div className="mb-3 flex items-center justify-between gap-3 rounded-[16px] border border-white/10 bg-[#090e13]/82 px-4 py-3 shadow-[0_24px_70px_rgba(0,0,0,0.38)] backdrop-blur-xl">
-            <div className="min-w-0">
-              <p className="font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-white/42">
-                Focused league
-              </p>
-              <p className="mt-2 truncate text-[18px] font-semibold leading-none tracking-[0] text-white">
-                {activeItem.league.long}
-              </p>
-            </div>
-            <span className="shrink-0 rounded-full border border-accent/35 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-accent-text">
+        {/* Galaxy core: active league logo inside a grained green aura.
+            Sized + centered purely in CSS (.orbit-aura) so it locks to the
+            dead center of the rings regardless of content height. */}
+        <div className="orbit-aura z-10">
+          <div aria-hidden className="orbit-aura__bloom" />
+          <div aria-hidden className="orbit-aura__core" />
+          <div aria-hidden className="orbit-aura__grain" />
+          <div aria-hidden className="orbit-aura__vignette" />
+          <div key={activeItem.league.label} className="orbit-aura__logo text-center">
+            {activeItem.logo ? (
+              <Image
+                src={activeItem.logo}
+                alt=""
+                width={96}
+                height={96}
+                sizes="96px"
+                className="h-[96px] w-[96px] object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
+              />
+            ) : (
+              <span className="font-mono text-[24px] font-semibold uppercase tracking-[0.04em] text-foreground">
+                {activeItem.league.label}
+              </span>
+            )}
+            <p className="mt-4 text-[19px] font-semibold leading-none tracking-[0] text-foreground">
+              {activeItem.league.long}
+            </p>
+            <span className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-accent/35 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-accent-text">
+              <span aria-hidden className="orbit-live-dot" />
               {STATUS_LABEL[activeItem.league.status]}
             </span>
           </div>
-
-          <VideoSurface
-            key={activeItem.league.label}
-            className="shadow-[0_30px_90px_rgba(0,0,0,0.45)]"
-            description={activeItem.media.description}
-            eyebrow={activeItem.media.eyebrow}
-            fallbackUrl={activeItem.media.fallbackUrl}
-            posterAlt={activeItem.media.posterAlt}
-            posterSrc={activeItem.media.posterSrc}
-            title={activeItem.media.title}
-            youtubeId={activeItem.media.youtubeId}
-          />
         </div>
 
+        {/* One spinning layer per ring; nodes counter-rotate to stay upright. */}
         <ul className="absolute inset-0" aria-label="Covered leagues">
-          {items.map((item, index) => (
-            <LeagueNode
-              key={item.league.label}
-              index={index}
-              isActive={item.league.label === activeItem.league.label}
-              item={item}
-              onActivate={() => setActiveLabel(item.league.label)}
-            />
+          {ORBIT_RINGS.map((ring) => (
+            <li key={ring.ring} className={cn('orbit-spin', `orbit-spin-${ring.ring}`)}>
+              <ul>
+                {items
+                  .map((item, index) => ({ item, index }))
+                  .filter(({ index }) => index >= ring.start && index < ring.start + ring.count)
+                  .map(({ item, index }) => (
+                    <LeagueNode
+                      key={item.league.label}
+                      index={index}
+                      ring={ring.ring}
+                      isActive={item.league.label === activeItem.league.label}
+                      item={item}
+                      onActivate={() => setActiveLabel(item.league.label)}
+                    />
+                  ))}
+              </ul>
+            </li>
           ))}
         </ul>
       </div>

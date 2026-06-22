@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { CalloutCard } from '@/components/ui/CalloutCard';
 import { Badge } from '@/components/ui/Badge';
+import { ScrollReveal } from '@/components/ScrollReveal';
 import { getLeagueLogo } from '@/src/lib/leagueLogos';
 import { LEAGUE_COUNT } from '@/src/lib/constants';
 
@@ -25,34 +26,40 @@ const CLIPS: Clip[] = [
 export function Highlights() {
   return (
     <Section id="highlights" aria-labelledby="highlights-title">
-      <header className="mb-10 grid gap-4 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-12">
-        <div>
+      <ScrollReveal>
+        <header className="mb-12 grid gap-5 lg:grid-cols-[1.1fr_0.9fr] lg:items-end lg:gap-12">
           <h2
             id="highlights-title"
-            className="mt-3 max-w-[18ch] text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
+            className="max-w-[18ch] text-balance text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.045em] text-foreground"
           >
             Wake up. Watch last night.
           </h2>
-        </div>
-        <p className="max-w-[36ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted lg:text-right">
-          Post-game highlights. Linked from official channels.
-        </p>
-      </header>
+          <p className="max-w-[36ch] text-[16px] leading-[1.5] tracking-[-0.025em] text-muted lg:text-right">
+            Post-game highlights. Linked from official channels.
+          </p>
+        </header>
+      </ScrollReveal>
 
-      <CalloutCard className="mb-3 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Fact value="Live"     label="on-demand" />
-        <Fact value="12"       label="sports covered" />
-        <Fact value={String(LEAGUE_COUNT)} label="leagues" />
-        <Fact value="Quick"    label="recaps" />
-      </CalloutCard>
+      <ScrollReveal delay={1}>
+        <CalloutCard className="mb-4 grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-4 md:gap-x-8">
+          <Fact value="Live"     label="on-demand" />
+          <Fact value="12"       label="sports covered" />
+          <Fact value={String(LEAGUE_COUNT)} label="leagues" />
+          <Fact value="Quick"    label="recaps" />
+        </CalloutCard>
+      </ScrollReveal>
 
-      <ul role="list" className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-        {CLIPS.map((c) => (
-          <li key={c.matchup}><ClipCard clip={c} /></li>
+      <ul role="list" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {CLIPS.map((c, i) => (
+          <li key={c.matchup}>
+            <ScrollReveal delay={(Math.min(i + 2, 6)) as 2 | 3 | 4 | 5 | 6} className="h-full">
+              <ClipCard clip={c} />
+            </ScrollReveal>
+          </li>
         ))}
       </ul>
 
-      <p className="mt-6 text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
+      <p className="mt-8 text-[14px] leading-[1.43] tracking-[0.01em] text-whisper">
         Official channels. We link out, never rehost.
       </p>
     </Section>
@@ -62,12 +69,11 @@ export function Highlights() {
 function ClipCard({ clip }: { clip: Clip }) {
   const logo = getLeagueLogo(clip.league);
   return (
-    <CalloutCard className="group flex flex-col overflow-hidden p-0">
-      <div className="relative aspect-video w-full overflow-hidden border-b border-border">
+    <CalloutCard className="group flex h-full flex-col overflow-hidden p-0">
+      <div className="relative aspect-video w-full overflow-hidden border-b border-border bg-canvas">
         <div
           aria-hidden
-          className="absolute inset-0"
-          style={{ background: 'linear-gradient(150deg, #0c1a12 0%, #08090b 55%, #0a120c 100%)' }}
+          className="absolute inset-0 bg-[radial-gradient(120%_120%_at_15%_0%,rgba(0,194,100,0.12),transparent_55%)]"
         />
         {logo && (
           <Image
@@ -77,12 +83,12 @@ function ClipCard({ clip }: { clip: Clip }) {
             width={150}
             height={150}
             sizes="150px"
-            className="pointer-events-none absolute -bottom-5 -right-5 h-[150px] w-[150px] object-contain opacity-[0.16]"
+            className="pointer-events-none absolute -bottom-5 -right-5 h-[150px] w-[150px] object-contain opacity-[0.16] transition-opacity duration-200 ease-out group-hover:opacity-[0.22]"
           />
         )}
 
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="flex h-12 w-12 items-center justify-center border border-border bg-black/30 text-foreground backdrop-blur-sm transition-colors group-hover:border-accent group-hover:bg-accent/10 group-hover:text-accent">
+          <span className="flex h-12 w-12 items-center justify-center border border-border bg-canvas/40 text-foreground backdrop-blur-sm transition-[transform,border-color,background-color,color] duration-200 ease-out group-hover:border-accent group-hover:bg-accent/10 group-hover:text-accent [@media(hover:hover)]:group-hover:scale-[1.06] group-active:scale-[0.97]">
             <svg width="13" height="15" viewBox="0 0 13 15" fill="none" aria-hidden>
               <path d="M1 1.2v12.6L12 7.5z" fill="currentColor" />
             </svg>
@@ -105,16 +111,16 @@ function ClipCard({ clip }: { clip: Clip }) {
           {clip.duration}
         </div>
       </div>
-      <div className="flex flex-col gap-1 p-4">
-        <h3 className="truncate text-[16px] font-semibold leading-[1.5] tracking-[-0.02em] text-foreground">
+      <div className="flex flex-1 flex-col gap-1.5 p-4">
+        <h3 className="truncate text-[16px] font-semibold leading-[1.4] tracking-[-0.02em] text-foreground">
           {clip.matchup}
         </h3>
-        <p className="truncate text-[14px] leading-[1.43] tracking-[0.1px] text-muted">
+        <p className="truncate text-[14px] leading-[1.43] tracking-[-0.005em] text-muted">
           {clip.subtitle}
         </p>
-        <div className="mt-1 flex items-center justify-between font-mono text-[11px] tracking-[0.1em] text-muted">
+        <div className="mt-auto flex items-center justify-between pt-2 font-mono text-[11px] tracking-[0.1em] text-muted">
           <span>{clip.views} views</span>
-          <span>OFFICIAL</span>
+          <span className="text-whisper">OFFICIAL</span>
         </div>
       </div>
     </CalloutCard>
@@ -123,8 +129,8 @@ function ClipCard({ clip }: { clip: Clip }) {
 
 function Fact({ value, label }: { value: string; label: string }) {
   return (
-    <div className="flex flex-col gap-1">
-      <span className="score-mono text-[24px] leading-[1.2] tracking-[-0.025em] text-foreground">{value}</span>
+    <div className="flex flex-col gap-1.5">
+      <span className="score-mono text-[24px] leading-[1.1] tracking-[-0.03em] text-foreground">{value}</span>
       <Badge>{label}</Badge>
     </div>
   );

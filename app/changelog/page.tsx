@@ -193,6 +193,33 @@ const RELEASES: readonly Release[] = [
   }
 ];
 
+type ChangeTag = { label: string; className: string };
+
+const TAG_ADDED: ChangeTag = {
+  label: 'Added',
+  className: 'border-accent/30 bg-accent/[0.08] text-accent-text'
+};
+const TAG_IMPROVED: ChangeTag = {
+  label: 'Improved',
+  className: 'border-white/12 bg-white/[0.04] text-foreground/75'
+};
+const TAG_FIXED: ChangeTag = {
+  label: 'Fixed',
+  className: 'border-white/12 bg-white/[0.02] text-muted'
+};
+
+// Map a release group to a restrained change tag for the changelog timeline.
+function groupTag(title: string): ChangeTag {
+  const key = title.toLowerCase();
+  if (key.includes('buzzr bets') || key.includes('detail') || key.includes('feed') || key.includes('scroll')) {
+    return TAG_ADDED;
+  }
+  if (key.includes('design') || key.includes('notification') || key.includes('rating')) {
+    return TAG_FIXED;
+  }
+  return TAG_IMPROVED;
+}
+
 export default function ChangelogPage() {
   const changelogLd = {
     '@context': 'https://schema.org',
@@ -211,89 +238,95 @@ export default function ChangelogPage() {
   return (
     <EditorialShell
       labelledBy="changelog-title"
-      eyebrow="Product dossier"
+      eyebrow="Release notes"
       title="What shipped in Buzzr."
-      description="Release notes for the AI-native sports social app, written as field files for fans and builders."
+      description="Every release that moved the app forward, from Scroll and dashboards to leagues and Buzzr Bets. Newest first."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Changelog' }]}
       prelude={<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(changelogLd) }} />}
       headerAside={
-        <div className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5">
-          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
-            Current file
+        <div className="lg:pl-8 lg:text-right">
+          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-muted">
+            Where it is now
           </p>
-          <p className="mt-3 text-[15px] leading-[1.6] tracking-[0] text-white/68">
-            Buzzr is converging Scroll, AI context, crews, dashboards, leagues, and DFS slip tracking into one sports graph.
+          <p className="mt-3 text-[15px] leading-[1.6] tracking-[0] text-foreground/75">
+            Scroll, AI context, crews, dashboards, leagues, and DFS slip tracking are converging into one sports graph.
           </p>
           <a
             href={APP_STORE_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-full bg-accent px-4 py-2.5 text-[14px] font-semibold leading-none tracking-[0] text-on-accent transition-colors hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="mt-5 inline-flex min-h-[44px] items-center justify-center rounded-full bg-accent px-4 py-2.5 text-[14px] font-semibold leading-none tracking-[0] text-on-accent transition-[transform,background-color] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] lg:ml-auto"
           >
             Get the app<span className="sr-only"> (opens in new tab)</span>
           </a>
         </div>
       }
     >
-      <ol className="release-timeline relative space-y-6 before:absolute before:bottom-0 before:left-[18px] before:top-0 before:w-px before:bg-white/10 md:before:left-[92px]">
-        {RELEASES.map((release) => (
-          <li key={release.version} className="relative grid gap-4 pl-12 md:grid-cols-[184px_minmax(0,1fr)] md:pl-0">
-            <div className="md:pr-8">
-              <div className="absolute left-0 top-1 h-9 w-9 rounded-full border border-accent/45 bg-[#090e13] shadow-[0_0_0_6px_rgba(0,194,100,0.08)] md:left-[74px]" aria-hidden />
-              <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
-                Buzzr {release.version}
-              </p>
-              <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/58">
+      <ol className="release-timeline relative space-y-0">
+        {RELEASES.map((release, index) => (
+          <li
+            key={release.version}
+            className="group relative grid gap-y-6 border-t border-white/10 py-12 first:border-t-0 first:pt-0 md:grid-cols-[200px_minmax(0,1fr)] md:gap-x-12 md:py-16 md:first:pt-2"
+          >
+            <div className="md:sticky md:top-24 md:self-start">
+              <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.14em] text-muted">
                 {release.date}
               </p>
+              <p className="mt-1 font-mono text-[13px] leading-[1.6] tracking-[0.04em] text-foreground/80">
+                Buzzr {release.version}
+              </p>
               {release.status ? (
-                <span className="mt-3 inline-flex rounded-full border border-accent/35 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-accent-text">
+                <span className="mt-4 inline-flex items-center rounded-full border border-accent/30 bg-accent/[0.08] px-2.5 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-accent-text">
                   {release.status}
                 </span>
               ) : null}
             </div>
 
-            <article className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5 md:p-7">
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-white/42">
-                  signal
-                </span>
-                <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-white/68">
-                  {release.signal}
-                </span>
-              </div>
-
-              <h2 className="mt-5 max-w-[18ch] text-[30px] font-semibold leading-[1.05] tracking-[0] text-white md:text-[42px]">
+            <article className="min-w-0">
+              <h2 className="max-w-[24ch] text-[26px] font-semibold leading-[1.12] tracking-[-0.02em] text-foreground md:text-[34px]">
                 {release.headline}
               </h2>
-              <p className="mt-4 max-w-[66ch] text-[16px] leading-[1.65] tracking-[0] text-white/62">
+              <p className="mt-4 max-w-[68ch] text-[16px] leading-[1.65] tracking-[0] text-muted">
                 {release.summary}
               </p>
+              <p className="mt-4 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-muted/80">
+                <span className="text-foreground/55">signal</span>{' '}
+                <span className="text-foreground/80">{release.signal}</span>
+              </p>
 
-              <div className="mt-7 divide-y divide-white/10 border-y border-white/10">
-                {release.groups.map((group) => (
-                  <section key={group.title} className="grid gap-4 py-5 md:grid-cols-[180px_minmax(0,1fr)]">
-                    <h3 className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white">
-                      {group.title}
-                    </h3>
-                    <ul className="space-y-3 text-[14px] leading-[1.6] tracking-[0] text-white/60">
-                      {group.items.map((item) => (
-                        <li key={item} className="flex gap-3">
-                          <span aria-hidden className="mt-[0.7em] h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </section>
-                ))}
+              <div className="mt-9 space-y-8">
+                {release.groups.map((group) => {
+                  const tag = groupTag(group.title);
+                  return (
+                    <section key={group.title}>
+                      <div className="flex items-center gap-3">
+                        <span className={`inline-flex items-center rounded-md border px-2 py-0.5 font-mono text-[11px] uppercase leading-none tracking-[0.1em] ${tag.className}`}>
+                          {tag.label}
+                        </span>
+                        <h3 className="text-[14px] font-medium leading-none tracking-[0] text-foreground/85">
+                          {group.title}
+                        </h3>
+                      </div>
+                      <ul className="mt-4 space-y-2.5 border-l border-white/10 pl-5 text-[15px] leading-[1.6] tracking-[0] text-muted">
+                        {group.items.map((item) => (
+                          <li key={item} className="relative">
+                            <span aria-hidden className="absolute -left-[21px] top-[0.62em] h-1.5 w-1.5 rounded-full bg-foreground/25" />
+                            {item}
+                          </li>
+                        ))}
+                      </ul>
+                    </section>
+                  );
+                })}
               </div>
 
               {release.technical?.length ? (
-                <details className="mt-5 border-t border-white/10 pt-5">
-                  <summary className="cursor-pointer font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/48">
+                <details className="group/notes mt-9 border-t border-white/10 pt-6">
+                  <summary className="flex cursor-pointer list-none items-center gap-2 font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-muted transition-colors duration-200 ease-out hover:text-foreground/80">
+                    <span aria-hidden className="text-foreground/40 transition-transform duration-200 ease-out group-open/notes:rotate-90">&rsaquo;</span>
                     Engineering notes
                   </summary>
-                  <ul className="mt-4 space-y-2 text-[13px] leading-[1.6] tracking-[0] text-white/52">
+                  <ul className="mt-4 space-y-2 pl-5 text-[13px] leading-[1.6] tracking-[0] text-muted/85">
                     {release.technical.map((item) => (
                       <li key={item}>{item}</li>
                     ))}

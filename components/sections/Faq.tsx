@@ -34,15 +34,21 @@ export function Faq() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }} />
 
       <header className="mb-10 max-w-[720px]">
+        <p className="font-mono text-[12px] uppercase tracking-[0.22em] text-whisper">
+          The rundown
+        </p>
         <h2
           id="faq-title"
           className="mt-3 text-[clamp(32px,4.5vw,48px)] font-bold uppercase leading-[0.95] tracking-[-0.04em] text-foreground"
         >
           Questions.
         </h2>
+        <p className="mt-4 text-[15px] leading-[1.6] text-muted">
+          Everything you want to know before you scroll, score, and start running your group chat.
+        </p>
       </header>
 
-      <div className="max-w-[860px]">
+      <div className="max-w-[860px] rounded-2xl border border-[rgba(255,255,255,0.08)] bg-[rgba(255,255,255,0.015)] px-5 sm:px-7">
         <FaqAccordion items={FAQS} />
       </div>
     </Section>

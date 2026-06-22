@@ -26,10 +26,10 @@ describe('editorial blog and changelog system', () => {
     expect(tagPage).toContain('EditorialShell');
   });
 
-  it('presents changelog entries as a dark product dossier timeline', () => {
+  it('presents changelog entries as a flat release-notes timeline', () => {
     const changelog = readSource('app/changelog/page.tsx');
 
-    expect(changelog).toContain('Product dossier');
+    expect(changelog).toContain('Release notes');
     expect(changelog).toContain('release-timeline');
     expect(changelog).toContain('signal');
   });

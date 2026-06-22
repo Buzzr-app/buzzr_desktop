@@ -8,7 +8,7 @@ import { EditorialTagRail } from '@/components/blog/EditorialTagRail';
 
 const PAGE_TITLE = `Blog · ${SITE_NAME}`;
 const PAGE_DESCRIPTION =
-  'Essays on AI-native sports social media, Scroll, dashboards, friends, leagues, and Buzzr Bets.';
+  'Quick reads on sports social: Scroll, dashboards, crews, leagues, and Buzzr Bets.';
 const URL = `${BASE_URL}/blog`;
 
 export const metadata: Metadata = {
@@ -94,9 +94,9 @@ export default function BlogIndexPage() {
   return (
     <EditorialShell
       labelledBy="blog-title"
-      eyebrow="Buzzr editorial"
+      eyebrow="Buzzr blog"
       title="The sports social notebook."
-      description="Short product essays on Scroll, Buzzr Score, crews, dashboards, leagues, and DFS slip tracking."
+      description="Quick reads on Scroll, Buzzr Score, crews, dashboards, leagues, and tracking your slips."
       breadcrumbs={[{ label: 'Home', href: '/' }, { label: 'Blog' }]}
       prelude={
         <>
@@ -106,17 +106,18 @@ export default function BlogIndexPage() {
         </>
       }
       headerAside={
-        <div className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5">
-          <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-white/45">
+        <div className="rounded-[14px] border border-border bg-surface p-6">
+          <p className="font-mono text-[11px] uppercase leading-none tracking-[0.14em] text-muted">
             Field notes
           </p>
-          <p className="mt-3 text-[15px] leading-[1.6] tracking-[0] text-white/68">
-            {posts.length} dispatches for fans building a smarter postgame habit.
+          <p className="mt-3.5 text-[15px] leading-[1.6] text-foreground/85">
+            {posts.length} posts on how Buzzr turns every game into a better hang.
           </p>
           <a
             href="/blog/rss.xml"
-            className="mt-5 inline-flex min-h-[40px] items-center rounded-full border border-white/14 px-3.5 py-2 text-[13px] font-medium leading-none tracking-[0] text-white transition-colors hover:border-white/32"
+            className="mt-5 inline-flex min-h-[40px] items-center gap-2 rounded-full border border-border px-4 py-2 text-[13px] font-medium leading-none text-foreground transition-[border-color,transform] duration-200 ease-[cubic-bezier(0.23,1,0.32,1)] hover:border-white/25 active:scale-[0.97]"
           >
+            <span aria-hidden className="size-1.5 rounded-full bg-accent" />
             RSS feed
           </a>
         </div>
@@ -124,7 +125,7 @@ export default function BlogIndexPage() {
     >
 
       {tagSlugs.length > 0 && (
-        <EditorialTagRail label="Topics" className="mb-8">
+        <EditorialTagRail label="Topics" className="mb-10">
           {tagSlugs.map((slug) => (
             <EditorialPill
               key={slug}
@@ -137,19 +138,27 @@ export default function BlogIndexPage() {
       )}
 
       {!leadPost ? (
-        <p className="rounded-[8px] border border-white/10 bg-white/[0.04] p-5 text-[15px] leading-[1.6] tracking-[0] text-white/62">
-          No posts yet.
+        <p className="rounded-[14px] border border-border bg-surface p-6 text-[15px] leading-[1.6] text-muted">
+          Nothing here yet. New posts drop soon.
         </p>
       ) : (
         <>
           <PostCard post={leadPost} priority variant="lead" />
 
           {restPosts.length > 0 ? (
-            <div className="mt-8 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {restPosts.map((post, i) => (
-                <PostCard key={post.slug} post={post} priority={i < 2} />
-              ))}
-            </div>
+            <>
+              <div className="mt-14 mb-7 flex items-center gap-4">
+                <h2 className="font-mono text-[11px] uppercase leading-none tracking-[0.14em] text-muted">
+                  More posts
+                </h2>
+                <span aria-hidden className="h-px flex-1 bg-border" />
+              </div>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {restPosts.map((post, i) => (
+                  <PostCard key={post.slug} post={post} priority={i < 2} />
+                ))}
+              </div>
+            </>
           ) : null}
         </>
       )}

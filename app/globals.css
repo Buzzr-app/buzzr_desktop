@@ -6,19 +6,21 @@
 
 /* Buzzr dark editorial tokens. One dark surface, one green accent, no runtime theme branch. */
 @theme {
-  --color-canvas:     #14181d;
-  --color-surface:    #1c222b;
-  --color-subtle:     #252e38;
-  --color-border:     #323b46;
+  /* Dark surfaces match the real Buzzr app (src/theme/palette.ts): warm
+     near-black, neutral greys - NOT the old blue-leaning steel. */
+  --color-canvas:     #0a0a0c;  /* app background */
+  --color-surface:    #191920;  /* app surface */
+  --color-subtle:     #26262e;  /* app surfaceElevated */
+  --color-border:     #2c2c33;  /* neutral hairline */
   --color-foreground: #f1efe9;
-  --color-muted:      #9aa3ad;
-  --color-whisper:    #6b747e;
+  --color-muted:      #9a9aa3;  /* neutralized (was blue-grey) */
+  --color-whisper:    #6c6c74;  /* neutralized (was blue-grey) */
 
-  --color-steel:         #0f1318;
-  --color-steel-surface: #1a2027;
-  --color-steel-border:  #2a323b;
+  --color-steel:         #060608;  /* sinks just below canvas */
+  --color-steel-surface: #17171c;
+  --color-steel-border:  #26262c;
   --color-on-steel:      #f3f0e9;
-  --color-on-steel-muted:#a7afb8;
+  --color-on-steel-muted:#a8a8b0;
 
   --color-accent:      #00c264;  /* brand green fill */
   --color-accent-dim:  #00a152;
@@ -214,7 +216,7 @@ h1, h2, h3, h4, h5, h6 {
 .landing-dark {
   background:
     radial-gradient(circle at 50% 6%, rgba(0, 194, 100, 0.12), transparent 34%),
-    linear-gradient(180deg, #10161d 0%, #111821 52%, #14181d 100%);
+    linear-gradient(180deg, #0c0c0f 0%, #0a0a0c 52%, #0a0a0c 100%);
 }
 
 /* Header glass and nested control radii. */
@@ -380,7 +382,7 @@ h1, h2, h3, h4, h5, h6 {
   padding: var(--phone-inset);
   background:
     linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.04) 32%, rgba(0, 194, 100, 0.18) 100%),
-    #0a0f12;
+    #0b0b0d;
   box-shadow:
     0 32px 90px -54px rgba(0, 194, 100, 0.95),
     0 18px 50px -38px rgba(0, 0, 0, 0.92),
@@ -392,7 +394,7 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   overflow: hidden;
   border-radius: var(--phone-screen-radius);
-  background: #030506;
+  background: #050506;
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.08),
     inset 0 24px 46px rgba(255, 255, 255, 0.08),
@@ -608,7 +610,7 @@ h1, h2, h3, h4, h5, h6 {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 45%, transparent 56%, #10161d 100%);
+  background: radial-gradient(ellipse at 50% 45%, transparent 56%, var(--color-canvas) 100%);
 }
 
 .hero-edge-blur {
@@ -650,4 +652,216 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-grain { animation: none; opacity: 0.04; }
+}
+
+/* ─── League galaxy (LeagueOrbit) ─────────────────────────────────────────────
+   Three hairline rings rotate at differential speed like a galaxy; the middle
+   ring counter-rotates. Each ring's node layer spins, and every node counter-
+   spins by the same duration so logos/labels stay upright. The center holds the
+   active league logo inside a grained green aura (sun at the galaxy's core).
+   Transform/opacity only; all colour via tokens. */
+@keyframes orbit-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to   { transform: translate(-50%, -50%) rotate(360deg); }
+}
+@keyframes orbit-spin-reverse {
+  from { transform: translate(-50%, -50%) rotate(360deg); }
+  to   { transform: translate(-50%, -50%) rotate(0deg); }
+}
+@keyframes orbit-node-counter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@keyframes orbit-node-counter-reverse {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Soft green glow behind the core, anchored dead-center of the stage. */
+.orbit-stage { --orbit-core: min(320px, 26vw); }
+.orbit-core-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 520px;
+  width: 520px;
+  transform: translate(-50%, -50%);
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--color-accent) 12%, transparent);
+  filter: blur(92px);
+  pointer-events: none;
+}
+
+/* Spinning node layers (one per ring). The layer is a zero-size point at center;
+   nodes are positioned absolutely off it via getOrbitStyle. */
+.orbit-spin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: 0;
+  width: 0;
+  transform: translate(-50%, -50%);
+  transform-origin: center;
+  will-change: transform;
+}
+.orbit-spin-0 { animation: orbit-spin 92s linear infinite; }
+.orbit-spin-1 { animation: orbit-spin-reverse 134s linear infinite; }
+.orbit-spin-2 { animation: orbit-spin 172s linear infinite; }
+
+/* Counter-spin keeps each node upright at the ring's own duration/direction. */
+.orbit-node-counter { will-change: transform; }
+.orbit-node-counter-0 { animation: orbit-node-counter 92s linear infinite; }
+.orbit-node-counter-1 { animation: orbit-node-counter-reverse 134s linear infinite; }
+.orbit-node-counter-2 { animation: orbit-node-counter 172s linear infinite; }
+
+/* The hairline rings themselves drift slowly too, so the whole field feels alive. */
+.orbit-ring-line { animation: orbit-spin 220s linear infinite; }
+
+/* Node micro-interaction (Emil): transform/opacity only, custom ease-out, press
+   feedback. A staggered reveal fades nodes up on first paint. Hover gated. */
+.orbit-node {
+  opacity: 0;
+  transform: translateY(6px) scale(0.96);
+  animation: orbit-node-in 460ms cubic-bezier(0.23, 1, 0.32, 1) forwards;
+  animation-delay: var(--orbit-delay, 0ms);
+  transition:
+    border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    box-shadow 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    color 200ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+@keyframes orbit-node-in {
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.orbit-node:active { transform: scale(0.95); }
+@media (hover: hover) and (pointer: fine) {
+  .orbit-node:not(.orbit-node--active):hover {
+    border-color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+    background-color: rgb(255 255 255 / 0.08);
+    color: var(--color-foreground);
+  }
+}
+
+/* Mobile rail node press feedback (Emil). */
+.orbit-rail-node {
+  transition:
+    border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 150ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.orbit-rail-node:active { transform: scale(0.97); }
+
+/* LIVE chip pulse dot - opacity-only so reduced-motion can freeze it. */
+.orbit-live-dot {
+  height: 6px;
+  width: 6px;
+  border-radius: 999px;
+  background: var(--color-accent-text);
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--color-accent) 60%, transparent);
+  animation: orbit-live-pulse 2.4s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+}
+@keyframes orbit-live-pulse {
+  0%, 100% { opacity: 0.55; }
+  50%      { opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-spin-0, .orbit-spin-1, .orbit-spin-2,
+  .orbit-node-counter-0, .orbit-node-counter-1, .orbit-node-counter-2,
+  .orbit-ring-line,
+  .orbit-live-dot {
+    animation: none;
+  }
+  .orbit-node {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+  .orbit-live-dot { opacity: 0.9; }
+}
+
+/* ── Grained aura at the galaxy core ──────────────────────────────────────────
+   On the desktop stage the aura is absolutely locked to the dead-center of the
+   rings. We size it as an explicit square (no aspect-ratio height resolution,
+   which collapses under position:absolute + display:grid and was floating the
+   lockup up into the heading). The logo block is centered within. */
+.orbit-stage .orbit-aura {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  height: var(--orbit-core);
+  width: var(--orbit-core);
+  transform: translate(-50%, -50%);
+}
+.orbit-aura {
+  position: relative;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+/* Soft green bloom (token-derived), gently breathing. */
+.orbit-aura__bloom {
+  position: absolute;
+  inset: -40%;
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-accent) 36%, transparent), transparent 58%),
+    radial-gradient(circle at 50% 44%, color-mix(in oklab, var(--color-accent-text) 22%, transparent), transparent 46%);
+  filter: blur(46px);
+  opacity: 0.85;
+  pointer-events: none;
+  animation: orbit-aura-breathe 9s ease-in-out infinite;
+}
+@keyframes orbit-aura-breathe {
+  0%, 100% { opacity: 0.7;  transform: scale(0.96); }
+  50%      { opacity: 0.95; transform: scale(1.04); }
+}
+/* Tight inner core glow so the logo reads against the bloom. */
+.orbit-aura__core {
+  position: absolute;
+  inset: 8%;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-accent) 20%, transparent), transparent 66%);
+  pointer-events: none;
+}
+/* Film grain over the aura - monochrome turbulence, screen-blended so the green shows through. */
+.orbit-aura__grain {
+  position: absolute;
+  inset: -40%;
+  border-radius: 999px;
+  pointer-events: none;
+  opacity: 0.16;
+  mix-blend-mode: screen;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='og'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23og)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 28%, transparent 70%);
+          mask-image: radial-gradient(circle at 50% 50%, #000 28%, transparent 70%);
+  animation: orbit-grain-drift 7s steps(6) infinite;
+}
+@keyframes orbit-grain-drift {
+  0%   { background-position: 0 0; }
+  25%  { background-position: 5px -5px; }
+  50%  { background-position: -5px 5px; }
+  75%  { background-position: 5px 5px; }
+  100% { background-position: 0 0; }
+}
+/* Subtle vignette so the core sinks into the canvas at its edges. */
+.orbit-aura__vignette {
+  position: absolute;
+  inset: -40%;
+  border-radius: 999px;
+  pointer-events: none;
+  background: radial-gradient(circle at 50% 50%, transparent 52%, var(--color-canvas) 86%);
+}
+/* The logo / wordmark sits above all aura layers. */
+.orbit-aura__logo {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .orbit-aura__bloom { animation: none; opacity: 0.82; }
+  .orbit-aura__grain { animation: none; }
 }

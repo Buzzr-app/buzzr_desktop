@@ -5,6 +5,7 @@ type Surface = {
   title: string;
   body: string;
   shot: string;
+  featured?: boolean;
   className?: string;
   imageClassName?: string;
 };
@@ -14,6 +15,7 @@ const SURFACES: readonly Surface[] = [
     title: 'AI Feed',
     body: 'Ratings, recaps, news, and friend signals in one sports graph.',
     shot: '/app-screens/feed.png',
+    featured: true,
     className: 'md:col-span-2 md:row-span-2',
     imageClassName: 'object-top'
   },
@@ -75,7 +77,7 @@ function SurfaceCard({ surface }: { surface: Surface }) {
     <article
       className={`group flex min-h-[320px] flex-col overflow-hidden rounded-lg border border-border bg-surface shadow-[var(--shadow-card)] transition-[border-color,background-color,transform] duration-200 ease-out hover:border-accent/35 hover:bg-subtle/55 active:scale-[0.995] ${surface.className ?? ''}`}
     >
-      <div className="relative min-h-[210px] flex-1 overflow-hidden bg-[#050706]">
+      <div className="relative min-h-[210px] flex-1 overflow-hidden bg-canvas">
         <Image
           src={surface.shot}
           alt={`Buzzr ${surface.title} screen`}
