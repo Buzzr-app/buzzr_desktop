@@ -16,13 +16,13 @@ type Review = {
 
 const REVIEWS: Review[] = [
   {
-    title: 'The watch party feature carried March Madness',
-    body: "Got 9 friends in a party for the Final Four, live reactions popping off, everyone's brackets on one screen. this replaced our groupchat. only complaint is I wish i could pin someone's bracket to the top.",
+    title: 'Our group chat finally has a scoreboard',
+    body: "Got 9 friends following the Final Four, live reactions popping off, everyone's brackets and takes in one place. this replaced our groupchat. only complaint is I wish i could pin someone's bracket to the top.",
     author: 'Sid',
     date: 'Apr 18',
     stars: 5,
     response:
-      "9 friends in a Final Four party with everyone's brackets on one screen is exactly what we built the watch party for. Pinning is on the way."
+      "9 friends following the Final Four with everyone's brackets on one screen is exactly why we built the social layer. Pinning is on the way."
   },
   {
     title: 'Just what I need with everything in one place',

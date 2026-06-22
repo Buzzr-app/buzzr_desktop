@@ -537,11 +537,12 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       applyExplosion(explode);
 
       // The ball starts at visual center. The frosted copy layer handles legibility.
-      const ballScale = lerp(isNarrow ? 0.6 : 0.76, isNarrow ? 0.78 : 0.95, explode);
+      const ballScale = lerp(isNarrow ? 0.32 : 0.56, isNarrow ? 0.72 : 0.95, explode);
       ball.scale.setScalar(ballScale);
       ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
 
       const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
+      phone.visible = rise > 0.018;
       phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.42 : -0.5, rise);
       phone.position.z = lerp(-0.45, 0.18, rise); // pulled forward, in front of where the ball was
       const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.54 : 0.64, rise);

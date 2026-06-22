@@ -14,6 +14,7 @@ import { ScrollReveal } from '@/components/ScrollReveal';
 import { Hero } from '@/components/sections/Hero';
 import { ScrollSection } from '@/components/sections/ScrollSection';
 import { SurfacesGrid } from '@/components/sections/SurfacesGrid';
+import { PromoReels } from '@/components/sections/PromoReels';
 import { DataBento } from '@/components/sections/DataBento';
 import { RateMission } from '@/components/sections/RateMission';
 import { Showcase } from '@/components/sections/Showcase';
@@ -145,10 +146,13 @@ export default function HomePage() {
 
       <Hero />
       <ScrollReveal>
-        <RateMission />
+        <SurfacesGrid />
       </ScrollReveal>
       <ScrollReveal>
-        <SurfacesGrid />
+        <PromoReels />
+      </ScrollReveal>
+      <ScrollReveal>
+        <RateMission />
       </ScrollReveal>
       <ScrollReveal>
         <ScrollSection />

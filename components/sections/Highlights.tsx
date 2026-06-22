@@ -3,7 +3,7 @@ import { Section } from '@/components/ui/Section';
 import { CalloutCard } from '@/components/ui/CalloutCard';
 import { Badge } from '@/components/ui/Badge';
 import { ScrollReveal } from '@/components/ScrollReveal';
-import { getLeagueLogo } from '@/src/lib/leagueLogos';
+import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
 import { LEAGUE_COUNT } from '@/src/lib/constants';
 
 type Clip = {
@@ -83,6 +83,7 @@ function ClipCard({ clip }: { clip: Clip }) {
             width={150}
             height={150}
             sizes="150px"
+            unoptimized={isRemoteLeagueLogo(logo)}
             className="pointer-events-none absolute -bottom-5 -right-5 h-[150px] w-[150px] object-contain opacity-[0.16] transition-opacity duration-200 ease-out group-hover:opacity-[0.22]"
           />
         )}

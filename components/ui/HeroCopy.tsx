@@ -95,30 +95,30 @@ export function HeroCopy() {
     <div ref={rootRef} className="pointer-events-none absolute inset-0 z-10">
       <div ref={introRef} className="absolute inset-0 will-change-[transform,opacity]">
         <h1 id="hero-title" className="sr-only">
-          The AI-native home for sports fans.
+          The home for all sports fans.
         </h1>
 
         {/* Headline wraps the ball on two arcs (Encircle). The dark text outline
             keeps it legible over the green/molten without a blur scrim. */}
         <svg
           aria-hidden
-          viewBox="0 0 600 600"
+          viewBox="0 0 560 560"
           style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
-          className="pointer-events-none absolute left-1/2 top-[49%] h-[min(120vw,104vh)] w-[min(120vw,104vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none"
+          className="hero-encircle pointer-events-none absolute left-1/2 top-[48%] h-[min(104vw,90vh)] w-[min(104vw,90vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none md:top-[49%]"
         >
           <defs>
-            <path id="heroArcTop" d="M 92 300 A 208 208 0 0 1 508 300" fill="none" />
-            <path id="heroArcBot" d="M 150 318 Q 300 560 450 318" fill="none" />
+            <path id="heroArcTop" d="M 58 302 Q 280 10 502 302" fill="none" />
+            <path id="heroArcBot" d="M 96 346 Q 280 592 464 346" fill="none" />
           </defs>
-          <text fontSize="52" fontWeight="800" letterSpacing="-2" fill="#ffffff" stroke="#04120a" strokeWidth="3" strokeLinejoin="round" paintOrder="stroke">
-            <textPath href="#heroArcTop" startOffset="50%" textAnchor="middle">The AI-native home</textPath>
+          <text fontSize="45" fontWeight="800" letterSpacing="-1.45" fill="#ffffff" stroke="#04120a" strokeWidth="2" strokeLinejoin="round" paintOrder="stroke">
+            <textPath href="#heroArcTop" startOffset="50%" textAnchor="middle">The home for all</textPath>
           </text>
-          <text fontSize="52" fontWeight="800" letterSpacing="-2" fill="#ffffff" stroke="#04120a" strokeWidth="3" strokeLinejoin="round" paintOrder="stroke">
-            <textPath href="#heroArcBot" startOffset="50%" textAnchor="middle">for sports fans.</textPath>
+          <text fontSize="45" fontWeight="800" letterSpacing="-1.45" fill="#ffffff" stroke="#04120a" strokeWidth="2" strokeLinejoin="round" paintOrder="stroke">
+            <textPath href="#heroArcBot" startOffset="50%" textAnchor="middle">sports fans.</textPath>
           </text>
         </svg>
 
-        <div className="pointer-events-auto absolute inset-x-0 bottom-[12vh] flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3 px-6">
+        <div className="pointer-events-auto absolute inset-x-0 bottom-[22vh] flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3 px-6 sm:bottom-[12vh]">
           <MagneticButton
             href={APP_STORE_URL}
             external
@@ -147,7 +147,7 @@ export function HeroCopy() {
 
       <div
         ref={wordRef}
-        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[12vh] opacity-0 will-change-[transform,opacity]"
+        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[10vh] opacity-0 will-change-[transform,opacity] md:pt-[11vh]"
       >
         <ShimmerText
           kind="ramp"
@@ -161,9 +161,9 @@ export function HeroCopy() {
 
       <div
         ref={taglineRef}
-        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[25vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[26vh]"
+        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[23vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[24vh]"
       >
-        <p className="max-w-[28ch] text-balance text-[clamp(16px,2.1vw,24px)] font-medium leading-[1.24] tracking-[-0.015em] text-white">
+        <p className="font-hero max-w-[28ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white">
           <ShimmerText kind="accent" className="text-accent-text">
             AI-Native
           </ShimmerText>{' '}

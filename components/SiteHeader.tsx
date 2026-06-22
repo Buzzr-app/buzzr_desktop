@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  Bot,
   ChartSpline,
   MessagesSquare,
   ScrollText,
@@ -20,7 +19,6 @@ import { APP_STORE_URL } from '@/src/lib/constants';
 type NavItem = { id: string; label: string; Icon: LucideIcon };
 
 const SECTIONS: NavItem[] = [
-  { id: 'mission', label: 'AI', Icon: Bot },
   { id: 'scroll', label: 'Scroll', Icon: ScrollText },
   { id: 'data', label: 'Dashboards', Icon: ChartSpline },
   { id: 'showcase', label: 'Friends', Icon: MessagesSquare },
@@ -106,7 +104,7 @@ export function SiteHeader() {
           isHome ? 'fixed pointer-events-none' : 'sticky'
         }`}
       >
-        <div className="site-nav-shell pointer-events-auto mx-auto flex w-full max-w-[1180px] items-center justify-between gap-3 py-2 pl-3 pr-2 sm:gap-4 sm:pr-3">
+        <div className="site-nav-shell pointer-events-auto mx-auto grid w-full max-w-[1180px] grid-cols-[auto_1fr_auto] items-center gap-3 py-2 pl-3 pr-2 sm:gap-4 sm:pr-3">
           <Link
             href={isHome ? '#top' : '/'}
             onClick={(e) => {
@@ -123,8 +121,8 @@ export function SiteHeader() {
             <BrandMark alt="Buzzr" size={40} variant="transparent" priority />
           </Link>
 
-          <nav aria-label="Primary" className="hidden md:block">
-            <ul className="flex items-center gap-1">
+          <nav aria-label="Primary" className="hidden justify-self-center md:block">
+            <ul className="flex items-center gap-1.5">
               {SECTIONS.map(({ id, label, Icon }) => {
                 const isActive = isHome && active === id;
                 return (
@@ -133,12 +131,23 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`site-nav-control inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
-                        isActive ? 'bg-white/10 text-accent-text' : 'text-white/62 hover:text-white'
+                      className={`site-nav-control font-hero group relative inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
+                        isActive ? 'text-white' : 'text-white/62 hover:text-white'
                       }`}
                     >
-                      <Icon size={14} strokeWidth={1.75} aria-hidden />
-                      {label}
+                      <Icon
+                        size={14}
+                        strokeWidth={1.75}
+                        aria-hidden
+                        className={isActive ? 'text-accent-text' : 'text-white/45 transition-colors group-hover:text-white/75'}
+                      />
+                      <span>{label}</span>
+                      <span
+                        aria-hidden
+                        className={`absolute bottom-1.5 left-1/2 h-[3px] -translate-x-1/2 rounded-full bg-accent transition-[opacity,width] duration-200 ${
+                          isActive ? 'w-3 opacity-100' : 'w-1 opacity-0 group-hover:opacity-45'
+                        }`}
+                      />
                     </Link>
                   </li>
                 );
@@ -149,13 +158,13 @@ export function SiteHeader() {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/blog"
-              className="site-nav-control inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] font-semibold text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Blog
             </Link>
             <Link
               href="/changelog"
-              className="site-nav-control inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] font-semibold text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               Changelog
             </Link>
@@ -163,7 +172,7 @@ export function SiteHeader() {
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="site-nav-cta ml-1 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-[18px] text-[14px] font-semibold text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-cta font-hero ml-1 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-[18px] text-[14px] font-bold text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <AppleIcon size={15} />
               <ShimmerHoverLabel className="site-nav-cta-label">Get the app</ShimmerHoverLabel>
@@ -214,8 +223,8 @@ export function SiteHeader() {
                     <Link
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
-                      className={`flex min-h-[48px] items-center gap-2 rounded-button border px-3 py-2.5 text-[14px] tracking-[-0.015em] transition-colors ${
-                        isActive ? 'border-accent/45 bg-accent/10 text-accent-text' : 'border-border bg-subtle text-foreground hover:border-accent/40'
+                      className={`font-hero flex min-h-[48px] items-center gap-2 rounded-button border px-3 py-2.5 text-[14px] font-semibold tracking-[-0.015em] transition-colors ${
+                        isActive ? 'border-accent/45 bg-accent/10 text-white' : 'border-border bg-subtle text-foreground hover:border-accent/40'
                       }`}
                     >
                       <Icon size={16} strokeWidth={1.75} aria-hidden />
@@ -238,7 +247,7 @@ export function SiteHeader() {
                 href={APP_STORE_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="site-nav-cta site-nav-cta-mobile inline-flex items-center justify-center gap-2 bg-accent px-4 text-[14px] font-semibold text-on-accent transition-colors duration-200 hover:bg-accent-dim"
+                className="site-nav-cta site-nav-cta-mobile font-hero inline-flex items-center justify-center gap-2 bg-accent px-4 text-[14px] font-bold text-on-accent transition-colors duration-200 hover:bg-accent-dim"
               >
                 <AppleIcon size={16} />
                 <span className="site-nav-cta-label">Get the app</span>

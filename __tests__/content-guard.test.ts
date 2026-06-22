@@ -57,8 +57,7 @@ describe('content guardrails', () => {
       /Swipe to/i,
       /Swipe through/i,
       /swipe thing/i,
-      /ProductHunt/i,
-      /Product Hunt/i
+      /ProductHuntLaunchEmbed/i
     ];
 
     const hits = marketingCorpus.flatMap(({ file, text }) =>
@@ -94,7 +93,7 @@ describe('content guardrails', () => {
     expect(source).not.toContain("classList.toggle('dark'");
     expect(source).not.toContain('/brand/buzzr-mark-light.png');
     expect(source).not.toContain('MutationObserver');
-    expect(readFileSync(path.join(ROOT, 'app/manifest.ts'), 'utf8')).toContain("theme_color: '#14181d'");
+    expect(readFileSync(path.join(ROOT, 'app/manifest.ts'), 'utf8')).toContain("theme_color: '#0a0a0c'");
   });
 
   it('uses the metallic Buzzr mark for visible landing branding', () => {
@@ -160,6 +159,88 @@ describe('content guardrails', () => {
     expect(css).toContain('--nav-control-radius: calc(var(--nav-radius) - var(--nav-pad-y));');
     expect(css).toContain('white-space: nowrap;');
     expect(header).not.toContain('rounded-button bg-accent px-4 py-2.5');
+  });
+
+  it('keeps the refined encircle hero copy and decorative SVG headline', () => {
+    const heroCopy = readFileSync(path.join(ROOT, 'components/ui/HeroCopy.tsx'), 'utf8');
+
+    expect(heroCopy).toContain('The home for all sports fans.');
+    expect(heroCopy).toContain('<h1 id="hero-title" className="sr-only">');
+    expect(heroCopy).toContain('viewBox="0 0 560 560"');
+    expect(heroCopy).toContain('hero-encircle');
+    expect(heroCopy).toContain('The home for all');
+    expect(heroCopy).toContain('sports fans.');
+    expect(heroCopy).not.toContain('The AI-native home for sports fans.');
+  });
+
+  it('moves AI Feed out of the top nav and keeps product anchors focused', () => {
+    const header = readFileSync(path.join(ROOT, 'components/SiteHeader.tsx'), 'utf8');
+
+    expect(header).toContain("{ id: 'scroll', label: 'Scroll'");
+    expect(header).toContain("{ id: 'data', label: 'Dashboards'");
+    expect(header).toContain("{ id: 'showcase', label: 'Friends'");
+    expect(header).toContain("{ id: 'leagues', label: 'Leagues'");
+    expect(header).toContain("{ id: 'rail', label: 'Bets'");
+    expect(header).not.toContain("label: 'AI'");
+    expect(header).not.toContain("id: 'mission'");
+  });
+
+  it('uses the Everything Buzzr bento story instead of repeated screenshot cards', () => {
+    const surfacesGrid = readFileSync(
+      path.join(ROOT, 'components/sections/SurfacesGrid.tsx'),
+      'utf8'
+    );
+
+    for (const label of ['01 Scroll', '02 Dashboards', '03 Friends and Chat', '04 Leagues', '05 AI Feed', '06 Bets']) {
+      expect(surfacesGrid).toContain(label);
+    }
+
+    expect(surfacesGrid).toContain('Everything Buzzr');
+    expect(surfacesGrid).toContain('Sports. Social. Seamless.');
+    expect(surfacesGrid).toContain('Everything you need to follow, connect, and win.');
+    expect(surfacesGrid).toContain('SocialFeedPreview');
+    expect(surfacesGrid).toContain('LeagueClusterPreview');
+    expect(surfacesGrid).toContain('BetsPanelPreview');
+    expect(surfacesGrid).not.toContain('The app map, without the clutter.');
+  });
+
+  it('uses generated editorial covers for blog posts', () => {
+    const posts = sourceFiles('content/blog');
+    const missingCovers = posts
+      .map((file) => ({
+        file,
+        text: readFileSync(path.join(ROOT, file), 'utf8')
+      }))
+      .filter(({ text }) => !text.includes('src: "/blog-covers/'))
+      .map(({ file }) => file);
+
+    expect(missingCovers).toEqual([]);
+  });
+
+  it('mounts the simulator promo reel section from dedicated media paths', () => {
+    const page = readFileSync(path.join(ROOT, 'app/page.tsx'), 'utf8');
+    const promo = readFileSync(
+      path.join(ROOT, 'components/sections/PromoReels.tsx'),
+      'utf8'
+    );
+
+    expect(page).toContain('<PromoReels />');
+    expect(promo).toContain('/promo/buzzr-scroll.mp4');
+    expect(promo).toContain('/promo/buzzr-dashboard.mp4');
+    expect(promo).toContain('/promo/buzzr-friends.mp4');
+    expect(promo).toContain('/promo/buzzr-bets.mp4');
+    expect(promo).toContain('/app-screens/bets-manual.png');
+  });
+
+  it('keeps and polishes the Buzzr 2.0 launch banner', () => {
+    const launchBanner = readFileSync(path.join(ROOT, 'components/LaunchBanner.tsx'), 'utf8');
+
+    expect(launchBanner).toContain('Buzzr 2.0 is live.');
+    expect(launchBanner).toContain('Scroll, dashboards, leagues, and Bets in one app.');
+    expect(launchBanner).toContain('Review on PH');
+    expect(launchBanner).toContain('What changed');
+    expect(launchBanner).toContain('pb-[calc(16px_+_env(safe-area-inset-bottom))]');
+    expect(launchBanner).toContain('launch-banner-shell');
   });
 
   it('keeps the AI section on real product proof instead of synthetic score cards', () => {

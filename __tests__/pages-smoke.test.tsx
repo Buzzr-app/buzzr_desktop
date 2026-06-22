@@ -21,5 +21,5 @@ test('root layout has no light-mode bootstrap script', () => {
   expect(rootLayout).not.toContain('localStorage.getItem');
   expect(rootLayout).not.toContain('prefers-color-scheme');
   expect(rootLayout).not.toContain("classList.add('dark'");
-  expect(rootLayout).toContain("themeColor: '#14181d'");
+  expect(rootLayout).toContain("themeColor: '#0a0a0c'");
 });

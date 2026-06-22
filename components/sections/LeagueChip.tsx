@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import type { League } from '@/src/lib/constants';
-import { getLeagueLogo } from '@/src/lib/leagueLogos';
+import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
 
 export function LeagueChip({ league }: { league: League }) {
   const logo = getLeagueLogo(league.label);
@@ -16,7 +16,15 @@ export function LeagueChip({ league }: { league: League }) {
         className="relative inline-flex h-5 w-5 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-foreground"
       >
         {logo ? (
-          <Image src={logo} alt="" width={18} height={18} sizes="18px" className="h-[16px] w-[16px] object-contain" />
+          <Image
+            src={logo}
+            alt=""
+            width={18}
+            height={18}
+            sizes="18px"
+            unoptimized={isRemoteLeagueLogo(logo)}
+            className="h-[16px] w-[16px] object-contain"
+          />
         ) : (
           <span className="font-mono text-[9px] font-bold leading-none text-canvas">{initials}</span>
         )}

@@ -1,31 +1,13 @@
 'use client';
 
-import dynamic from 'next/dynamic';
 import { Component, useEffect, useState, type ReactNode } from 'react';
-import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 import { VideoBackdrop } from '@/components/ui/VideoBackdrop';
+import ClayHeroScene from './ClayHeroScene';
 
 /** Static fallback shown while the WebGL chunk loads or if WebGL is unavailable. */
 function Poster() {
-  return (
-    <div className="flex h-full w-full items-center justify-center">
-      <PhoneShowcase
-        src="/app-screens/dashboard.png"
-        alt=""
-        priority
-        aura
-        size="standard"
-      />
-    </div>
-  );
+  return <div className="hero-scene-loading" aria-hidden />;
 }
-
-// WebGL scene is client-only (needs the DOM) and heavy, so load it lazily;
-// the poster shows until it is ready.
-const ClayHeroScene = dynamic(() => import('./ClayHeroScene'), {
-  ssr: false,
-  loading: () => <Poster />
-});
 
 /** Falls back to the poster if the WebGL scene throws (e.g. no WebGL context). */
 class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean }> {
@@ -35,16 +17,6 @@ class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean
   }
   render() {
     return this.state.failed ? <Poster /> : this.props.children;
-  }
-}
-
-/** Cheap synchronous probe - avoids constructing the renderer (and its throw path). */
-function hasWebGL(): boolean {
-  if (typeof window === 'undefined') return false;
-  try {
-    return !!document.createElement('canvas').getContext('webgl2');
-  } catch {
-    return false;
   }
 }
 
@@ -71,7 +43,7 @@ export function ClayHero({
   // scene then mounts client-only, with no hydration involved.
   const [showScene, setShowScene] = useState(false);
   useEffect(() => {
-    if (hasWebGL()) setShowScene(true);
+    setShowScene(true);
   }, []);
   return (
     <div data-hero-pin className={`relative h-[200vh] motion-reduce:h-auto ${className ?? ''}`}>

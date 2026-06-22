@@ -6,6 +6,7 @@ import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { LEAGUE_COUNT, type LeagueStatus } from '@/src/lib/constants';
 import { LEAGUE_ORBIT_ITEMS, type LeagueOrbitItem } from '@/src/lib/leagueMedia';
+import { isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
 
 type OrbitRing = {
   count: number;
@@ -115,6 +116,7 @@ function LeagueNode({
                 width={34}
                 height={34}
                 sizes="34px"
+                unoptimized={isRemoteLeagueLogo(item.logo)}
                 className="h-[34px] w-[34px] object-contain drop-shadow-[0_8px_18px_rgba(0,0,0,0.45)]"
               />
               <span className="sr-only">{item.league.label}</span>
@@ -154,6 +156,7 @@ function MobileLeagueRail({
               width={72}
               height={72}
               sizes="72px"
+              unoptimized={isRemoteLeagueLogo(activeItem.logo)}
               className="h-[72px] w-[72px] object-contain drop-shadow-[0_10px_24px_rgba(0,0,0,0.5)]"
             />
           ) : (
@@ -197,6 +200,7 @@ function MobileLeagueRail({
                       width={28}
                       height={28}
                       sizes="28px"
+                      unoptimized={isRemoteLeagueLogo(item.logo)}
                       className="h-7 w-7 object-contain"
                     />
                   ) : null}
@@ -270,6 +274,7 @@ export function LeagueOrbit() {
                 width={96}
                 height={96}
                 sizes="96px"
+                unoptimized={isRemoteLeagueLogo(activeItem.logo)}
                 className="h-[96px] w-[96px] object-contain drop-shadow-[0_12px_30px_rgba(0,0,0,0.5)]"
               />
             ) : (

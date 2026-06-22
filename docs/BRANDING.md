@@ -59,7 +59,7 @@ Use these labels in navigation, metadata, and section copy:
 Avoid old labels in public copy:
 
 - Stale launch badges
-- Watch-party language
+- Old group viewing language
 - Old entertainment-only positioning
 - Stale gesture labels
 

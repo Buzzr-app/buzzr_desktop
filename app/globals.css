@@ -120,9 +120,9 @@ body {
 
 /* Headings lead with size + tracking, not mass. Explicit utilities still win. */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: -0.018em;
+  font-family: var(--ff-hero), var(--font-sans);
+  font-weight: 700;
+  letter-spacing: -0.022em;
 }
 
 /* Hero / big-heading display face. next/font sets --ff-hero (Bricolage Grotesque). */
@@ -299,6 +299,83 @@ h1, h2, h3, h4, h5, h6 {
 .site-nav-cta-mobile {
   --nav-control-radius: 16px;
   width: 100%;
+}
+
+.hero-scene-loading {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(0, 194, 100, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 48%, rgba(0, 0, 0, 0.34), transparent 54%);
+}
+
+/* Family-style product bento. */
+.bento-card {
+  --bento-radius: 24px;
+  --bento-pad: 18px;
+  position: relative;
+  display: flex;
+  min-height: 378px;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--bento-radius);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.055), transparent 46%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.018)),
+    color-mix(in oklab, var(--color-surface) 78%, black);
+  box-shadow:
+    0 28px 80px -58px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  transition:
+    border-color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 220ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.bento-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 12%, rgba(0, 194, 100, 0.12), transparent 54%);
+  opacity: 0;
+  transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+.bento-card__preview {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  padding: var(--bento-pad) var(--bento-pad) 0;
+}
+.bento-card__copy {
+  position: relative;
+  z-index: 1;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 22px 22px;
+}
+@media (hover: hover) and (pointer: fine) {
+  .bento-card:hover {
+    border-color: rgba(0, 194, 100, 0.34);
+    transform: translateY(-2px);
+  }
+  .bento-card:hover::before { opacity: 1; }
+}
+.bento-card:active { transform: scale(0.995); }
+
+/* Launch banner: retained, calmer, and safe-area aware. */
+.launch-banner-shell {
+  --launch-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(28, 34, 43, 0.92), rgba(16, 20, 26, 0.88)),
+    rgba(12, 14, 18, 0.86);
+  box-shadow:
+    0 30px 90px -42px rgba(0, 0, 0, 0.92),
+    0 18px 48px -34px rgba(0, 194, 100, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
+  -webkit-backdrop-filter: blur(24px) saturate(1.12);
+  backdrop-filter: blur(24px) saturate(1.12);
 }
 
 /* Seeded pixel aura used by hero, phone panels, and footer. */

@@ -19,14 +19,43 @@ describe('league orbit', () => {
     );
   });
 
-  it('uses local verified logos and text fallbacks for missing logos', () => {
+  it('uses local logos, provider-backed logos, and text fallbacks', () => {
     const items = buildLeagueOrbitItems();
     const nba = items.find((item) => item.league.label === 'NBA');
+    const ipl = items.find((item) => item.league.label === 'IPL');
     const ncaaw = items.find((item) => item.league.label === 'NCAAW');
+    const wwc = items.find((item) => item.league.label === 'WWC');
+    const copaAmerica = items.find((item) => item.league.label === 'COPA AMÉRICA');
+    const euros = items.find((item) => item.league.label === 'EUROS');
+    const afcon = items.find((item) => item.league.label === 'AFCON');
+    const asianCup = items.find((item) => item.league.label === 'ASIAN CUP');
+    const boxing = items.find((item) => item.league.label === 'BOXING');
+    const textFallbacks = items.filter((item) => item.logo === null);
 
     expect(nba?.logo).toBe(getLeagueLogo('NBA'));
-    expect(ncaaw?.logo).toBeNull();
-    expect(ncaaw?.fallbackLabel).toBe('NCAAW');
+    expect(ipl?.logo).toBe(getLeagueLogo('IPL'));
+    expect(ncaaw?.logo).toBe(getLeagueLogo('NCAAW'));
+    expect(wwc?.logo).toBe(getLeagueLogo('WWC'));
+    expect(copaAmerica?.logo).toBe(getLeagueLogo('COPA AMÉRICA'));
+    expect(euros?.logo).toBe(getLeagueLogo('EUROS'));
+    expect(afcon?.logo).toBe(getLeagueLogo('AFCON'));
+    expect(asianCup?.logo).toBe(getLeagueLogo('ASIAN CUP'));
+    expect(textFallbacks.map((item) => item.league.label)).toEqual([
+      'BOXING',
+      'BBL',
+      'CPL',
+      'THE HUNDRED',
+      'CWC',
+      'INTL CRICKET',
+      'SIX NATIONS',
+      'PREMIERSHIP',
+      'TOP 14',
+      'RUGBY WC',
+      'SUPER RUGBY',
+      'RUGBY CHAMP'
+    ]);
+    expect(boxing?.logo).toBeNull();
+    expect(boxing?.fallbackLabel).toBe('BOXING');
   });
 
   it('allows only verified youtube IDs or null media fallbacks', () => {
