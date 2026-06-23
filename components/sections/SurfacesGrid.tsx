@@ -4,6 +4,7 @@ import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
 import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
+import { GyroidField } from '@/components/ui/GyroidField';
 
 type BentoCard = {
   emojis: readonly string[];
@@ -398,8 +399,9 @@ function FanSignalsPreview() {
 
 function BetsSlipPreview() {
   return (
-    <div className="bento-preview-shell bento-preview-bets">
-      <div className="bets-slip-preview" aria-label="Buzzr Bets tracked slip preview">
+    <div className="bento-preview-shell bento-preview-bets relative overflow-hidden">
+      <GyroidField variant="hex" className="absolute inset-0 z-0" />
+      <div className="bets-slip-preview relative z-10" aria-label="Buzzr Bets tracked slip preview">
         <div className="bets-slip-preview__top">
           <span>Tracked slip</span>
           <strong>Live</strong>

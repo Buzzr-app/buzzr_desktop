@@ -22,7 +22,7 @@ import { cn } from '@/components/utils';
  *   - if WebGL is unavailable it renders nothing (section bg remains)
  */
 
-type GyroidVariant = 'cta' | 'reels' | 'dither';
+type GyroidVariant = 'cta' | 'reels' | 'dither' | 'hex';
 
 type VariantConfig = {
   lo: string; // token name for the deep/shadow color (≈ page bg)
@@ -37,8 +37,7 @@ type VariantConfig = {
   grain?: number; // subtle noise amplitude (dither variant only)
 };
 
-// `cta` (footer) is zoomed WAY out for dense, intricate detail; `reels` is the
-// per-card base. `dither` is the blog-cover Bayer-dithered MINT surface.
+// `cta` (footer) dense detail; `reels` per-card; `dither` Bayer blog; `hex` smooth honeycomb.
 const VARIANTS: Record<GyroidVariant, VariantConfig> = {
   cta: {
     lo: '--color-canvas',
@@ -61,6 +60,19 @@ const VARIANTS: Record<GyroidVariant, VariantConfig> = {
     levels: 7,
     intensity: 0.92,
     cell: 4
+  },
+  // Matches Fluid preset: Gyroid · MINT · Hex · pixelate 3 · zoom 4 · warp 9 · speed 3 · grain 0.12
+  hex: {
+    lo: '--color-canvas',
+    hi: '--color-accent-text',
+    peak: '--color-accent',
+    zoom: 4.0,
+    warp: 9.0,
+    speed: 0.55,
+    levels: 0,
+    intensity: 1.0,
+    cell: 3,
+    grain: 0.12
   },
   // Matches Fluid preset: Gyroid · MINT · Dither · pixelate 9 · zoom 4 · warp 9 · speed 3 · grain 0.25
   dither: {
@@ -213,6 +225,70 @@ void main() {
 }
 `;
 
+// Smooth hexagonal-cell surface for blog covers and bento auras.
+// Each hex cell displays a single flat color sampled from the gyroid at the
+// cell center, giving a honeycomb mosaic feel without the static of Bayer dither.
+const HEX_FRAGMENT_SRC = `
+precision highp float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec3 uLo;
+uniform vec3 uHi;
+uniform vec3 uPeak;
+uniform float uZoom;
+uniform float uWarp;
+uniform float uGrain;
+
+float gyroid(vec3 p) { return dot(sin(p), cos(p.zxy)); }
+
+float hash21(vec2 p) {
+  p = fract(p * vec2(443.897, 441.423));
+  p += dot(p, p + 19.19);
+  return fract(p.x * p.y);
+}
+
+// Nearest pointy-top hex cell center. r = circumradius.
+// Two interleaved rectangular grids, WebGL 1.0 safe.
+vec2 hexNearest(vec2 p, float r) {
+  float W = 1.73205080757 * r;
+  float Hrow = 3.0 * r;
+  vec2 ca = vec2(round(p.x / W) * W, round(p.y / Hrow) * Hrow);
+  float cbx = (round(p.x / W - 0.5) + 0.5) * W;
+  float cby = round((p.y - 1.5 * r) / Hrow) * Hrow + 1.5 * r;
+  vec2 cb = vec2(cbx, cby);
+  return dot(p - ca, p - ca) < dot(p - cb, p - cb) ? ca : cb;
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes - 0.5;
+  uv.x *= uRes.x / uRes.y;
+
+  vec2 cell = hexNearest(uv, 0.065);
+
+  vec3 p = vec3(cell * uZoom, uTime * 0.28);
+  p.xy += uWarp * 0.07 * vec2(sin(p.y * 1.4 + uTime * 0.38), cos(p.x * 1.4 - uTime * 0.32));
+
+  float g = gyroid(p * 3.14159);
+  g += 0.52 * gyroid(p * 6.4 + uTime * 0.18);
+  g += 0.28 * gyroid(p * 12.8 - uTime * 0.09);
+  g = clamp(g * 0.32 + 0.5, 0.0, 1.0);
+
+  // Per-cell grain: constant within a cell, so no pixel-level static
+  float noise = hash21(cell * 100.0) - 0.5;
+  g = clamp(g + noise * uGrain, 0.0, 1.0);
+
+  // 5-level smooth quantization gives mosaic look without binary harshness
+  g = floor(g * 5.0 + 0.5) / 5.0;
+
+  float vig = smoothstep(1.2, 0.15, length(uv));
+  g *= vig;
+
+  vec3 col = mix(uLo, uHi, g);
+  col = mix(col, uPeak, smoothstep(0.76, 1.0, g) * 0.48);
+  gl_FragColor = vec4(col, 1.0);
+}
+`;
+
 type RGB = [number, number, number];
 
 function readToken(styles: CSSStyleDeclaration, name: string, fallback: RGB): RGB {
@@ -330,7 +406,9 @@ export function GyroidField({
       gl.compileShader(sh);
       return sh;
     };
-    const fragSrc = variant === 'dither' ? DITHER_FRAGMENT_SRC : FRAGMENT_SRC;
+    const fragSrc = variant === 'dither' ? DITHER_FRAGMENT_SRC
+                 : variant === 'hex' ? HEX_FRAGMENT_SRC
+                 : FRAGMENT_SRC;
     const program = gl.createProgram()!;
     gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX_SRC));
     gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragSrc));
