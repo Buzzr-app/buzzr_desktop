@@ -3,13 +3,11 @@
 import { useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { MagneticButton } from '@/components/ui/MagneticButton';
-import { ShimmerText, ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
+import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { AppleIcon, DiscordIcon } from '@/components/ui/BrandIcons';
+import { HeroLogoSwarm } from '@/components/ui/HeroLogoSwarm';
 import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
 import { HERO_BANDS, bandProgress, sampleHeroProgress } from '@/src/lib/heroProgress';
-
-const HERO_REVEAL_COPY =
-  'Follow every team, rate live games, and keep your crew in the same feed.';
 
 /**
  * HeroCopy - the pinned-scroll narrative overlay that lives inside the sticky
@@ -18,24 +16,24 @@ const HERO_REVEAL_COPY =
  *
  *   p≈0.0  → centered intro headline + CTAs
  *   p≈0.5  → intro dissolves as the ball detonates
- *   p≈1.0  → centered "BUZZR" reveal,
- *            framing the phone now standing center stage.
+ *   p≈1.0  → phone stands center stage; Buzzr marks drift in the side gutters
+ *            (logo band) and the CTAs settle into the bottom band.
  *
  * Styles are written straight to refs each frame (no per-frame React render).
- * Reduced motion collapses the pin, so we just paint the final centered state.
+ * Reduced motion collapses the pin, so we just paint the final composition.
  */
 export function HeroCopy() {
   const rootRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
-  const wordRef = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLDivElement>(null);
+  const swarmRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
     const intro = introRef.current;
-    const word = wordRef.current;
-    const tagline = taglineRef.current;
-    if (!root || !intro || !word || !tagline) return;
+    const swarm = swarmRef.current;
+    const cta = ctaRef.current;
+    if (!root || !intro || !swarm || !cta) return;
 
     const pin = root.closest<HTMLElement>('[data-hero-pin]');
     const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
@@ -47,17 +45,16 @@ export function HeroCopy() {
       intro.style.transform = `translateY(${-22 * out}px)`;
       intro.style.pointerEvents = out > 0.5 ? 'none' : 'auto';
 
-      // Brand wordmark drops in from above (top band).
-      const wIn = bandProgress(HERO_BANDS.logo, p);
-      word.style.opacity = String(wIn);
-      word.style.transform = `translateY(${-22 * (1 - wIn)}px)`;
-      word.style.letterSpacing = `${-0.012 + 0.04 * (1 - wIn)}em`;
+      // Floating Buzzr marks fade + settle in on the same band the wordmark used.
+      const sIn = bandProgress(HERO_BANDS.logo, p);
+      swarm.style.opacity = String(sIn);
+      swarm.style.transform = `translateY(${10 * (1 - sIn)}px)`;
 
-      // Tagline + CTAs rise in from below (bottom band), trailing the wordmark.
-      const tIn = bandProgress(HERO_BANDS.tagline, p);
-      tagline.style.opacity = String(tIn);
-      tagline.style.transform = `translateY(${20 * (1 - tIn)}px)`;
-      tagline.style.pointerEvents = tIn > 0.5 ? 'auto' : 'none';
+      // CTAs rise into the bottom band, trailing the marks.
+      const cIn = bandProgress(HERO_BANDS.tagline, p);
+      cta.style.opacity = String(cIn);
+      cta.style.transform = `translateY(${20 * (1 - cIn)}px)`;
+      cta.style.pointerEvents = cIn > 0.5 ? 'auto' : 'none';
     };
 
     // Reduced motion → static final composition, no scroll region to sample.
@@ -148,44 +145,34 @@ export function HeroCopy() {
         </div>
       </div>
 
-      <div
-        ref={wordRef}
-        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[7vh] opacity-0 will-change-[transform,opacity] md:pt-[8vh]"
-      >
-        <ShimmerText
-          kind="ramp"
-          duration={2.4}
-          pauseBetween={1400}
-          className="font-hero select-none text-center text-[clamp(46px,10vw,116px)] font-extrabold leading-[0.9] tracking-[-0.02em] text-white"
-        >
-          BUZZR
-        </ShimmerText>
+      {/* Reveal: Buzzr marks drift in the gutters around the risen phone. */}
+      <div ref={swarmRef} className="absolute inset-0 opacity-0 will-change-[transform,opacity]">
+        <HeroLogoSwarm />
       </div>
 
+      {/* Reveal CTAs settle into the bottom band, clear of the phone + section seam. */}
       <div
-        ref={taglineRef}
-        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[19vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[20vh]"
+        ref={ctaRef}
+        className="pointer-events-none absolute inset-x-0 top-[9vh] flex flex-col items-center justify-center gap-2 px-6 opacity-0 will-change-[transform,opacity] sm:flex-row sm:gap-3 md:top-[10vh]"
       >
-        <p className="font-hero max-w-[34ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white md:max-w-[40ch]">
-          {HERO_REVEAL_COPY}
-        </p>
-        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3">
-          <MagneticButton
-            href={APP_STORE_URL}
-            external
-            className="inline-flex w-[168px] items-center justify-center rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            Get the app<span className="sr-only"> (opens in new tab)</span>
-          </MagneticButton>
-          <Link
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-[168px] items-center justify-center rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            Join the Discord<span className="sr-only"> (opens in new tab)</span>
-          </Link>
-        </div>
+        <MagneticButton
+          href={APP_STORE_URL}
+          external
+          className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
+        >
+          <AppleIcon size={17} />
+          <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
+          <span className="sr-only"> (opens in new tab)</span>
+        </MagneticButton>
+        <Link
+          href={DISCORD_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
+        >
+          <DiscordIcon size={17} />
+          Join the Discord<span className="sr-only"> (opens in new tab)</span>
+        </Link>
       </div>
     </div>
   );

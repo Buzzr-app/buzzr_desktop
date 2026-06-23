@@ -7,6 +7,8 @@ import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
 import { GyroidField } from '@/components/ui/GyroidField';
 
 type BentoCard = {
+  category: string;
+  descriptor: string;
   emojis: readonly string[];
   featured?: boolean;
   preview: 'dashboard' | 'friends' | 'leagues' | 'signals' | 'bets';
@@ -34,27 +36,37 @@ type TeamChip = {
 const BENTO_CARDS: readonly BentoCard[] = [
   {
     title: 'Dashboards For Every Team',
+    category: 'Dashboards',
+    descriptor: 'Every league and team, sorted on one home screen.',
     preview: 'dashboard',
     featured: true,
     emojis: ['❤️', '🏀', '⭐', '📊']
   },
   {
     title: 'Friends And Chat',
+    category: 'Chat',
+    descriptor: 'Live crew threads beside the score.',
     preview: 'friends',
     emojis: ['💬', '🔥', '🙌']
   },
   {
     title: 'League Map',
+    category: 'Leagues',
+    descriptor: 'Browse 49 leagues, tap to follow.',
     preview: 'leagues',
     emojis: ['🏆', '⚽', '🏁']
   },
   {
     title: 'Fan Signals',
+    category: 'Signals',
+    descriptor: 'Read the room in real time.',
     preview: 'signals',
     emojis: ['📈', '⚡', '👀']
   },
   {
     title: 'Buzzr Bets',
+    category: 'Bets',
+    descriptor: 'Track every leg as it lands.',
     preview: 'bets',
     emojis: ['✅', '💵', '🎯']
   }
@@ -129,9 +141,11 @@ function BentoSurfaceCard({ card }: { card: BentoCard }) {
         <SurfacePreview type={card.preview} />
       </div>
       <div className="bento-card__copy">
-        <h3 className="font-hero text-[clamp(24px,2.6vw,32px)] font-extrabold leading-[0.98] tracking-[-0.035em] text-foreground">
+        <span className="bento-card__eyebrow">{card.category}</span>
+        <h3 className="bento-card__title font-hero text-foreground">
           {card.title}
         </h3>
+        <p className="bento-card__descriptor">{card.descriptor}</p>
       </div>
       <EmojiBurst items={card.emojis} />
     </article>
@@ -204,7 +218,6 @@ function DashboardProofPreview() {
             <span key={team.code}>
               <TeamLogo logo={team.logo} label={team.label} compact />
               <strong>{team.code}</strong>
-              <small>saved</small>
             </span>
           ))}
         </div>
@@ -356,12 +369,10 @@ function FanSignalsPreview() {
     <div className="bento-preview-shell bento-preview-signals">
       <div className="fan-signal-card">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/48">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
             Heat
           </span>
-          <span className="rounded-full bg-accent/14 px-2 py-1 font-mono text-[10px] text-accent-text">
-            Live
-          </span>
+          <span className="fan-signal-live">Live</span>
         </div>
         <svg viewBox="0 0 260 104" role="img" aria-label="Buzzr fan signal chart">
           <path

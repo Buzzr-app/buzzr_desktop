@@ -1,0 +1,96 @@
+/*
+ * MoneyField - cash-blower keyframes + classes (CSS Module).
+ *
+ * Each bill sits in a 3D stage (perspective + preserve-3d on the field). A bill
+ * runs one seamless loop: it launches from low near the phone base and flies
+ * up-and-outward while tumbling on Y/X so it flips like real cash, then fades
+ * back to its origin to loop without a seam. Per-bill custom props drive the
+ * vector, tumble, timing and depth so the stream reads continuous, not pulsed.
+ *
+ * Two depth presets (.back / .front) tune scale, blur and opacity ceiling so the
+ * field can render one instance behind the phone and one in front of it.
+ */
+
+.field {
+  perspective: 900px;
+  perspective-origin: 70% 60%;
+}
+
+.bill {
+  position: absolute;
+  transform-style: preserve-3d;
+  will-change: transform, opacity;
+  transform-origin: 50% 50%;
+  /* fly + breathe run together off the same loop period for a seamless stream */
+  animation:
+    moneyFly var(--dur) cubic-bezier(0.33, 0, 0.2, 1) var(--d) infinite,
+    moneyFade var(--dur) ease-in-out var(--d) infinite;
+}
+
+/* Depth: BACK - recede behind the phone, dimmer + softer + smaller. */
+.back .bill {
+  filter: blur(var(--blur, 1.4px));
+  opacity: var(--o);
+}
+
+/* Depth: FRONT - sit in front of the phone, crisp + brighter. */
+.front .bill {
+  filter: none;
+  opacity: var(--o);
+}
+
+/*
+ * The blower path: rise and drift outward (--mx/--my) while tumbling around Y
+ * (and a little X) and scaling up slightly as it nears the viewer, then settle
+ * back to origin so the loop closes seamlessly.
+ */
+@keyframes moneyFly {
+  0% {
+    transform: translate3d(0, 0, 0) rotateY(var(--ry0)) rotateX(var(--rx0)) rotateZ(var(--rz0)) scale(0.82);
+  }
+  45% {
+    transform: translate3d(calc(var(--mx) * 0.62), calc(var(--my) * 0.5), 40px)
+      rotateY(calc(var(--ry0) + var(--spin) * 0.55)) rotateX(calc(var(--rx0) + 26deg))
+      rotateZ(calc(var(--rz0) + var(--tilt) * 0.6)) scale(1.04);
+  }
+  100% {
+    transform: translate3d(var(--mx), var(--my), 0)
+      rotateY(calc(var(--ry0) + var(--spin))) rotateX(var(--rx0))
+      rotateZ(calc(var(--rz0) + var(--tilt))) scale(0.9);
+  }
+}
+
+/* Breathe opacity in/out so each bill enters and exits softly, no hard pop. */
+@keyframes moneyFade {
+  0% {
+    opacity: 0;
+  }
+  14% {
+    opacity: var(--o);
+  }
+  78% {
+    opacity: var(--o);
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* The drawn banknote: clean rounded note, scaled by --size. */
+.note {
+  display: block;
+  width: var(--size);
+  height: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bill {
+    animation: none;
+    opacity: var(--o);
+    filter: none;
+    transform: translate3d(calc(var(--mx) * 0.4), calc(var(--my) * 0.4), 0) rotateZ(var(--rz0));
+  }
+  .back .bill {
+    filter: blur(var(--blur, 1.4px));
+  }
+}
