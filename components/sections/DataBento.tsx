@@ -1,8 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { Activity, Flame, TrendingUp, Users, Trophy, type LucideIcon } from 'lucide-react';
 import { Section } from '@/components/ui/Section';
 import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
+import { DashboardScreen } from '@/components/ui/DashboardScreen';
 import { LEAGUE_COUNT } from '@/src/lib/constants';
 
 type DashboardStep = {
@@ -57,6 +59,8 @@ const DASHBOARD_STEPS: readonly DashboardStep[] = [
   }
 ];
 
+const STEP_ICONS: LucideIcon[] = [Activity, Flame, TrendingUp, Users, Trophy];
+
 export function DataBento() {
   const [activeIndex, setActiveIndex] = useState(0);
   const itemRefs = useRef<Array<HTMLLIElement | null>>([]);
@@ -90,8 +94,6 @@ export function DataBento() {
     };
   }, []);
 
-  const active = DASHBOARD_STEPS[activeIndex] ?? DASHBOARD_STEPS[0];
-
   return (
     <Section id="data" aria-labelledby="data-title" className="max-w-none px-0 py-0">
       <div className="mx-auto max-w-[1200px] px-6 py-20 md:py-28">
@@ -109,21 +111,10 @@ export function DataBento() {
 
         <div className="grid gap-12 lg:grid-cols-[0.96fr_1.04fr] lg:gap-16">
           <div className="lg:sticky lg:top-24 lg:flex lg:h-[calc(100vh-7rem)] lg:items-center">
-            <div className="relative mx-auto grid w-full max-w-[520px] gap-5 rounded-2xl border border-white/[0.08] bg-surface/55 p-5 shadow-[0_44px_120px_-70px_rgba(0,0,0,0.85)]">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute inset-x-0 -top-px h-px bg-gradient-to-r from-transparent via-white/15 to-transparent"
-              />
-              <div className="grid items-center gap-5 sm:grid-cols-[0.82fr_1fr] lg:grid-cols-1 xl:grid-cols-[0.82fr_1fr]">
-                <PhoneShowcase
-                  src="/app-screens/dashboard.png"
-                  alt="Buzzr dashboard screen with team and league context"
-                  priority
-                  size="compact"
-                  className="mx-auto"
-                />
-                <DashboardSignal step={active} />
-              </div>
+            <div className="relative mx-auto w-full max-w-[420px]">
+              <PhoneShowcase size="standard" className="mx-auto">
+                <DashboardScreen />
+              </PhoneShowcase>
             </div>
           </div>
 
@@ -151,43 +142,6 @@ export function DataBento() {
   );
 }
 
-function DashboardSignal({ step }: { step: DashboardStep }) {
-  return (
-    <div className="rounded-2xl border border-border bg-subtle/70 p-5 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
-      <div className="flex items-center justify-between gap-4">
-        <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-whisper">
-          {step.label}
-        </span>
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/[0.14] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.14em] text-accent-text">
-          <span
-            aria-hidden
-            className="size-1.5 rounded-full bg-accent-text motion-safe:animate-buzz-pulse"
-          />
-          Live
-        </span>
-      </div>
-      <div
-        key={step.label}
-        className="mt-6 flex items-end justify-between gap-4 motion-safe:animate-fade-in"
-      >
-        <span className="score-mono text-[clamp(42px,7vw,72px)] leading-none tracking-[-0.05em] text-accent-text">
-          {step.value}
-        </span>
-        <span className="pb-2 font-mono text-[11px] uppercase tracking-[0.16em] text-whisper">
-          {step.detail}
-        </span>
-      </div>
-      <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
-        <div
-          aria-hidden
-          className="h-full rounded-full bg-accent transition-transform duration-500 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-reduce:transition-none"
-          style={{ transform: `scaleX(${step.progress / 100})`, transformOrigin: 'left' }}
-        />
-      </div>
-    </div>
-  );
-}
-
 function DashboardStepCard({
   active,
   index,
@@ -197,10 +151,11 @@ function DashboardStepCard({
   index: number;
   step: DashboardStep;
 }) {
+  const Icon = STEP_ICONS[index];
   return (
     <article
       aria-current={active ? 'true' : undefined}
-      className={`group relative w-full overflow-hidden rounded-2xl border p-6 transition-[border-color,background-color,transform] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-safe:active:scale-[0.99] ${
+      className={`group relative w-full overflow-hidden rounded-card border p-6 transition-[border-color,background-color,transform] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] motion-safe:active:scale-[0.99] ${
         active
           ? 'border-accent/40 bg-subtle shadow-[0_24px_70px_-50px_rgba(0,0,0,0.8)]'
           : 'border-white/[0.06] bg-surface/40 motion-safe:[@media(hover:hover)]:hover:border-white/[0.12] motion-safe:[@media(hover:hover)]:hover:bg-surface/70'
@@ -212,6 +167,14 @@ function DashboardStepCard({
           active ? 'opacity-100' : 'opacity-0'
         }`}
       />
+      <span
+        aria-hidden
+        className={`mb-4 grid size-11 place-items-center rounded-control border transition-colors duration-300 ${
+          active ? 'border-accent/40 bg-accent/[0.14] text-accent-text' : 'border-white/[0.08] bg-white/[0.04] text-muted'
+        }`}
+      >
+        <Icon size={20} strokeWidth={1.9} />
+      </span>
       <span className="flex items-center gap-2.5 font-mono text-[11px] uppercase tracking-[0.16em]">
         <span className={active ? 'text-accent-text' : 'text-whisper'}>
           {String(index + 1).padStart(2, '0')}

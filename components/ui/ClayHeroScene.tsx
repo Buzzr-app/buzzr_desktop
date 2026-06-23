@@ -11,6 +11,7 @@ type SceneTokens = {
   canvas: string;
   steel: string;
   steelSurface: string;
+  subtle: string;
   accent: string;
   foreground: string;
   ramp: string[]; // [peak, great, good, mid, bad, garbage]
@@ -24,6 +25,7 @@ function readTokens(): SceneTokens {
     canvas: '#808080',
     steel: '#404040',
     steelSurface: '#505050',
+    subtle: '#3a3a42',
     accent: '#808080',
     foreground: '#d0d0d0',
     ramp: ['#808080', '#808080', '#808080', '#808080', '#808080', '#808080']
@@ -35,6 +37,7 @@ function readTokens(): SceneTokens {
     canvas: g('--color-canvas', fallback.canvas),
     steel: g('--color-steel', fallback.steel),
     steelSurface: g('--color-steel-surface', fallback.steelSurface),
+    subtle: g('--color-subtle', fallback.subtle),
     accent: g('--color-accent', fallback.accent),
     foreground: g('--color-foreground', fallback.foreground),
     ramp: [
@@ -86,9 +89,11 @@ function buildVoxels() {
   const inner = 0.74 * R;      // THICK shell (was 0.82R) so the burst reads solid
   const outer = 1.0 * R;
   const lim = Math.ceil(outer / g) + 1;
+  const SEAM_WAVE = 0.32;      // amplitude of the wavy equator seam (basketball weave)
 
   const base: number[] = [];
   const dir: number[] = [];
+  const seam: number[] = [];
   const axis: number[] = [];
   const rand: number[] = [];
   const scl: number[] = [];
@@ -116,7 +121,17 @@ function buildVoxels() {
 
         base.push(px, py, pz);
         const inv = 1 / (d || 1e-5);
-        dir.push(px * inv, py * inv, pz * inv);
+        const dxu = px * inv;
+        const dyu = py * inv;
+        const dzu = pz * inv;
+        dir.push(dxu, dyu, dzu);
+
+        // CPU-baked basketball seam distance: 2 perpendicular vertical great
+        // circles (|dx|,|dz|) carve 4 lunes; one wavy equator seam (dy weaving
+        // by SEAM_WAVE*sin(2*lon)) splits each lune -> the real 8-panel weave.
+        const lon = Math.atan2(dzu, dxu);
+        const dWavy = Math.abs(dyu - SEAM_WAVE * Math.sin(2 * lon));
+        seam.push(Math.min(Math.abs(dxu), Math.abs(dzu), dWavy));
 
         // random unit tumble axis
         let ax = rng() * 2 - 1;
@@ -136,6 +151,7 @@ function buildVoxels() {
   return {
     base: new Float32Array(base),
     dir: new Float32Array(dir),
+    seam: new Float32Array(seam),
     axis: new Float32Array(axis),
     rand: new Float32Array(rand),
     scl: new Float32Array(scl),
@@ -186,23 +202,23 @@ function roundedScreenGeometry(width: number, height: number, radius: number) {
 
 // Neutral shade endpoints (not brand colors) for deriving lighter/darker tints.
 const SHADE_WHITE = new THREE.Color(0xffffff);
-const SHADE_BLACK = new THREE.Color(0x000000);
 
 /**
- * The voxel ball is "all shades of green": a 6-stop ramp (pole to pole) built
- * ONLY from the green brand tokens (buzz-peak + buzz-great), shaded bright to
- * deep with neutral white/black lerps.
+ * The voxel ball is "all shades of green": a 5-stop ramp built ONLY from the
+ * green brand tokens (buzz-peak + buzz-great) with --color-canvas as the deep
+ * on-brand shadow anchor and white as the highlight. Sampled by a real light
+ * term in the shader, so the ball gets a true terminator, not random noise.
  */
 function buildGreenRamp(tk: SceneTokens): THREE.Color[] {
-  const bright = new THREE.Color(tk.ramp[0]); // buzz-peak, brightest green
-  const deep = new THREE.Color(tk.ramp[1]); // buzz-great, deeper green
+  const peak = new THREE.Color(tk.ramp[0]); // buzz-peak, brightest green
+  const great = new THREE.Color(tk.ramp[1]); // buzz-great, deeper green
+  const canvasCol = new THREE.Color(tk.canvas); // warm app near-black -> on-brand shadow
   return [
-    bright.clone().lerp(SHADE_WHITE, 0.62), // pale mint
-    bright.clone().lerp(SHADE_WHITE, 0.32), // light green
-    bright.clone(), // bright brand green
-    deep.clone().lerp(bright, 0.45), // mid green
-    deep.clone(), // deep green
-    deep.clone().lerp(SHADE_BLACK, 0.42) // forest
+    peak.clone().lerp(SHADE_WHITE, 0.3), // 0 highlight (top-lit sheen)
+    peak.clone(), // 1 bright brand green
+    peak.clone().lerp(great, 0.5), // 2 mid green
+    great.clone(), // 3 shadow green (emissive base)
+    great.clone().lerp(canvasCol, 0.45) // 4 deep shadow + seam channel (on-brand)
   ];
 }
 
@@ -282,6 +298,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const voxGeo = new RoundedBoxGeometry(vox.size, vox.size, vox.size, 2, vox.size * 0.22);
     voxGeo.setAttribute('aBaseDir', new THREE.InstancedBufferAttribute(vox.dir, 3));
     voxGeo.setAttribute('aRand', new THREE.InstancedBufferAttribute(vox.rand, 1));
+    voxGeo.setAttribute('aSeamDist', new THREE.InstancedBufferAttribute(vox.seam, 1));
 
     const voxMat = new THREE.MeshStandardMaterial({
       transparent: false, // opaque kills the z-fight shimmer
@@ -292,7 +309,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       roughness: 0.6, // matte rubber, not plastic-shiny
       metalness: 0.0,
       emissive: new THREE.Color(tokens.ramp[1]), // deep green base lift
-      emissiveIntensity: 0.1
+      emissiveIntensity: 0.06 // lower so shadows stay deep, not lifted flat
     });
 
     const ballUniforms = {
@@ -300,8 +317,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       uRamp: { value: rampColors },
       uExplode: { value: 0 },
       uFresnel: { value: 0.6 }, // rim now feeds emissive only
-      uSeamW: { value: 0.052 }, // seam half-width (arc radians) - TUNABLE
-      uSeamDark: { value: 0.86 } // how near-black the seam goes 0..1 - TUNABLE
+      uSeamW: { value: 0.072 }, // seam half-width (arc radians) - TUNABLE
+      uSeamDark: { value: 0.86 }, // retained (seam now uses the canvas-green stop)
+      uLightDir: { value: key.position.clone().normalize() } // key light -> real terminator
     };
 
     voxMat.onBeforeCompile = (shader) => {
@@ -311,38 +329,35 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       shader.uniforms.uFresnel = ballUniforms.uFresnel;
       shader.uniforms.uSeamW = ballUniforms.uSeamW;
       shader.uniforms.uSeamDark = ballUniforms.uSeamDark;
+      shader.uniforms.uLightDir = ballUniforms.uLightDir;
 
       // Solid basketball: panel green + recessed 8-panel seams (three mutually
       // perpendicular great circles, |n.x|/|n.y|/|n.z|) resolved in the vertex
       // stage. All colour derives from the green token ramp - no hardcoded hex.
       shader.vertexShader =
-        'attribute vec3 aBaseDir;\nattribute float aRand;\n' +
-        'uniform float uTime;\nuniform float uExplode;\nuniform float uSeamW;\nuniform float uSeamDark;\nuniform vec3 uRamp[6];\n' +
+        'attribute vec3 aBaseDir;\nattribute float aRand;\nattribute float aSeamDist;\n' +
+        'uniform float uTime;\nuniform float uExplode;\nuniform float uSeamW;\nuniform float uSeamDark;\nuniform vec3 uLightDir;\nuniform vec3 uRamp[5];\n' +
         'varying vec3 vPanel;\nvarying vec3 vSeamCol;\nvarying float vSeam;\nvarying float vSeamCore;\nvarying float vSeamAO;\nvarying float vFresnel;\nvarying float vRand;\n' +
-        'float bSeam(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
-        '  return 1.0 - smoothstep(w, w + max(w * 0.6, 0.012), dG); }\n' +
-        'float bSeamCore(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
-        '  return 1.0 - smoothstep(0.0, w * 0.5, dG); }\n' +
-        'float bSeamAO(vec3 n, float w){ float dG = min(abs(n.x), min(abs(n.y), abs(n.z)));\n' +
-        '  return 1.0 - smoothstep(w + w * 0.6, w + w * 0.6 + 0.05, dG); }\n' +
         shader.vertexShader.replace(
           '#include <project_vertex>',
           '#include <project_vertex>\n' +
-            '  vec3 vd = normalize(aBaseDir + vec3(1e-5));\n' +
             '  vRand = aRand;\n' +
-            '  float tone = 0.18 + aRand * 0.20;\n' +
-            '  vPanel = mix(uRamp[2], uRamp[4], tone);\n' +
-            '  vSeamCol = mix(vPanel, vec3(0.0), uSeamDark);\n' +
-            '  vSeam = bSeam(vd, uSeamW);\n' +
-            '  vSeamCore = bSeamCore(vd, uSeamW);\n' +
-            '  vSeamAO = max(vSeam, bSeamAO(vd, uSeamW) * 0.55);\n' +
             '  vec3 nrmV = normalize(transformedNormal);\n' +
             '  vec3 viewV = normalize(-mvPosition.xyz);\n' +
-            '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.6);\n'
+            '  vFresnel = pow(1.0 - clamp(dot(nrmV, viewV), 0.0, 1.0), 2.6);\n' +
+            '  vec3 lightV = normalize((viewMatrix * vec4(uLightDir, 0.0)).xyz);\n' +
+            '  float shade = clamp(0.5 + 0.5 * dot(nrmV, lightV) + aBaseDir.y * 0.12, 0.0, 1.0);\n' +
+            '  vPanel = (shade < 0.5\n' +
+            '    ? mix(uRamp[4], uRamp[3], shade * 2.0)\n' +
+            '    : mix(uRamp[3], mix(uRamp[1], uRamp[0], (shade - 0.5) * 0.7), (shade - 0.5) * 2.0)) * (0.97 + aRand * 0.06);\n' +
+            '  vSeamCol = uRamp[4];\n' +
+            '  vSeam = 1.0 - smoothstep(uSeamW, uSeamW + max(uSeamW * 0.6, 0.012), aSeamDist);\n' +
+            '  vSeamCore = 1.0 - smoothstep(0.0, uSeamW * 0.5, aSeamDist);\n' +
+            '  vSeamAO = max(vSeam, (1.0 - smoothstep(uSeamW * 1.6, uSeamW * 1.6 + 0.05, aSeamDist)) * 0.55);\n'
         );
 
       shader.fragmentShader =
-        'uniform float uFresnel;\n' +
+        'uniform float uFresnel;\nuniform float uExplode;\n' +
         'varying vec3 vPanel;\nvarying vec3 vSeamCol;\nvarying float vSeam;\nvarying float vSeamCore;\nvarying float vSeamAO;\nvarying float vFresnel;\nvarying float vRand;\n' +
         shader.fragmentShader
           .replace(
@@ -357,10 +372,10 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
           .replace(
             'vec3 totalEmissiveRadiance = emissive;',
             'float panelLit = 1.0 - vSeam;\n' +
-              '  vec3 totalEmissiveRadiance = emissive + vPanel * (0.05 + vRand * 0.03 + vFresnel * uFresnel * 0.5) * panelLit;'
+              '  vec3 totalEmissiveRadiance = emissive + vPanel * (0.04 + uExplode * 0.18 + vFresnel * uFresnel * 0.5) * panelLit;'
           );
     };
-    voxMat.customProgramCacheKey = () => 'voxelBasketballSolid';
+    voxMat.customProgramCacheKey = () => 'voxelBasketball_v3';
 
     const ball = new THREE.InstancedMesh(voxGeo, voxMat, vox.count);
     ball.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -423,26 +438,26 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     phoneGroup.add(phone);
 
     const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
-    // A lit graphite slab that reads above the dark canvas without crushing the screen.
-    // Mint clay: brand green lifted toward white for a soft matte mint body.
-    const phoneBodyColor = () => new THREE.Color(tokens.accent).lerp(SHADE_WHITE, 0.52);
+    // Sleek titanium slab: neutral grey from --color-subtle nudged slightly to
+    // white, high metalness. No brand-green tint (this was the mint clay body).
+    const phoneBodyColor = () => new THREE.Color(tokens.subtle).lerp(SHADE_WHITE, 0.06);
     const bodyMat = new THREE.MeshStandardMaterial({
       color: phoneBodyColor(),
-      roughness: 0.58,
-      metalness: 0.12
+      roughness: 0.55,
+      metalness: 0.42
     });
     const body = new THREE.Mesh(bodyGeo, bodyMat);
     body.renderOrder = 0;
     phone.add(body);
 
-    // Subtle accent frame just inside the body edge - premium device bezel glow.
+    // Neutral brushed-steel edge just inside the body - a metal rim, not a green glow.
     const frameGeo = new RoundedBoxGeometry(1.5, 3.13, 0.355, 4, 0.19);
     const frameMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(tokens.accent),
+      color: new THREE.Color(tokens.steelSurface),
       roughness: 0.5,
-      metalness: 0.0,
-      emissive: new THREE.Color(tokens.accent),
-      emissiveIntensity: 0.12,
+      metalness: 0.6,
+      emissive: new THREE.Color(0x000000),
+      emissiveIntensity: 0.0,
       transparent: true,
       opacity: 0.0
     });
@@ -543,9 +558,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
       const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
       phone.visible = rise > 0.018;
-      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.42 : -0.5, rise);
-      phone.position.z = lerp(-0.45, 0.18, rise); // pulled forward, in front of where the ball was
-      const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.54 : 0.64, rise);
+      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.26 : -0.32, rise);
+      phone.position.z = lerp(-0.45, 0.2, rise); // pulled forward, in front of where the ball was
+      const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.58 : 0.7, rise);
       phone.scale.setScalar(sc);
 
       const surface = bandProgress(HERO_BANDS.phoneSurface, p);

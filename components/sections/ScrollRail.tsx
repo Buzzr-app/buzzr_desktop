@@ -20,15 +20,12 @@ export function ScrollRail() {
             >
               Buzzr Bets tracks the slips, not the book.
             </h2>
-            <p className="mt-4 max-w-[48ch] text-[16px] leading-[1.55] tracking-[-0.02em] text-muted">
-              Track the DFS slips you place elsewhere. Buzzr grades every leg against live results and keeps the receipts next to the game it came from. No sportsbook integrations, no money touched, just the scoreboard. The settlement engine is open source.
-            </p>
           </ScrollReveal>
 
           <div className="mt-8 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
             {BETS_STEPS.map(([title, body], index) => (
               <ScrollReveal key={title} delay={(index + 1) as 1 | 2 | 3}>
-                <div className="group rounded-lg border border-border bg-surface p-4 shadow-[var(--shadow-card)] transition-[border-color,background-color,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:scale-[0.985] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-accent/30 [@media(hover:hover)]:hover:bg-subtle/60">
+                <div className="group rounded-card border border-border bg-surface p-4 shadow-[var(--shadow-card)] transition-[border-color,background-color,transform] duration-200 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] active:scale-[0.985] [@media(hover:hover)]:hover:-translate-y-0.5 [@media(hover:hover)]:hover:border-accent/30 [@media(hover:hover)]:hover:bg-subtle/60">
                   <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-muted transition-colors duration-200 [@media(hover:hover)]:group-hover:text-accent-text">
                     {String(index + 1).padStart(2, '0')}
                   </span>
@@ -51,7 +48,7 @@ export function ScrollRail() {
               size="standard"
               className="mx-auto"
             />
-            <div className="absolute bottom-10 left-4 right-4 rounded-lg border border-white/10 bg-black/72 p-4 text-white backdrop-blur-md">
+            <div className="absolute bottom-10 left-4 right-4 rounded-card border border-white/10 bg-black/72 p-4 text-white backdrop-blur-md">
               <div className="flex items-center justify-between gap-4">
                 <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
                   Slip status

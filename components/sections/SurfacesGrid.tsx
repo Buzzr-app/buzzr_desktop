@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
 import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
+import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
+import { DashboardScreen } from '@/components/ui/DashboardScreen';
 
 type BentoCard = {
   label: string;
@@ -60,9 +62,6 @@ export function SurfacesGrid() {
         >
           Sports. Social. Seamless.
         </h2>
-        <p className="mt-4 text-[clamp(17px,1.8vw,22px)] leading-[1.35] tracking-[-0.015em] text-muted">
-          Everything you need to follow, connect, and win.
-        </p>
       </header>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -90,9 +89,6 @@ function BentoSurfaceCard({ card }: { card: BentoCard }) {
           </span>
           <span>{title}</span>
         </h3>
-        <p className="mt-3 max-w-[34ch] text-[15px] leading-[1.52] tracking-[-0.012em] text-muted">
-          {card.body}
-        </p>
       </div>
     </article>
   );
@@ -100,11 +96,11 @@ function BentoSurfaceCard({ card }: { card: BentoCard }) {
 
 function SurfacePreview({ type }: { type: BentoCard['preview'] }) {
   if (type === 'scroll') {
-    return <ScreenshotCrop src="/app-screens/games.png" alt="Buzzr Scroll game stream" y="top" />;
+    return <ScrollFeedPreview />;
   }
 
   if (type === 'dashboard') {
-    return <ScreenshotCrop src="/app-screens/dashboard.png" alt="Buzzr dashboard screen" y="top" />;
+    return <DashboardCardPreview />;
   }
 
   if (type === 'friends') {
@@ -122,51 +118,32 @@ function SurfacePreview({ type }: { type: BentoCard['preview'] }) {
   return <BetsPanelPreview />;
 }
 
-function ScreenshotCrop({
-  alt,
-  src,
-  y
-}: {
-  alt: string;
-  src: string;
-  y: 'top' | 'center';
-}) {
+function DashboardCardPreview() {
   return (
-    <div className="relative h-full min-h-[210px] overflow-hidden rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-black shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
-      <Image
-        src={src}
-        alt={alt}
-        fill
-        sizes="(max-width: 768px) 100vw, 33vw"
-        className={`object-cover ${y === 'top' ? 'object-top' : 'object-center'}`}
-      />
+    <div className="relative h-full min-h-[210px] overflow-hidden rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-canvas shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="absolute inset-x-0 top-0" style={{ aspectRatio: '9 / 19.5' }}>
+        <DashboardScreen />
+      </div>
       <div
         aria-hidden
-        className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/76 via-black/10 to-transparent"
+        className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-canvas via-canvas/20 to-transparent"
       />
     </div>
   );
 }
 
-const AVATARS = [
-  ['SC', 'from-emerald-300 to-teal-600'],
-  ['MJ', 'from-sky-300 to-blue-600'],
-  ['AK', 'from-amber-200 to-orange-500'],
-  ['TR', 'from-fuchsia-300 to-purple-600'],
-  ['JL', 'from-lime-200 to-emerald-500'],
-  ['DB', 'from-rose-200 to-red-500']
-] as const;
+const STACK_SEEDS: readonly AvatarSeed[] = ['maya', 'sid', 'marcus', 'nina', 'jordan', 'devin'];
 
 function AvatarStack() {
   return (
-    <div className="flex -space-x-2">
-      {AVATARS.map(([initials, gradient]) => (
-        <span
-          key={initials}
-          className={`grid size-9 place-items-center rounded-full border border-black/50 bg-gradient-to-br ${gradient} font-hero text-[11px] font-bold text-black shadow-[0_10px_24px_rgba(0,0,0,0.34)]`}
-        >
-          {initials}
-        </span>
+    <div className="flex -space-x-2.5">
+      {STACK_SEEDS.map((seed) => (
+        <Avatar
+          key={seed}
+          seed={seed}
+          size={36}
+          className="border-2 border-[#080b0d] shadow-[0_10px_24px_rgba(0,0,0,0.34)]"
+        />
       ))}
     </div>
   );
@@ -182,9 +159,9 @@ function SocialFeedPreview() {
         </span>
       </div>
       <div className="mt-5 space-y-2.5">
-        <MessageBubble name="Sid" text="That 8.6 is real. This match is chaos." />
-        <MessageBubble name="Maya" text="Pinned the finals thread. Get in here." align="right" />
-        <MessageBubble name="Dre" text="Crowd signal just flipped green." />
+        <MessageBubble seed="sid" name="Sid" text="That 8.6 is real. This match is chaos." />
+        <MessageBubble seed="maya" name="Maya" text="Pinned the finals thread. Get in here." align="right" />
+        <MessageBubble seed="marcus" name="Dre" text="Crowd signal just flipped green." />
       </div>
     </div>
   );
@@ -193,16 +170,19 @@ function SocialFeedPreview() {
 function MessageBubble({
   align = 'left',
   name,
+  seed,
   text
 }: {
   align?: 'left' | 'right';
   name: string;
+  seed: AvatarSeed;
   text: string;
 }) {
   return (
-    <div className={`flex ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+    <div className={`flex items-end gap-2 ${align === 'right' ? 'justify-end' : 'justify-start'}`}>
+      {align === 'left' && <Avatar seed={seed} size={26} className="shrink-0" />}
       <div
-        className={`max-w-[82%] rounded-[18px] px-3.5 py-2.5 ${
+        className={`max-w-[78%] rounded-[18px] px-3.5 py-2.5 ${
           align === 'right'
             ? 'bg-accent text-on-accent'
             : 'border border-white/[0.08] bg-white/[0.065] text-white'
@@ -213,6 +193,7 @@ function MessageBubble({
         </p>
         <p className="mt-1.5 text-[13px] leading-[1.28] tracking-[-0.01em]">{text}</p>
       </div>
+      {align === 'right' && <Avatar seed={seed} size={26} className="shrink-0" />}
     </div>
   );
 }
@@ -253,13 +234,49 @@ function LeagueClusterPreview() {
   );
 }
 
-function AiFeedPreview() {
-  const rows = [
-    ['Tiafoe · Fritz', '8.0', 'friend heat'],
-    ['Mets · Phillies', '7.1', 'trending'],
-    ['Thieves · GenOne', '6.5', 'live recap']
-  ] as const;
+const SCROLL_GAMES = [
+  { a: 'pistons', b: 'knicks', sa: '102', sb: '98', status: 'Q4 2:14' },
+  { a: 'mets', b: 'phillies', sa: '4', sb: '3', status: 'Top 8' },
+  { a: 'rangers', b: 'bruins', sa: '2', sb: '2', status: '3rd 5:30' }
+] as const;
 
+function ScrollFeedPreview() {
+  return (
+    <div className="flex h-full min-h-[210px] flex-col rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-[#080b0d] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+      <div className="flex items-center justify-between">
+        <span className="inline-flex items-center gap-1.5 font-mono text-[10px] uppercase tracking-[0.16em] text-accent-text">
+          <span aria-hidden className="size-1.5 rounded-full bg-accent motion-safe:animate-buzz-pulse" />
+          Live now
+        </span>
+        <span className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/40">12 games</span>
+      </div>
+      <div className="mt-3 space-y-2">
+        {SCROLL_GAMES.map((g) => (
+          <div
+            key={g.a}
+            className="flex items-center gap-2 rounded-[14px] border border-white/[0.07] bg-white/[0.045] px-2.5 py-2"
+          >
+            <Image src={`/logos/${g.a}.png`} alt="" width={26} height={26} className="size-[26px] rounded-full bg-white/10 p-0.5" />
+            <span className="font-mono text-[15px] font-bold tabular-nums text-white">{g.sa}</span>
+            <span className="flex-1 text-center font-mono text-[9px] uppercase tracking-[0.1em] text-accent-text">
+              {g.status}
+            </span>
+            <span className="font-mono text-[15px] font-bold tabular-nums text-white">{g.sb}</span>
+            <Image src={`/logos/${g.b}.png`} alt="" width={26} height={26} className="size-[26px] rounded-full bg-white/10 p-0.5" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const AI_FEED_ROWS = [
+  { a: 'pistons', b: 'knicks', match: 'Pistons · Knicks', league: 'NBA', score: '8.4', signal: 'friend heat' },
+  { a: 'mets', b: 'phillies', match: 'Mets · Phillies', league: 'MLB', score: '7.1', signal: 'trending' },
+  { a: 'rangers', b: 'bruins', match: 'Rangers · Bruins', league: 'NHL', score: '6.5', signal: 'live recap' }
+] as const;
+
+function AiFeedPreview() {
   return (
     <div className="flex h-full min-h-[210px] flex-col rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-[#080b0d] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <div className="rounded-[18px] border border-white/[0.08] bg-white/[0.055] px-4 py-3">
@@ -271,17 +288,31 @@ function AiFeedPreview() {
         </p>
       </div>
       <div className="mt-3 space-y-2">
-        {rows.map(([game, score, signal]) => (
+        {AI_FEED_ROWS.map((row) => (
           <div
-            key={game}
+            key={row.match}
             className="flex items-center gap-3 rounded-[16px] border border-white/[0.07] bg-white/[0.045] px-3 py-2.5"
           >
-            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent/16 font-mono text-[11px] text-accent-text">
-              {score}
+            <span className="flex shrink-0 -space-x-2">
+              {[row.a, row.b].map((team) => (
+                <Image
+                  key={team}
+                  src={`/logos/${team}.png`}
+                  alt=""
+                  width={28}
+                  height={28}
+                  className="size-7 rounded-full bg-white/10 p-1 ring-1 ring-black/50"
+                />
+              ))}
             </span>
             <span className="min-w-0 flex-1">
-              <span className="block truncate text-[13px] font-semibold text-white">{game}</span>
-              <span className="block text-[11px] text-muted">{signal}</span>
+              <span className="block truncate text-[13px] font-semibold text-white">{row.match}</span>
+              <span className="block text-[11px] text-muted">
+                {row.league} · {row.signal}
+              </span>
+            </span>
+            <span className="grid size-8 shrink-0 place-items-center rounded-full bg-accent/16 font-mono text-[12px] font-semibold text-accent-text">
+              {row.score}
             </span>
           </div>
         ))}
@@ -303,9 +334,18 @@ function BetsPanelPreview() {
       </div>
       <div className="mt-5 rounded-[18px] border border-white/[0.08] bg-white/[0.055] p-4">
         <div className="flex items-center justify-between gap-3">
-          <span>
-            <span className="block text-[13px] font-semibold text-white">Detroit Pistons</span>
-            <span className="mt-1 block text-[11px] text-muted">NBA · 24</span>
+          <span className="flex items-center gap-2.5">
+            <Image
+              src="/logos/pistons.png"
+              alt=""
+              width={34}
+              height={34}
+              className="size-9 shrink-0 rounded-full bg-white/10 p-1 ring-1 ring-black/50"
+            />
+            <span>
+              <span className="block text-[13px] font-semibold text-white">Detroit Pistons</span>
+              <span className="mt-1 block text-[11px] text-muted">NBA · 24</span>
+            </span>
           </span>
           <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-accent-text">
             updated

@@ -30,22 +30,19 @@ export function OpenSource() {
           >
             We open-sourced parts of Buzzr.
           </h2>
-          <p className="mt-4 max-w-[54ch] text-[16px] leading-[1.55] tracking-[-0.015em] text-muted">
-            The Buzzr Bets settlement engine and scoring internals ship as small, typed npm packages. Read the source, grade a slip from the CLI, or wire your own stat provider.
-          </p>
         </div>
         <a
           href={NPM_SEARCH}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex w-fit shrink-0 items-center gap-2 rounded-button border border-border px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-foreground transition-[border-color,background-color] duration-200 ease-out hover:border-accent/40 hover:bg-subtle focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+          className="inline-flex w-fit shrink-0 items-center gap-2 rounded-control border border-border px-4 py-2.5 text-[14px] font-medium tracking-[-0.01em] text-foreground transition-[border-color,background-color] duration-200 ease-out hover:border-accent/40 hover:bg-subtle focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
           View all on npm
           <span aria-hidden>&rarr;</span>
         </a>
       </header>
 
-      <ul className="grid gap-px overflow-hidden rounded-2xl border border-border bg-border">
+      <ul className="grid gap-px overflow-hidden rounded-card border border-border bg-border">
         {PACKAGES.map((pkg) => (
           <li key={pkg.name}>
             <a

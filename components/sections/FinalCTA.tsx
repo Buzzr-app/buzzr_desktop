@@ -1,6 +1,7 @@
 import { MagneticButton } from '@/components/ui/MagneticButton';
 import { ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
 import { AppleIcon } from '@/components/ui/BrandIcons';
+import { btnPrimary } from '@/components/ui/button';
 import { APP_STORE_URL } from '@/src/lib/constants';
 import { BrandMark } from '@/components/BrandMark';
 import { PixelAura } from '@/components/ui/PixelAura';
@@ -26,13 +27,10 @@ export function FinalCTA() {
         >
           Sports feels better when Buzzr gets it.
         </h2>
-        <p className="max-w-[34ch] text-pretty text-[18px] leading-[1.5] tracking-[-0.015em] text-white/62 motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.12s_both]">
-          One app for the feed, dashboards, crews, leagues, and Buzzr Bets.
-        </p>
         <MagneticButton
           href={APP_STORE_URL}
           external
-          className="mt-2 inline-flex items-center gap-2 rounded-button bg-accent px-6 py-3.5 text-[15px] font-medium tracking-[-0.01em] text-on-accent shadow-[var(--shadow-card)] transition-[background-color,transform] duration-150 ease-[var(--ease-out)] hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.18s_both]"
+          className={`${btnPrimary} mt-2 shadow-[var(--shadow-card)] motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.18s_both]`}
         >
           <AppleIcon size={18} />
           <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>

@@ -33,7 +33,7 @@ export function LaunchBanner() {
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-[calc(16px_+_env(safe-area-inset-bottom))]">
-      <div className="launch-banner-shell pointer-events-auto grid w-full max-w-[680px] grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 rounded-[22px] border border-white/[0.12] px-4 py-3 motion-safe:animate-fade-in-up sm:grid-cols-[auto_1fr_auto_auto_auto] sm:px-5">
+      <div className="launch-banner-shell pointer-events-auto grid w-full max-w-[680px] grid-cols-[1fr_auto] items-center gap-x-4 gap-y-3 rounded-card border border-white/[0.12] px-4 py-3 motion-safe:animate-fade-in-up sm:grid-cols-[auto_1fr_auto_auto_auto] sm:px-5">
         <span
           aria-hidden
           className="hidden size-2.5 shrink-0 rounded-full bg-accent shadow-[0_0_22px_rgba(0,194,100,0.75)] motion-safe:animate-buzz-pulse sm:block"
@@ -47,13 +47,13 @@ export function LaunchBanner() {
             href="https://www.producthunt.com/products/buzzr-sports/reviews/new"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-hero inline-flex min-h-10 items-center rounded-[14px] px-3 text-[13px] font-semibold tracking-[-0.01em] text-white/68 transition-[background-color,color] duration-150 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="font-hero inline-flex min-h-10 items-center rounded-control px-3 text-[13px] font-semibold tracking-[-0.01em] text-white/68 transition-[background-color,color] duration-150 hover:bg-white/[0.06] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Review on PH
           </a>
           <Link
             href="/changelog"
-            className="font-hero inline-flex min-h-10 shrink-0 items-center justify-center rounded-[14px] bg-accent px-4 text-[13px] font-bold tracking-[-0.01em] text-on-accent shadow-[0_16px_40px_-20px_rgba(0,194,100,0.85)] transition-[background-color,transform] duration-150 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="font-hero inline-flex min-h-10 shrink-0 items-center justify-center rounded-control bg-accent px-4 text-[13px] font-bold tracking-[-0.01em] text-on-accent shadow-[0_16px_40px_-20px_rgba(0,194,100,0.85)] transition-[background-color,transform] duration-150 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             What changed
           </Link>

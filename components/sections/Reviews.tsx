@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Section } from '@/components/ui/Section';
+import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
 import { APP_STORE_URL } from '@/src/lib/constants';
 
 // Live App Store numbers for Buzzr Sports (id6760628256).
@@ -9,6 +10,7 @@ type Review = {
   title: string;
   body: string;
   author: string;
+  seed: AvatarSeed;
   date: string;
   stars: 1 | 2 | 3 | 4 | 5;
   response?: string;
@@ -19,6 +21,7 @@ const REVIEWS: Review[] = [
     title: 'Our group chat finally has a scoreboard',
     body: "Got 9 friends following the Final Four, live reactions popping off, everyone's brackets and takes in one place. this replaced our groupchat. only complaint is I wish i could pin someone's bracket to the top.",
     author: 'Sid',
+    seed: 'sid',
     date: 'Apr 18',
     stars: 5,
     response:
@@ -28,6 +31,7 @@ const REVIEWS: Review[] = [
     title: 'Just what I need with everything in one place',
     body: "Finally an app where you get to skip the fluff and give straight ratings on games from 1 to 10, see what other people thought, and maybe drop a take if you want. that's it. no betting spam.",
     author: 'Isishsbjssihsbnsjsjsi',
+    seed: 'nina',
     date: 'Apr 22',
     stars: 5,
     response:
@@ -37,6 +41,7 @@ const REVIEWS: Review[] = [
     title: 'Chats has been a pretty nice experience',
     body: 'Been enjoying being able to chat with others and discover new friends that have the same niche sports interests as me. Its also fun to filter the swarm sometimes and rate it.',
     author: 'AllenJHHHHH',
+    seed: 'leo',
     date: 'May 4',
     stars: 4,
     response:
@@ -134,7 +139,7 @@ export function Reviews() {
               className="mb-1.5 block h-[6px] overflow-hidden rounded-full bg-foreground/[0.08] last:mb-0"
             >
               <span
-                className="block h-full rounded-full bg-foreground/70"
+                className="block h-full rounded-full bg-accent"
                 style={{ width: `${row.pct * 100}%` }}
               />
             </span>
@@ -155,7 +160,7 @@ export function Reviews() {
           href={APP_STORE_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 rounded-button border border-border bg-surface px-5 py-3 text-[14px] font-medium tracking-[-0.01em] text-foreground transition-[transform,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent/50 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+          className="inline-flex items-center gap-2 rounded-control border border-border bg-surface px-5 py-3 text-[14px] font-medium tracking-[-0.01em] text-foreground transition-[transform,border-color,background-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-accent/50 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
         >
           See all reviews on the App Store
           <span aria-hidden>&rarr;</span>
@@ -167,7 +172,7 @@ export function Reviews() {
 
 function ReviewCard({ review }: { review: Review }) {
   return (
-    <article className="flex flex-col rounded-2xl border border-border bg-surface p-5">
+    <article className="flex flex-col rounded-card border border-border bg-surface p-5">
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-[15px] font-semibold leading-[1.35] tracking-[-0.01em] text-foreground">
           {review.title}
@@ -177,16 +182,21 @@ function ReviewCard({ review }: { review: Review }) {
         </span>
       </div>
 
-      <div className="mt-2 flex items-center gap-2">
-        <Stars value={review.stars} sizeClass="h-3 w-3" />
-        <span className="text-[12px] text-muted">{review.author}</span>
+      <div className="mt-3 flex items-center gap-2.5">
+        <Avatar seed={review.seed} size={34} className="shrink-0 ring-1 ring-white/10" />
+        <span className="min-w-0">
+          <span className="block truncate text-[13px] font-semibold tracking-[-0.01em] text-foreground">
+            {review.author}
+          </span>
+          <Stars value={review.stars} sizeClass="h-3 w-3" />
+        </span>
       </div>
 
       <p className="mt-3 text-[14px] leading-[1.5] text-muted">{review.body}</p>
 
       {review.response ? (
-        <div className="mt-4 rounded-xl border border-border bg-subtle/60 p-3.5">
-          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-whisper">
+        <div className="mt-4 rounded-control border border-accent/25 bg-accent/[0.05] p-3.5">
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-accent-text">
             Developer Response
           </p>
           <p className="mt-1.5 text-[13px] leading-[1.5] text-muted">{review.response}</p>

@@ -18,10 +18,13 @@ import { APP_STORE_URL } from '@/src/lib/constants';
 
 type NavItem = { id: string; label: string; Icon: LucideIcon };
 
+// Ids must match sections actually rendered on the home page (page.tsx), in
+// scroll order, so the active/selected state tracks monotonically. The old
+// 'scroll'/'showcase' targets were unmounted -> selection broke.
 const SECTIONS: NavItem[] = [
-  { id: 'scroll', label: 'Scroll', Icon: ScrollText },
+  { id: 'surfaces', label: 'Scroll', Icon: ScrollText },
+  { id: 'promo', label: 'Friends', Icon: MessagesSquare },
   { id: 'data', label: 'Dashboards', Icon: ChartSpline },
-  { id: 'showcase', label: 'Friends', Icon: MessagesSquare },
   { id: 'leagues', label: 'Leagues', Icon: Trophy },
   { id: 'rail', label: 'Bets', Icon: WalletCards }
 ];
@@ -223,7 +226,7 @@ export function SiteHeader() {
                     <Link
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
-                      className={`font-hero flex min-h-[48px] items-center gap-2 rounded-button border px-3 py-2.5 text-[14px] font-semibold tracking-[-0.015em] transition-colors ${
+                      className={`font-hero flex min-h-[48px] items-center gap-2 rounded-control border px-3 py-2.5 text-[14px] font-semibold tracking-[-0.015em] transition-colors ${
                         isActive ? 'border-accent/45 bg-accent/10 text-white' : 'border-border bg-subtle text-foreground hover:border-accent/40'
                       }`}
                     >

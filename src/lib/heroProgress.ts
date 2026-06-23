@@ -2,8 +2,8 @@ export const HERO_BANDS = {
   introOut: [0.16, 0.64],
   burst: [0.25, 0.65],
   burstFade: [0.66, 0.9],
-  phoneRise: [0.65, 0.96],
-  phoneSurface: [0.62, 0.78],
+  phoneRise: [0.3, 0.9],
+  phoneSurface: [0.5, 0.76],
   logo: [0.66, 0.9],
   tagline: [0.74, 0.98]
 } as const;

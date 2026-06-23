@@ -122,7 +122,7 @@ export function HeroCopy() {
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center gap-2 rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             <AppleIcon size={17} />
             <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
@@ -132,7 +132,7 @@ export function HeroCopy() {
             href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center gap-2 rounded-control border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             <DiscordIcon size={17} />
             Join the Discord<span className="sr-only"> (opens in new tab)</span>
@@ -147,7 +147,7 @@ export function HeroCopy() {
 
       <div
         ref={wordRef}
-        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[10vh] opacity-0 will-change-[transform,opacity] md:pt-[11vh]"
+        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[7vh] opacity-0 will-change-[transform,opacity] md:pt-[8vh]"
       >
         <ShimmerText
           kind="ramp"
@@ -161,9 +161,9 @@ export function HeroCopy() {
 
       <div
         ref={taglineRef}
-        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[23vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[24vh]"
+        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[19vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[20vh]"
       >
-        <p className="font-hero max-w-[28ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white">
+        <p className="font-hero max-w-[34ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white md:max-w-[40ch]">
           <ShimmerText kind="accent" className="text-accent-text">
             AI-Native
           </ShimmerText>{' '}
@@ -173,7 +173,7 @@ export function HeroCopy() {
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center rounded-button bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Get the app<span className="sr-only"> (opens in new tab)</span>
           </MagneticButton>
@@ -181,7 +181,7 @@ export function HeroCopy() {
             href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded-button border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center rounded-control border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Join the Discord<span className="sr-only"> (opens in new tab)</span>
           </Link>

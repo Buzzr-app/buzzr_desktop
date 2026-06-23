@@ -37,3 +37,11 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = 'Button';
 
 export { buttonVariants };
+
+// Canonical button class sets — one look across links, MagneticButton, and sections.
+// primary = brand green; secondary = outline on a dark surface; glass = over media (hero).
+export const btnBase =
+  'inline-flex items-center justify-center gap-2 rounded-control px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] transition-[background-color,border-color,transform] duration-200 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]';
+export const btnPrimary = `${btnBase} bg-accent text-on-accent hover:bg-accent-dim`;
+export const btnSecondary = `${btnBase} border border-border bg-surface text-foreground hover:border-accent/40 hover:bg-subtle`;
+export const btnGlass = `${btnBase} border border-white/15 bg-black/35 text-white backdrop-blur-md hover:bg-black/55`;
