@@ -143,7 +143,7 @@ export default function BlogIndexPage() {
         </p>
       ) : (
         <>
-          <PostCard post={leadPost} priority variant="lead" />
+          <PostCard post={leadPost} seed={0} priority variant="lead" />
 
           {restPosts.length > 0 ? (
             <>
@@ -155,7 +155,7 @@ export default function BlogIndexPage() {
               </div>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {restPosts.map((post, i) => (
-                  <PostCard key={post.slug} post={post} priority={i < 2} />
+                  <PostCard key={post.slug} post={post} seed={i + 1} priority={i < 2} />
                 ))}
               </div>
             </>

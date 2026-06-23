@@ -22,7 +22,7 @@ import { cn } from '@/components/utils';
  *   - if WebGL is unavailable it renders nothing (section bg remains)
  */
 
-type GyroidVariant = 'cta' | 'reels';
+type GyroidVariant = 'cta' | 'reels' | 'dither';
 
 type VariantConfig = {
   lo: string; // token name for the deep/shadow color (≈ page bg)
@@ -34,10 +34,11 @@ type VariantConfig = {
   levels: number;
   intensity: number;
   cell: number; // upscaled pixel size (matches Fluid "pixelate N")
+  grain?: number; // subtle noise amplitude (dither variant only)
 };
 
 // `cta` (footer) is zoomed WAY out for dense, intricate detail; `reels` is the
-// per-card base. Both run at a small cell size so the pixelate look stays crisp.
+// per-card base. `dither` is the blog-cover Bayer-dithered MINT surface.
 const VARIANTS: Record<GyroidVariant, VariantConfig> = {
   cta: {
     lo: '--color-canvas',
@@ -60,6 +61,19 @@ const VARIANTS: Record<GyroidVariant, VariantConfig> = {
     levels: 7,
     intensity: 0.92,
     cell: 4
+  },
+  // Matches Fluid preset: Gyroid · MINT · Dither · pixelate 9 · zoom 4 · warp 9 · speed 3 · grain 0.25
+  dither: {
+    lo: '--color-canvas',
+    hi: '--color-accent-text',
+    peak: '--color-accent',
+    zoom: 4.0,
+    warp: 9.0,
+    speed: 0.55,
+    levels: 0, // unused in dither path (Bayer replaces level-banding)
+    intensity: 1.0,
+    cell: 9,
+    grain: 0.25
   }
 };
 
@@ -121,6 +135,80 @@ void main() {
 
   vec3 col = mix(uLo, uHi, q * uIntensity);
   col = mix(col, uPeak, smoothstep(0.82, 1.0, q) * 0.5 * uIntensity);
+  gl_FragColor = vec4(col, 1.0);
+}
+`;
+
+// Bayer 4x4 ordered-dither variant for blog covers.
+// Replaces ASCII level-banding with a threshold pattern so the surface
+// reads as a mint/green halftone grid over the gyroid topology.
+const DITHER_FRAGMENT_SRC = `
+precision highp float;
+uniform vec2 uRes;
+uniform float uTime;
+uniform vec3 uLo;
+uniform vec3 uHi;
+uniform vec3 uPeak;
+uniform float uZoom;
+uniform float uWarp;
+uniform float uGrain;
+
+float gyroid(vec3 p) { return dot(sin(p), cos(p.zxy)); }
+
+// 4x4 Bayer ordered-dither threshold. WebGL 1.0 compatible (step/mix only).
+float bayer4x4(vec2 fc) {
+  vec2 p = mod(floor(fc), 4.0);
+  float x = p.x;
+  float y = p.y;
+  // Row vectors (Bayer values / 16.0)
+  vec4 r0 = vec4(0.0, 8.0, 2.0, 10.0) / 16.0;
+  vec4 r1 = vec4(12.0, 4.0, 14.0, 6.0) / 16.0;
+  vec4 r2 = vec4(3.0, 11.0, 1.0, 9.0) / 16.0;
+  vec4 r3 = vec4(15.0, 7.0, 13.0, 5.0) / 16.0;
+  // Select row
+  vec4 row = mix(
+    mix(r0, r1, step(1.0, y)),
+    mix(r2, r3, step(1.0, y - 2.0)),
+    step(2.0, y)
+  );
+  // Select column
+  return mix(
+    mix(row.x, row.y, step(1.0, x)),
+    mix(row.z, row.w, step(1.0, x - 2.0)),
+    step(2.0, x)
+  );
+}
+
+// Fast pseudo-random for grain
+float hash21(vec2 p) {
+  p = fract(p * vec2(443.897, 441.423));
+  p += dot(p, p + 19.19);
+  return fract(p.x * p.y);
+}
+
+void main() {
+  vec2 uv = gl_FragCoord.xy / uRes - 0.5;
+  uv.x *= uRes.x / uRes.y;
+
+  vec3 p = vec3(uv * uZoom, uTime * 0.28);
+  p.xy += uWarp * 0.08 * vec2(sin(p.y * 1.4 + uTime * 0.38), cos(p.x * 1.4 - uTime * 0.32));
+
+  float g = gyroid(p * 3.14159);
+  g += 0.52 * gyroid(p * 6.4 + uTime * 0.18);
+  g += 0.28 * gyroid(p * 12.8 - uTime * 0.09);
+  g = clamp(g * 0.32 + 0.5, 0.0, 1.0);
+
+  // Subtle grain before dithering
+  float noise = hash21(gl_FragCoord.xy + uTime * 0.07) - 0.5;
+  g = clamp(g + noise * uGrain, 0.0, 1.0);
+
+  // Ordered Bayer dithering: per-pixel threshold -> binary hi/lo surface
+  float threshold = bayer4x4(gl_FragCoord.xy);
+  float dithered = step(threshold, g);
+
+  // Accent peak: brightest dithered cells pick up a hint of the peak token
+  vec3 col = mix(uLo, uHi, dithered);
+  col = mix(col, uPeak, step(0.78, g) * dithered * 0.45);
   gl_FragColor = vec4(col, 1.0);
 }
 `;
@@ -242,9 +330,10 @@ export function GyroidField({
       gl.compileShader(sh);
       return sh;
     };
+    const fragSrc = variant === 'dither' ? DITHER_FRAGMENT_SRC : FRAGMENT_SRC;
     const program = gl.createProgram()!;
     gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX_SRC));
-    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, FRAGMENT_SRC));
+    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragSrc));
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       if (process.env.NODE_ENV !== 'production') {
@@ -270,8 +359,9 @@ export function GyroidField({
       peak: gl.getUniformLocation(program, 'uPeak'),
       zoom: gl.getUniformLocation(program, 'uZoom'),
       warp: gl.getUniformLocation(program, 'uWarp'),
-      levels: gl.getUniformLocation(program, 'uLevels'),
-      intensity: gl.getUniformLocation(program, 'uIntensity')
+      levels: gl.getUniformLocation(program, 'uLevels'),     // null in dither shader, no-op
+      intensity: gl.getUniformLocation(program, 'uIntensity'), // null in dither shader, no-op
+      grain: gl.getUniformLocation(program, 'uGrain')        // null in non-dither shaders, no-op
     };
 
     const styles = getComputedStyle(document.documentElement);
@@ -285,6 +375,7 @@ export function GyroidField({
     gl.uniform1f(u.warp, cfg.warp);
     gl.uniform1f(u.levels, cfg.levels);
     gl.uniform1f(u.intensity, cfg.intensity);
+    gl.uniform1f(u.grain, cfg.grain ?? 0);
 
     /* ── size: render at CELL resolution, CSS upscales (pixelate look) ── */
     const resize = () => {
