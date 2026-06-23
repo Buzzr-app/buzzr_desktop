@@ -90,7 +90,7 @@ export function HeroCopy() {
             tilt makes the words read as if they curve around the globe in 3D. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-[50%] h-[106vh] w-[106vh] -translate-x-1/2 -translate-y-1/2 select-none md:top-[51%]"
+          className="pointer-events-none absolute left-1/2 top-[50%] h-[min(106vh,92vw)] w-[min(106vh,92vw)] -translate-x-1/2 -translate-y-1/2 select-none md:top-[51%]"
           style={{ perspective: '1500px' }}
         >
           <div className="h-full w-full" style={{ transform: 'rotateX(4deg)', transformStyle: 'preserve-3d' }}>

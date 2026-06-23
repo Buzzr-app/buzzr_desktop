@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { type CSSProperties } from 'react';
+import { Flame, Zap, Snowflake, Clapperboard, MessageSquare } from 'lucide-react';
 import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
@@ -9,16 +9,9 @@ import { GyroidField } from '@/components/ui/GyroidField';
 type BentoCard = {
   category: string;
   descriptor: string;
-  emojis: readonly string[];
   featured?: boolean;
   preview: 'dashboard' | 'friends' | 'leagues' | 'signals' | 'bets';
   title: string;
-};
-
-type EmojiStyle = CSSProperties & {
-  '--emoji-delay'?: string;
-  '--emoji-x'?: string;
-  '--emoji-y'?: string;
 };
 
 type DashboardWidget = {
@@ -39,36 +32,31 @@ const BENTO_CARDS: readonly BentoCard[] = [
     category: 'Dashboards',
     descriptor: 'Every league and team, sorted on one home screen.',
     preview: 'dashboard',
-    featured: true,
-    emojis: ['❤️', '🏀', '⭐', '📊']
+    featured: true
   },
   {
     title: 'Friends And Chat',
     category: 'Chat',
     descriptor: 'Live crew threads beside the score.',
-    preview: 'friends',
-    emojis: ['💬', '🔥', '🙌']
+    preview: 'friends'
   },
   {
     title: 'League Map',
     category: 'Leagues',
     descriptor: 'Browse 49 leagues, tap to follow.',
-    preview: 'leagues',
-    emojis: ['🏆', '⚽', '🏁']
+    preview: 'leagues'
   },
   {
     title: 'Fan Signals',
     category: 'Signals',
     descriptor: 'Read the room in real time.',
-    preview: 'signals',
-    emojis: ['📈', '⚡', '👀']
+    preview: 'signals'
   },
   {
     title: 'Buzzr Bets',
     category: 'Bets',
     descriptor: 'Track every leg as it lands.',
-    preview: 'bets',
-    emojis: ['✅', '💵', '🎯']
+    preview: 'bets'
   }
 ];
 
@@ -147,7 +135,6 @@ function BentoSurfaceCard({ card }: { card: BentoCard }) {
         </h3>
         <p className="bento-card__descriptor">{card.descriptor}</p>
       </div>
-      <EmojiBurst items={card.emojis} />
     </article>
   );
 }
@@ -273,9 +260,9 @@ function ChatProofPreview() {
       </div>
 
       <div className="chat-proof-preview__meta">
-        <span>🔥 12 reacts</span>
-        <span>🎥 3 clips</span>
-        <span>💬 crew takes</span>
+        <span className="inline-flex items-center gap-1.5"><Flame size={12} strokeWidth={2} aria-hidden className="text-accent-text/70" />12 reacts</span>
+        <span className="inline-flex items-center gap-1.5"><Clapperboard size={12} strokeWidth={2} aria-hidden className="text-muted" />3 clips</span>
+        <span className="inline-flex items-center gap-1.5"><MessageSquare size={12} strokeWidth={2} aria-hidden className="text-muted" />crew takes</span>
       </div>
     </div>
   );
@@ -393,12 +380,12 @@ function FanSignalsPreview() {
         </svg>
         <div className="grid grid-cols-3 gap-2">
           {[
-            ['🔥', '246'],
-            ['💯', '81'],
-            ['❄️', '19']
-          ].map(([emoji, value]) => (
-            <span key={emoji} className="fan-signal-reaction">
-              <span>{emoji}</span>
+            { Icon: Flame, value: '246' },
+            { Icon: Zap, value: '81' },
+            { Icon: Snowflake, value: '19' }
+          ].map(({ Icon, value }) => (
+            <span key={value} className="fan-signal-reaction">
+              <Icon size={13} strokeWidth={2} aria-hidden className="text-accent-text/75" />
               <strong>{value}</strong>
             </span>
           ))}
@@ -440,25 +427,6 @@ function BetsSlipPreview() {
           ))}
         </div>
       </div>
-    </div>
-  );
-}
-
-function EmojiBurst({ items }: { items: readonly string[] }) {
-  return (
-    <div className="emoji-burst" aria-hidden>
-      {items.map((emoji, index) => (
-        <span
-          key={`${emoji}-${index}`}
-          style={{
-            '--emoji-delay': `${index * 70}ms`,
-            '--emoji-x': `${18 + index * 24}%`,
-            '--emoji-y': `${18 + (index % 2) * 42}%`
-          } as EmojiStyle}
-        >
-          {emoji}
-        </span>
-      ))}
     </div>
   );
 }

@@ -1068,73 +1068,40 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 12px;
   color: var(--color-foreground);
 }
-.emoji-burst {
-  position: absolute;
-  inset: 0;
-  z-index: 3;
-  pointer-events: none;
-}
-.emoji-burst span {
-  position: absolute;
-  left: var(--emoji-x);
-  top: var(--emoji-y);
-  opacity: 0;
-  transform: translate3d(-50%, 14px, 0) scale(0.5) rotate(-12deg);
-  transition:
-    opacity 200ms ease,
-    transform 460ms cubic-bezier(0.34, 1.46, 0.5, 1);
-  transition-delay: var(--emoji-delay);
-  font-size: 25px;
-  will-change: transform, opacity;
-  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.34));
-}
-.bento-card:hover .emoji-burst span {
-  opacity: 1;
-  transform: translate3d(-50%, -22px, 0) scale(1) rotate(0deg);
+/* ─── Bento hover: sleek + minimal ─────────────────────────────────────────
+   The card itself does the work - a quiet lift (from .bento-card), an accent
+   hairline and a soft accent glow. No emoji burst, no per-element jitter. */
+@media (hover: hover) {
+  .bento-card {
+    transition:
+      transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+      border-color 260ms ease,
+      box-shadow 260ms ease;
+  }
+  .bento-card:hover {
+    box-shadow:
+      var(--shadow-card),
+      0 24px 64px -30px rgb(var(--accent-rgb) / 0.34),
+      inset 0 0 0 1px rgb(var(--accent-rgb) / 0.16);
+  }
 }
 
-/* ─── Bento preview micro-interactions ─────────────────────────────────────
-   On card hover the dashboard tiles and chat messages settle up in a clean
-   stagger, and the live/now badges get a soft accent pulse. Subtle, fast,
-   restrained - life, not noise. Reduced motion opts out. */
-.dashboard-proof-preview__team,
-.dashboard-proof-preview__widgets span,
-.dashboard-proof-preview__teams span,
-.chat-proof-preview__messages > span,
-.chat-proof-preview__meta span {
-  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
-}
-@media (hover: hover) {
-  .bento-card:hover .dashboard-proof-preview__team,
-  .bento-card:hover .dashboard-proof-preview__widgets span,
-  .bento-card:hover .chat-proof-preview__messages > span,
-  .bento-card:hover .chat-proof-preview__meta span {
-    transform: translateY(-3px);
-  }
-  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(2) { transition-delay: 45ms; }
-  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(3) { transition-delay: 90ms; }
-  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(4) { transition-delay: 135ms; }
-  .bento-card:hover .chat-proof-preview__messages > span:nth-child(2) { transition-delay: 55ms; }
-  .bento-card:hover .chat-proof-preview__messages > span:nth-child(3) { transition-delay: 110ms; }
-  .bento-card:hover .chat-proof-preview__meta span:nth-child(2) { transition-delay: 60ms; }
-  .bento-card:hover .chat-proof-preview__meta span:nth-child(3) { transition-delay: 120ms; }
-  .bento-card:hover .chat-proof-preview__live,
-  .bento-card:hover .dashboard-proof-preview__action {
-    animation: bento-badge-pulse 1.7s ease-in-out infinite;
-  }
-}
-@keyframes bento-badge-pulse {
-  0%, 100% { box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0); }
-  50%      { box-shadow: 0 0 0 5px rgb(var(--accent-rgb) / 0.14); }
-}
-/* bento micro-interactions v1 */
-@media (prefers-reduced-motion: reduce) {
-  .bento-card:hover .dashboard-proof-preview__team,
-  .bento-card:hover .dashboard-proof-preview__widgets span,
-  .bento-card:hover .chat-proof-preview__messages > span,
-  .bento-card:hover .chat-proof-preview__meta span { transform: none; }
-  .bento-card:hover .chat-proof-preview__live,
-  .bento-card:hover .dashboard-proof-preview__action { animation: none; }
+/* Mobile: the dashboard preview is dense - tighten it so every value fits on a
+   narrow card (no truncated stats, no clipped league/team chips). */
+@media (max-width: 520px) {
+  .dashboard-proof-preview { gap: 9px; }
+  .dashboard-proof-preview__body { gap: 8px; grid-template-columns: 1fr; }
+  .dashboard-proof-preview__widgets { gap: 6px; }
+  .dashboard-proof-preview__widgets span { padding: 9px 10px; min-height: 62px; }
+  .dashboard-proof-preview__widgets strong,
+  .dashboard-proof-preview__team strong { font-size: 14px; }
+  .dashboard-proof-preview__team { padding: 11px; gap: 8px; }
+  .dashboard-proof-preview__league-tabs { gap: 5px; }
+  .dashboard-proof-preview__league-tabs span,
+  .league-sort-preview__tabs span { padding: 5px 7px 5px 5px; font-size: 9px; gap: 5px; }
+  .league-chip-logo { width: 20px; height: 20px; }
+  .dashboard-proof-preview__teams { gap: 6px; }
+  .dashboard-proof-preview__teams span { padding: 4px 8px 4px 4px; }
 }
 
 .dashboard-widget-stage {
