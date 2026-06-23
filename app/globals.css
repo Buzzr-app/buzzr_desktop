@@ -1726,15 +1726,16 @@ h1, h2, h3, h4, h5, h6 {
    so rings and nodes stay aligned as the field leans toward the cursor). */
 .orbit-ring-line {
   animation: none;
-  transform: translate(calc(-50% + var(--orbit-px, 0) * 18px), calc(-50% + var(--orbit-py, 0) * 18px));
-  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 7px), calc(-50% + var(--orbit-py, 0) * 7px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
 }
-/* Node layer leans further than the center for depth; z-index keeps the orbiting
-   nodes above the center aura (the transform would otherwise drop it behind). */
+/* Node layer leans a touch further than the center for depth; z-index keeps the
+   orbiting nodes above the center aura (the transform would otherwise drop it
+   behind). Magnitude kept small so the field drifts subtly, not slides. */
 .orbit-node-layer {
   z-index: 20;
-  transform: translate(calc(var(--orbit-px, 0) * 18px), calc(var(--orbit-py, 0) * 18px));
-  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform: translate(calc(var(--orbit-px, 0) * 7px), calc(var(--orbit-py, 0) * 7px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
   will-change: transform;
 }
 
@@ -1963,9 +1964,9 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
   height: var(--orbit-core);
   width: var(--orbit-core);
-  /* Pointer parallax: the center drifts a little (less than the outer field) for depth. */
-  transform: translate(calc(-50% + var(--orbit-px, 0) * 8px), calc(-50% + var(--orbit-py, 0) * 8px));
-  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+  /* Pointer parallax: the center drifts a hair (less than the outer field) for depth. */
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 3px), calc(-50% + var(--orbit-py, 0) * 3px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .orbit-aura {
   position: relative;
