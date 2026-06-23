@@ -356,8 +356,21 @@ describe('content guardrails', () => {
     );
     const css = readFileSync(path.join(ROOT, 'app/globals.css'), 'utf8');
 
-    expect(clayHero).toContain('h-[155vh] md:h-[165vh]');
-    expect(clayHero).not.toContain('h-[200vh]');
+    // Tall cinematic pin so the ball->phone sequence breathes; never regress to
+    // the compressed single-screen pin that made the scroll feel abrupt.
+    expect(clayHero).toContain('h-[220vh] md:h-[260vh]');
+    expect(clayHero).not.toContain('h-[155vh]');
+
+    // Staged progress bands: an opening hold, a staggered burst->phone baton pass
+    // (ball clears before the phone dominates), and a settled tagline before the
+    // pin releases. These exact ranges are what make the sequence feel cinematic.
+    const heroProgress = readFileSync(path.join(ROOT, 'src/lib/heroProgress.ts'), 'utf8');
+    expect(heroProgress).toContain('introOut: [0.12, 0.46]');
+    expect(heroProgress).toContain('burst: [0.2, 0.56]');
+    expect(heroProgress).toContain('burstFade: [0.52, 0.72]');
+    expect(heroProgress).toContain('phoneRise: [0.3, 0.74]');
+    expect(heroProgress).toContain('tagline: [0.8, 0.94]');
+
     expect(page).toContain('landing-section-reveal landing-section-reveal--first');
     expect(page).toContain('landing-section-reveal');
     expect(scrollReveal).toContain("containIntrinsicSize: inView ? undefined : '560px'");

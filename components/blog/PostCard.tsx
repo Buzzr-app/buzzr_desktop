@@ -31,7 +31,7 @@ export function PostCard({ post, priority = false, variant = 'standard' }: PostC
     return (
       <Link
         href={`/blog/${post.slug}`}
-        className="group grid overflow-hidden rounded-[14px] border border-border bg-surface transition-[border-color,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-white/20 active:translate-y-0 lg:grid-cols-[1.05fr_0.95fr]"
+        className="group grid overflow-hidden rounded-card border border-border bg-surface transition-[border-color,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-white/20 active:translate-y-0 lg:grid-cols-[1.05fr_0.95fr]"
       >
         <div className="relative min-h-[260px] overflow-hidden bg-canvas md:min-h-[420px]">
           <Image
@@ -82,7 +82,7 @@ export function PostCard({ post, priority = false, variant = 'standard' }: PostC
   return (
     <Link
       href={`/blog/${post.slug}`}
-      className="group flex h-full flex-col overflow-hidden rounded-[14px] border border-border bg-surface transition-[border-color,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-white/20 active:translate-y-0"
+      className="group flex h-full flex-col overflow-hidden rounded-card border border-border bg-surface transition-[border-color,transform] duration-300 ease-[cubic-bezier(0.23,1,0.32,1)] hover:-translate-y-0.5 hover:border-white/20 active:translate-y-0"
     >
       <div className="relative aspect-[16/10] overflow-hidden bg-canvas">
         <Image

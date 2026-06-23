@@ -4,7 +4,7 @@ import { AppleIcon } from '@/components/ui/BrandIcons';
 import { btnPrimary } from '@/components/ui/button';
 import { APP_STORE_URL } from '@/src/lib/constants';
 import { BrandMark } from '@/components/BrandMark';
-import { PixelAura } from '@/components/ui/PixelAura';
+import { GyroidField } from '@/components/ui/GyroidField';
 
 const CTA_TRUST_ITEMS = ['Free on iOS', '5.0 App Store rating', '11 ratings', '49 leagues'] as const;
 
@@ -15,7 +15,11 @@ export function FinalCTA() {
       aria-labelledby="cta-title"
       className="landing-dark relative w-full overflow-hidden"
     >
-      <PixelAura density="footer" className="absolute inset-0" />
+      <div aria-hidden className="cta-gyroid absolute inset-0">
+        <GyroidField variant="cta" className="absolute inset-0" />
+      </div>
+      <div aria-hidden className="gyroid-veil-cta absolute inset-0" />
+      <div aria-hidden className="cta-gyroid-scrim" />
       <div className="relative mx-auto flex max-w-[760px] flex-col items-center gap-7 px-6 py-28 text-center [--ease-out:cubic-bezier(0.23,1,0.32,1)]">
         <BrandMark
           alt="Buzzr"

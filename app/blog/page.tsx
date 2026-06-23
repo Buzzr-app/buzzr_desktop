@@ -106,7 +106,7 @@ export default function BlogIndexPage() {
         </>
       }
       headerAside={
-        <div className="rounded-[14px] border border-border bg-surface p-6">
+        <div className="rounded-card border border-border bg-surface p-6">
           <p className="font-mono text-[11px] uppercase leading-none tracking-[0.14em] text-muted">
             Field notes
           </p>
@@ -138,7 +138,7 @@ export default function BlogIndexPage() {
       )}
 
       {!leadPost ? (
-        <p className="rounded-[14px] border border-border bg-surface p-6 text-[15px] leading-[1.6] text-muted">
+        <p className="rounded-card border border-border bg-surface p-6 text-[15px] leading-[1.6] text-muted">
           Nothing here yet. New posts drop soon.
         </p>
       ) : (

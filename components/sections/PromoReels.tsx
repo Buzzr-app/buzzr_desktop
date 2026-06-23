@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Section } from '@/components/ui/Section';
 import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
 import { LazyPhoneVideo } from '@/components/ui/LazyPhoneVideo';
+import { GyroidField } from '@/components/ui/GyroidField';
 import { cn } from '@/components/utils';
 
 type PromoReel = {
@@ -160,9 +161,14 @@ export function PromoReels() {
           <article
             key={reel.title}
             data-carousel-index={index}
-            className="promo-carousel__card group overflow-hidden rounded-[24px] border border-white/[0.09] bg-white/[0.045] shadow-[0_30px_80px_rgba(0,0,0,0.28)] transition-[border-color,background-color,transform] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] hover:border-accent/25 hover:bg-white/[0.06] md:rounded-[26px] [@media(hover:hover)]:hover:-translate-y-1"
+            className="promo-carousel__card group relative overflow-hidden rounded-card-lg border border-white/[0.09] shadow-[0_30px_80px_rgba(0,0,0,0.28)] transition-[border-color,transform] duration-300 [transition-timing-function:cubic-bezier(0.23,1,0.32,1)] hover:border-accent/30 [@media(hover:hover)]:hover:-translate-y-1"
           >
-            <div className="relative flex justify-center overflow-hidden bg-[radial-gradient(circle_at_50%_18%,rgb(var(--accent-rgb)_/_0.16),transparent_48%),linear-gradient(180deg,rgba(255,255,255,0.045),transparent)] px-4 pb-4 pt-7">
+            {/* Every card carries its own hue-rotated gyroid pattern (seed=index),
+                so no two cards look alike. Veil keeps the title legible. */}
+            <GyroidField variant="reels" seed={index} className="absolute inset-0 -z-10" />
+            <div aria-hidden className="gyroid-veil-reels absolute inset-0 -z-10" />
+
+            <div className="relative flex justify-center overflow-hidden px-4 pb-4 pt-7">
               <div
                 aria-hidden
                 className="promo-card-ground absolute inset-x-10 bottom-9 h-20 rounded-full bg-accent/10 transition-opacity duration-300 group-hover:opacity-80"
@@ -175,7 +181,7 @@ export function PromoReels() {
                 />
               </PhoneShowcase>
             </div>
-            <div className="px-5 pb-5 pt-4">
+            <div className="relative px-5 pb-5 pt-4">
               <h3 className="font-hero text-[23px] font-extrabold leading-[1.04] text-foreground">
                 {reel.title}
               </h3>

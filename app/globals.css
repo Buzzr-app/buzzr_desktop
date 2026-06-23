@@ -72,11 +72,14 @@
   --text-display--line-height: 1.04;
   --text-display--letter-spacing: -0.024em;
 
-  /* Radii - soft, on a tight scale */
-  /* One radius language: chip / control / card (+ rounded-full for true pills). */
+  /* Radii - one algorithmic scale: 8 / 11 / 16 / 24 (chip / control / card / card-lg).
+     Pills use rounded-full. Large glass surfaces (bento, carousel cards, app-store
+     gallery) all share --radius-card-lg; nested children use parent - padding so
+     corners stay concentric. */
   --radius-chip:    8px;
   --radius-control: 11px;
   --radius-card:    16px;
+  --radius-card-lg: 24px;
   --radius-input:   11px;
   --radius-button:  11px;
   --radius-callout: 16px;
@@ -94,7 +97,7 @@ html {
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
 }
@@ -114,7 +117,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-canvas);
   color: var(--color-foreground);
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) kills horizontal overflow WITHOUT turning <body> into a
+     scroll container. `overflow-x: hidden` forces the used overflow-y to `auto`,
+     which makes <body> a scrollport and silently breaks `position: sticky` on the
+     pinned hero stage (it scrolls away instead of pinning -> black dead zone). */
+  overflow-x: clip;
 }
 
 ::selection {
@@ -124,6 +131,13 @@ body {
 :focus-visible {
   outline: 2px solid rgb(var(--accent-rgb) / 0.6);
   outline-offset: 2px;
+}
+
+/* Prevent heading widows site-wide: balance wrapping so a heading never drops a
+   single lonely word onto its last line. */
+h1,
+h2 {
+  text-wrap: balance;
 }
 
 /* Headings lead with size + tracking, not mass. Explicit utilities still win. */
@@ -267,33 +281,37 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
   white-space: nowrap;
 }
+/* Clean accent pill: one soft brand shadow + a single hairline top sheen. No
+   stacked insets / heavy gloss - reads flat and modern, not plasticky. */
 .site-nav-cta {
   position: relative;
   isolation: isolate;
-  min-width: 132px;
-  height: 44px;
+  min-width: 124px;
+  height: 40px;
   overflow: hidden;
-  border-radius: var(--nav-control-radius);
+  border-radius: 999px;
   box-shadow:
-    0 22px 58px -26px rgb(var(--accent-rgb) / 0.92),
-    0 8px 22px -14px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -1px 0 rgba(2, 28, 14, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 18px -9px rgb(var(--accent-rgb) / 0.5);
   letter-spacing: 0;
   line-height: 1;
   white-space: nowrap;
   font-kerning: normal;
+  transition: box-shadow 200ms ease, background-color 200ms ease;
 }
 .site-nav-cta::before {
   content: '';
   position: absolute;
-  inset: 1px;
+  inset: 0;
   z-index: -1;
-  border-radius: calc(var(--nav-control-radius) - 1px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28), transparent 44%);
-  opacity: 0.76;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 54%);
+  opacity: 0.7;
+}
+.site-nav-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 9px 22px -9px rgb(var(--accent-rgb) / 0.66);
 }
 .site-nav-cta-label {
   display: inline-flex;
@@ -349,6 +367,24 @@ h1, h2, h3, h4, h5, h6 {
     rgb(var(--background-rgb))
   );
 }
+/* Mirror feather on the trailing edge so the boundary INTO the next section
+   melts too - every adjacent seam now dissolves, not just the first. */
+.landing-section-reveal::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: -1;
+  height: clamp(96px, 13vh, 168px);
+  pointer-events: none;
+  transform: translateY(72%);
+  background: linear-gradient(
+    180deg,
+    rgb(var(--background-rgb)),
+    color-mix(in srgb, var(--color-canvas) 70%, transparent) 46%,
+    transparent
+  );
+}
 .landing-section-reveal--first {
   margin-top: clamp(-260px, -18vh, -150px);
 }
@@ -360,7 +396,7 @@ h1, h2, h3, h4, h5, h6 {
   gap: 16px;
 }
 .bento-card {
-  --bento-radius: 28px;
+  --bento-radius: var(--radius-card-lg);
   --bento-pad: 16px;
   position: relative;
   contain: layout paint;
@@ -407,7 +443,8 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   place-items: center;
   overflow: hidden;
-  border-radius: calc(var(--bento-radius) - 10px);
+  /* Concentric with the card: inner radius = card radius - padding inset. */
+  border-radius: calc(var(--bento-radius) - var(--bento-pad));
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.008)),
     rgba(6, 7, 10, 0.62);
@@ -1419,11 +1456,69 @@ h1, h2, h3, h4, h5, h6 {
   .pixel-aura__grid span { animation: none; }
 }
 
-.promo-carousel {
+/* Generative gyroid backdrops (components/ui/GyroidField.tsx): token-driven veils
+   that keep foreground content legible over the animated field. color-mix keeps
+   the scrim on the --color-canvas token (no hardcoded hex). */
+/* Feather the CTA gyroid wrapper so the generative field has no hard top edge
+   below the FAQ - it fades IN from above and gently OUT at the bottom. The mask
+   is neutral black-alpha (mask luminance only); the visible top scrim that melts
+   to canvas is the token-driven gradient below. */
+.cta-gyroid {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 130px,
+    #000 calc(100% - 90px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 130px,
+    #000 calc(100% - 90px),
+    transparent 100%
+  );
+}
+/* Thin top scrim that blends the section down from the FAQ into canvas. */
+.cta-gyroid-scrim {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(140px, 20vh, 240px);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--color-canvas) 0%,
+    color-mix(in srgb, var(--color-canvas) 60%, transparent) 44%,
+    transparent 100%
+  );
+}
+.gyroid-veil-cta {
+  background:
+    radial-gradient(
+      125% 92% at 50% 48%,
+      color-mix(in srgb, var(--color-canvas) 56%, transparent) 0%,
+      color-mix(in srgb, var(--color-canvas) 32%, transparent) 46%,
+      color-mix(in srgb, var(--color-canvas) 90%, transparent) 100%
+    );
+}
+.gyroid-veil-reels {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-canvas) 74%, transparent) 0%,
+      color-mix(in srgb, var(--color-canvas) 46%, transparent) 26%,
+      color-mix(in srgb, var(--color-canvas) 52%, transparent) 70%,
+      color-mix(in srgb, var(--color-canvas) 88%, transparent) 100%
+    );
+}
+
+.promo-carousel,
+.app-store-gallery {
   overscroll-behavior-x: contain;
   scrollbar-width: none;
 }
-.promo-carousel::-webkit-scrollbar {
+.promo-carousel::-webkit-scrollbar,
+.app-store-gallery::-webkit-scrollbar {
   display: none;
 }
 .promo-carousel__card {
@@ -1627,8 +1722,21 @@ h1, h2, h3, h4, h5, h6 {
   animation: none;
 }
 
-/* The hairline rings themselves drift slowly too, so the whole field feels alive. */
-.orbit-ring-line { animation: none; }
+/* Hairline rings: centered + pointer parallax (same magnitude as the node layer
+   so rings and nodes stay aligned as the field leans toward the cursor). */
+.orbit-ring-line {
+  animation: none;
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 18px), calc(-50% + var(--orbit-py, 0) * 18px));
+  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Node layer leans further than the center for depth; z-index keeps the orbiting
+   nodes above the center aura (the transform would otherwise drop it behind). */
+.orbit-node-layer {
+  z-index: 20;
+  transform: translate(calc(var(--orbit-px, 0) * 18px), calc(var(--orbit-py, 0) * 18px));
+  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
 
 /* Node micro-interaction (Emil): transform/opacity only, custom ease-out, press
    feedback. A staggered reveal fades nodes up on first paint. Hover gated. */
@@ -1683,6 +1791,13 @@ h1, h2, h3, h4, h5, h6 {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 15px;
+  /* Opaque tile so a transparent logo never reveals the pattern/aura behind it
+     (and so there is no ghost text under the mark). */
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.09);
+  background:
+    radial-gradient(circle at 42% 20%, rgb(var(--accent-rgb) / 0.16), transparent 46%),
+    linear-gradient(150deg, rgb(30 36 42 / 0.92), rgb(7 9 12 / 0.95));
   box-shadow: 0 12px 28px rgb(0 0 0 / 0.34);
 }
 .orbit-visual-mark__image {
@@ -1848,7 +1963,9 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
   height: var(--orbit-core);
   width: var(--orbit-core);
-  transform: translate(-50%, -50%);
+  /* Pointer parallax: the center drifts a little (less than the outer field) for depth. */
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 8px), calc(-50% + var(--orbit-py, 0) * 8px));
+  transition: transform 520ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .orbit-aura {
   position: relative;
@@ -1872,13 +1989,32 @@ h1, h2, h3, h4, h5, h6 {
   0%, 100% { opacity: 0.7;  transform: scale(0.96); }
   50%      { opacity: 0.95; transform: scale(1.04); }
 }
-/* Tight inner core glow so the logo reads against the bloom. */
+/* Generated gyroid pattern disc behind the center logo (replaces the old grain).
+   GyroidField paints it in brand green; masked to a soft circle so it melts at
+   the rim. DOM order (bloom -> field -> core -> vignette -> logo) does the layering. */
+.orbit-aura__field {
+  position: absolute;
+  inset: -14%;
+  border-radius: 999px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.9;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%);
+          mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%);
+}
+.orbit-aura__field canvas { height: 100%; width: 100%; display: block; }
+/* Dark scrim under the logo/name so they stay legible over the pattern. */
 .orbit-aura__core {
   position: absolute;
-  inset: 8%;
+  inset: 4%;
   border-radius: 999px;
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-accent) 20%, transparent), transparent 66%);
   pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 46%,
+    color-mix(in srgb, var(--color-canvas) 74%, transparent) 0%,
+    color-mix(in srgb, var(--color-canvas) 32%, transparent) 44%,
+    transparent 66%
+  );
 }
 /* Film grain over the aura - monochrome turbulence, screen-blended so the green shows through. */
 .orbit-aura__grain {
