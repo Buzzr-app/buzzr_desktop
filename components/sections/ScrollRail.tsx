@@ -1,5 +1,6 @@
 import { Section } from '@/components/ui/Section';
 import { PhoneShowcase } from '@/components/ui/PhoneShowcase';
+import { BetsScreen } from '@/components/ui/BetsScreen';
 import { ScrollReveal } from '@/components/ScrollReveal';
 
 const BETS_STEPS = [
@@ -40,28 +41,9 @@ export function ScrollRail() {
         </div>
 
         <ScrollReveal delay={2} className="mx-auto w-full max-w-[460px]">
-          <div className="relative">
-            <PhoneShowcase
-              src="/app-screens/bets.png"
-              alt="Buzzr Bets game context and rating screen"
-              aura
-              size="standard"
-              className="mx-auto"
-            />
-            <div className="absolute bottom-10 left-4 right-4 rounded-card border border-white/10 bg-black/72 p-4 text-white backdrop-blur-md">
-              <div className="flex items-center justify-between gap-4">
-                <span className="font-mono text-[11px] uppercase tracking-[0.16em] text-white/50">
-                  Slip status
-                </span>
-                <span className="rounded-full bg-accent px-2 py-1 font-mono text-[10px] uppercase tracking-[0.12em] text-canvas">
-                  Tracking
-                </span>
-              </div>
-              <p className="mt-3 text-[22px] font-semibold leading-[1.08] tracking-[-0.03em]">
-                Picks stay with the game context.
-              </p>
-            </div>
-          </div>
+          <PhoneShowcase aura size="standard" className="mx-auto">
+            <BetsScreen />
+          </PhoneShowcase>
         </ScrollReveal>
       </div>
     </Section>

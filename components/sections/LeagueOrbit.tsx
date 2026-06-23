@@ -61,7 +61,7 @@ function OrbitRingLines() {
         <div
           key={ring.ring}
           aria-hidden
-          className="orbit-ring-line absolute left-1/2 top-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle,rgba(0,194,100,0.045),transparent_64%)]"
+          className="orbit-ring-line absolute left-1/2 top-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle,rgb(var(--accent-rgb)_/_0.045),transparent_64%)]"
           style={{
             height: `calc(${ring.radius} * 2)`,
             transform: 'translate(-50%, -50%)',
@@ -100,7 +100,7 @@ function LeagueNode({
             'orbit-node group flex h-[58px] items-center justify-center rounded-[16px] border px-2 text-center focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
             hasLogo ? 'w-[58px]' : 'w-[86px]',
             isActive
-              ? 'orbit-node--active border-accent/80 bg-accent/14 text-foreground shadow-[0_0_34px_rgba(0,194,100,0.28)]'
+              ? 'orbit-node--active border-accent/80 bg-accent/14 text-foreground shadow-[0_0_34px_rgb(var(--accent-rgb)_/_0.28)]'
               : 'border-white/10 bg-white/[0.055] text-muted shadow-[0_16px_40px_rgba(0,0,0,0.28)]'
           )}
           data-testid={`league-orbit-trigger-${item.league.label}`}
@@ -249,9 +249,6 @@ export function LeagueOrbit() {
         >
           All {LEAGUE_COUNT} leagues in one sports graph.
         </h2>
-        <p className="mx-auto mt-4 max-w-[560px] text-[16px] leading-[1.55] tracking-[0] text-muted">
-          Verified marks where assets exist, clean text nodes where they do not, and one focused league surface at a time.
-        </p>
       </header>
 
       <div className="orbit-stage relative mt-12 hidden min-h-[920px] lg:block">

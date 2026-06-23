@@ -22,6 +22,9 @@
   --color-on-steel:      #f3f0e9;
   --color-on-steel-muted:#a8a8b0;
 
+  /* Brand green channels - single source for accent-with-alpha (glows, focus
+     rings, gradients). Mirrors --color-accent (#00c264); use rgb(var(--accent-rgb) / α). */
+  --accent-rgb: 0 194 100;
   --color-accent:      #00c264;  /* brand green fill */
   --color-accent-dim:  #00a152;
   --color-accent-text: #34d399;
@@ -80,7 +83,7 @@
 
   /* Shadows - clean soft elevation + green focus ring */
   --shadow-card: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 32px -16px rgba(0, 0, 0, 0.7);
-  --shadow-focus: 0 0 0 2px rgba(0, 194, 100, 0.55);
+  --shadow-focus: 0 0 0 2px rgb(var(--accent-rgb) / 0.55);
 }
 
 :root,
@@ -114,11 +117,11 @@ body {
 }
 
 ::selection {
-  background-color: rgba(0, 194, 100, 0.18);
+  background-color: rgb(var(--accent-rgb) / 0.18);
   color: var(--color-foreground);
 }
 :focus-visible {
-  outline: 2px solid rgba(0, 194, 100, 0.6);
+  outline: 2px solid rgb(var(--accent-rgb) / 0.6);
   outline-offset: 2px;
 }
 
@@ -224,7 +227,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Shared dark landing surface */
 .landing-dark {
   background:
-    radial-gradient(circle at 50% 6%, rgba(0, 194, 100, 0.12), transparent 34%),
+    radial-gradient(circle at 50% 6%, rgb(var(--accent-rgb) / 0.12), transparent 34%),
     linear-gradient(180deg, #0c0c0f 0%, #0a0a0c 52%, #0a0a0c 100%);
 }
 
@@ -271,7 +274,7 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   border-radius: var(--nav-control-radius);
   box-shadow:
-    0 22px 58px -26px rgba(0, 194, 100, 0.92),
+    0 22px 58px -26px rgb(var(--accent-rgb) / 0.92),
     0 8px 22px -14px rgba(0, 0, 0, 0.7),
     inset 0 1px 0 rgba(255, 255, 255, 0.34),
     inset 0 -1px 0 rgba(2, 28, 14, 0.28);
@@ -310,7 +313,7 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 46%, rgba(0, 194, 100, 0.12), transparent 32%),
+    radial-gradient(circle at 50% 46%, rgb(var(--accent-rgb) / 0.12), transparent 32%),
     radial-gradient(circle at 50% 48%, rgba(0, 0, 0, 0.34), transparent 54%);
 }
 
@@ -343,7 +346,7 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   pointer-events: none;
   border-radius: inherit;
-  background: radial-gradient(circle at 50% 12%, rgba(0, 194, 100, 0.12), transparent 54%);
+  background: radial-gradient(circle at 50% 12%, rgb(var(--accent-rgb) / 0.12), transparent 54%);
   opacity: 0;
   transition: opacity 220ms cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -361,7 +364,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media (hover: hover) and (pointer: fine) {
   .bento-card:hover {
-    border-color: rgba(0, 194, 100, 0.34);
+    border-color: rgb(var(--accent-rgb) / 0.34);
     transform: translateY(-2px);
   }
   .bento-card:hover::before { opacity: 1; }
@@ -376,7 +379,7 @@ h1, h2, h3, h4, h5, h6 {
     rgba(12, 14, 18, 0.86);
   box-shadow:
     0 30px 90px -42px rgba(0, 0, 0, 0.92),
-    0 18px 48px -34px rgba(0, 194, 100, 0.42),
+    0 18px 48px -34px rgb(var(--accent-rgb) / 0.42),
     inset 0 1px 0 rgba(255, 255, 255, 0.09);
   -webkit-backdrop-filter: blur(24px) saturate(1.12);
   backdrop-filter: blur(24px) saturate(1.12);
@@ -398,7 +401,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .pixel-aura__bloom {
   background:
-    radial-gradient(circle at 50% 42%, rgba(0, 194, 100, 0.3), transparent 40%),
+    radial-gradient(circle at 50% 42%, rgb(var(--accent-rgb) / 0.3), transparent 40%),
     radial-gradient(circle at 72% 24%, rgba(52, 211, 153, 0.16), transparent 30%),
     radial-gradient(circle at 22% 68%, rgba(20, 184, 166, 0.12), transparent 34%);
   filter: blur(34px);
@@ -421,7 +424,7 @@ h1, h2, h3, h4, h5, h6 {
   transform: translate3d(-50%, -50%, 0);
   background: #34d399;
   box-shadow:
-    0 0 calc(var(--s) * 2.5) rgba(0, 194, 100, 0.72),
+    0 0 calc(var(--s) * 2.5) rgb(var(--accent-rgb) / 0.72),
     calc(var(--s) * 1.8) calc(var(--s) * -0.6) 0 rgba(125, 92, 255, 0.34),
     calc(var(--s) * -1.5) calc(var(--s) * 0.8) 0 rgba(240, 249, 255, 0.26);
   animation: pixel-aura-pulse 3.8s ease-in-out infinite;
@@ -537,150 +540,6 @@ h1, h2, h3, h4, h5, h6 {
 
 @media (prefers-reduced-motion: reduce) {
   .pixel-aura__grid span { animation: none; }
-}
-
-/* ─── Hero clay-phone centerpiece (ScrollClayPhone) ───────────────────────────
-   A huge mint clay iPhone over a receding token grid. The component writes --p
-   (clamped to [-1,1]) on .cp-stage; CSS multiplies it into a BOUNDED turn. All
-   colour via tokens + color-mix(in oklab,…). blur/mask live on NON-rotated
-   siblings (.cp-horizon/.cp-floor/.cp-shadow), never inside the .cp-phone
-   preserve-3d chain (WebKit flattens 3D subtrees that carry filter/mask). */
-.cphone {
-  /* positioning comes from the Tailwind classes on the element (absolute in the
-     hero, etc.); only the box size is fixed here. */
-  height: clamp(380px, 58dvh, 600px);
-  aspect-ratio: 1000 / 2174;
-}
-.cp-stage {
-  --p: 0;
-  position: relative;
-  width: 100%;
-  height: 100%;
-  perspective: 1500px;
-  perspective-origin: 50% 42%;
-  transform-style: preserve-3d;
-}
-
-/* Receding grid floor */
-.cp-floor {
-  position: absolute;
-  left: 50%;
-  bottom: -2%;
-  width: 175%;
-  height: 130%;
-  transform-origin: 50% 100%;
-  transform: translateX(-50%) rotateX(74deg) translateZ(calc(var(--p) * -8px));
-  background-image:
-    repeating-linear-gradient(90deg, color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px),
-    repeating-linear-gradient(0deg,  color-mix(in oklab, var(--color-accent) 28%, var(--color-border)) 0 1px, transparent 1px 60px);
-  -webkit-mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
-          mask-image: linear-gradient(to top, black 0%, black 26%, transparent 76%);
-  pointer-events: none;
-}
-
-/* Single accent horizon glow (non-rotated blur sibling) */
-.cp-horizon {
-  position: absolute;
-  left: 50%;
-  bottom: 2%;
-  width: 78%;
-  height: 42%;
-  transform: translateX(-50%);
-  background: radial-gradient(62% 100% at 50% 100%, color-mix(in oklab, var(--color-accent) 26%, transparent), transparent 70%);
-  filter: blur(20px);
-  pointer-events: none;
-}
-
-/* Contact shadow grounding the phone (flattened, blurred sibling) */
-.cp-shadow {
-  position: absolute;
-  left: 50%;
-  bottom: 9%;
-  width: 60%;
-  height: 9%;
-  transform: translateX(-50%) rotateX(78deg) scaleY(0.42);
-  background: radial-gradient(closest-side, color-mix(in oklab, var(--color-on-accent) 34%, transparent), transparent 72%);
-  filter: blur(20px);
-  opacity: 0.6;
-  pointer-events: none;
-}
-
-/* The rigid clay body - the only 3D-rotated element */
-.cp-phone {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  will-change: transform;
-  transform:
-    rotateX(calc(6deg - var(--p) * 4deg))
-    rotateY(calc(var(--p) * 35deg));
-  border-radius: 13% / 6%;
-  background: linear-gradient(155deg,
-    var(--color-accent) 0%,
-    var(--color-accent-dim) 60%,
-    color-mix(in oklab, var(--color-accent-dim) 76%, var(--color-foreground)) 100%);
-  box-shadow:
-    var(--shadow-card),
-    0 44px 90px -34px color-mix(in oklab, var(--color-accent) 42%, transparent),
-    inset 0 2px 1px color-mix(in oklab, var(--color-surface) 55%, transparent),
-    inset 0 -4px 10px color-mix(in oklab, var(--color-on-accent) 30%, transparent);
-}
-.cp-phone::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  box-shadow:
-    inset 0 0 0 1.5px color-mix(in oklab, var(--color-on-accent) 26%, transparent),
-    inset 0 0 0 3px color-mix(in oklab, var(--color-surface) 20%, transparent);
-  pointer-events: none;
-}
-
-.cp-bezel {
-  position: absolute;
-  inset: 3.6%;
-  border-radius: 10% / 5%;
-  background: color-mix(in oklab, var(--color-on-accent) 86%, var(--color-accent-dim));
-  transform: translateZ(1px);
-}
-.cp-screen {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  overflow: hidden;
-  background: var(--color-steel);
-}
-.cp-island {
-  position: absolute;
-  top: 2.6%;
-  left: 50%;
-  width: 30%;
-  height: 3%;
-  transform: translateX(-50%) translateZ(4px);
-  border-radius: 999px;
-  background: color-mix(in oklab, var(--color-on-accent) 92%, transparent);
-}
-.cp-glare {
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  transform: translateZ(3px) translateX(calc(var(--p) * 8px));
-  background: linear-gradient(118deg, transparent 32%, color-mix(in oklab, var(--color-surface) 24%, transparent) 47%, transparent 60%);
-  pointer-events: none;
-}
-.cp-btn {
-  position: absolute;
-  width: 3px;
-  border-radius: 3px;
-  background: linear-gradient(color-mix(in oklab, var(--color-accent-dim) 65%, var(--color-on-accent)), color-mix(in oklab, var(--color-accent-dim) 35%, var(--color-on-accent)));
-  transform: translateZ(-1px);
-}
-.cp-btn-a   { left: -2px; top: 23%; height: 6%; }
-.cp-btn-b   { left: -2px; top: 31%; height: 6%; }
-.cp-btn-pwr { right: -2px; top: 27%; height: 9%; }
-
-@media (prefers-reduced-motion: reduce) {
-  .cp-phone { transform: rotateX(6deg) rotateY(-9deg); }
 }
 
 /* ─── Pinned WebGL hero overlays (token-driven; raw three.js scene) ───────────

@@ -272,7 +272,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     envScene.dispose?.();
 
     /* ── tokens → colors ── */
-    let tokens = readTokens();
+    const tokens = readTokens();
     const rampColors = buildGreenRamp(tokens);
     const hemi = new THREE.HemisphereLight(
       new THREE.Color(tokens.canvas),
@@ -438,13 +438,16 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     phoneGroup.add(phone);
 
     const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
-    // Sleek titanium slab: neutral grey from --color-subtle nudged slightly to
-    // white, high metalness. No brand-green tint (this was the mint clay body).
-    const phoneBodyColor = () => new THREE.Color(tokens.subtle).lerp(SHADE_WHITE, 0.06);
+    // Dark graphite titanium: anchor on --color-subtle pulled toward --color-canvas
+    // and drop metalness so the front fill light stops catching it as silver. This
+    // unifies the WebGL phone with the darker CSS phones (DataBento/promo) without
+    // touching the scene lights (which also rake the basketball) or the bands.
+    const phoneBodyColor = () =>
+      new THREE.Color(tokens.subtle).lerp(new THREE.Color(tokens.canvas), 0.35);
     const bodyMat = new THREE.MeshStandardMaterial({
       color: phoneBodyColor(),
-      roughness: 0.55,
-      metalness: 0.42
+      roughness: 0.6,
+      metalness: 0.22
     });
     const body = new THREE.Mesh(bodyGeo, bodyMat);
     body.renderOrder = 0;
@@ -558,7 +561,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
 
       const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
       phone.visible = rise > 0.018;
-      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.26 : -0.32, rise);
+      // Settle the risen phone lower in frame so it clears the post-scroll copy
+      // (BUZZR + tagline + CTAs) instead of crowding the buttons.
+      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.42 : -0.5, rise);
       phone.position.z = lerp(-0.45, 0.2, rise); // pulled forward, in front of where the ball was
       const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.58 : 0.7, rise);
       phone.scale.setScalar(sc);

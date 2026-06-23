@@ -69,7 +69,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           </main>
 
           <footer className="relative overflow-hidden border-t border-white/10 bg-canvas text-white">
-            <VideoBackdrop overlayClassName="bg-canvas/72" />
+            <VideoBackdrop defer overlayClassName="bg-canvas/72" />
             <div className="relative mx-auto w-full max-w-[1200px] px-6 py-12">
               <div className="mb-12 flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
                 <div className="space-y-3">

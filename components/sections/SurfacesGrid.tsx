@@ -202,7 +202,7 @@ const LEAGUE_CHIPS = ['NBA', 'NFL', 'MLB', 'NHL', 'MLS', 'UCL', 'F1', 'ATP', 'CS
 
 function LeagueClusterPreview() {
   return (
-    <div className="grid h-full min-h-[210px] place-items-center rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-[radial-gradient(circle_at_50%_42%,rgba(0,194,100,0.16),transparent_58%),#080b0d] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+    <div className="grid h-full min-h-[210px] place-items-center rounded-[calc(var(--bento-radius)_-_10px)] border border-white/[0.08] bg-[radial-gradient(circle_at_50%_42%,rgb(var(--accent-rgb)_/_0.16),transparent_58%),#080b0d] p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
       <div className="grid grid-cols-3 gap-2.5">
         {LEAGUE_CHIPS.map((label) => {
           const logo = getLeagueLogo(label);

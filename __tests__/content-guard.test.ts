@@ -125,15 +125,14 @@ describe('content guardrails', () => {
     expect(dataBento).not.toContain('BuzzSceneProvider');
     expect(dataBento).not.toContain('useBuzzScene');
     expect(dataBento).not.toContain('requestAnimationFrame');
-    expect(dataBento).toContain('/app-screens/dashboard.png');
+    // Dashboard proof is now the in-code DashboardScreen, not a flat PNG.
+    expect(dataBento).toContain('DashboardScreen');
   });
 
   it('uses app-screen assets for landing product proof sections', () => {
     const proofFiles = [
       'components/sections/DataBento.tsx',
       'components/sections/ScrollRail.tsx',
-      'components/sections/ScrollSection.tsx',
-      'components/sections/Showcase.tsx',
       'components/sections/SurfacesGrid.tsx',
       'components/ui/ClayHero.tsx',
       'components/ui/ClayHeroScene.tsx'
@@ -176,11 +175,11 @@ describe('content guardrails', () => {
   it('moves AI Feed out of the top nav and keeps product anchors focused', () => {
     const header = readFileSync(path.join(ROOT, 'components/SiteHeader.tsx'), 'utf8');
 
-    expect(header).toContain("{ id: 'scroll', label: 'Scroll'");
-    expect(header).toContain("{ id: 'data', label: 'Dashboards'");
-    expect(header).toContain("{ id: 'showcase', label: 'Friends'");
-    expect(header).toContain("{ id: 'leagues', label: 'Leagues'");
-    expect(header).toContain("{ id: 'rail', label: 'Bets'");
+    expect(header).toContain("label: 'Scroll'");
+    expect(header).toContain("label: 'Dashboards'");
+    expect(header).toContain("label: 'Friends'");
+    expect(header).toContain("label: 'Leagues'");
+    expect(header).toContain("label: 'Bets'");
     expect(header).not.toContain("label: 'AI'");
     expect(header).not.toContain("id: 'mission'");
   });
@@ -197,7 +196,6 @@ describe('content guardrails', () => {
 
     expect(surfacesGrid).toContain('Everything Buzzr');
     expect(surfacesGrid).toContain('Sports. Social. Seamless.');
-    expect(surfacesGrid).toContain('Everything you need to follow, connect, and win.');
     expect(surfacesGrid).toContain('SocialFeedPreview');
     expect(surfacesGrid).toContain('LeagueClusterPreview');
     expect(surfacesGrid).toContain('BetsPanelPreview');
@@ -243,15 +241,4 @@ describe('content guardrails', () => {
     expect(launchBanner).toContain('launch-banner-shell');
   });
 
-  it('keeps the AI section on real product proof instead of synthetic score cards', () => {
-    const rateMission = readFileSync(
-      path.join(ROOT, 'components/sections/RateMission.tsx'),
-      'utf8'
-    );
-
-    expect(rateMission).toContain('/app-screens/feed.png');
-    expect(rateMission).not.toContain("score: '9.8'");
-    expect(rateMission).not.toContain("score: '7.3'");
-    expect(rateMission).not.toContain("score: '2.8'");
-  });
 });

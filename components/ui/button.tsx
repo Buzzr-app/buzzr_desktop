@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/components/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center whitespace-nowrap rounded-button font-sans text-[12px] font-bold uppercase tracking-[0.04em] transition-[colors,box-shadow] duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgba(0,194,100,0.55)] disabled:pointer-events-none disabled:opacity-60',
+  'inline-flex items-center justify-center whitespace-nowrap rounded-button font-sans text-[12px] font-bold uppercase tracking-[0.04em] transition-[colors,box-shadow] duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgb(var(--accent-rgb)_/_0.55)] disabled:pointer-events-none disabled:opacity-60',
   {
     variants: {
       variant: {
@@ -38,7 +38,7 @@ Button.displayName = 'Button';
 
 export { buttonVariants };
 
-// Canonical button class sets — one look across links, MagneticButton, and sections.
+// Canonical button class sets - one look across links, MagneticButton, and sections.
 // primary = brand green; secondary = outline on a dark surface; glass = over media (hero).
 export const btnBase =
   'inline-flex items-center justify-center gap-2 rounded-control px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] transition-[background-color,border-color,transform] duration-200 ease-out active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]';

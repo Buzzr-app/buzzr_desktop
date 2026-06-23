@@ -122,7 +122,7 @@ export function HeroCopy() {
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             <AppleIcon size={17} />
             <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
@@ -173,7 +173,7 @@ export function HeroCopy() {
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgba(0,194,100,0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex items-center rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
           >
             Get the app<span className="sr-only"> (opens in new tab)</span>
           </MagneticButton>

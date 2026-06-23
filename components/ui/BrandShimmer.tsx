@@ -29,11 +29,18 @@ const stopsFrom = (cols: string[]): GradientStop[] =>
 function readGradients(): BrandGradients {
   const s = getComputedStyle(document.documentElement);
   const g = (n: string) => s.getPropertyValue(n).trim();
+  // Both sweeps are SYMMETRIC bells with DISTINCT stops: the first and last stop
+  // match so the loop wraps with no visible seam, and no two adjacent stops share
+  // a color (the old ramp/accent reused buzz-peak === accent, which flattened the
+  // middle into a solid block). Brightest at --color-accent-text (the lightest
+  // green token) so the highlight reads as a clean shine over the green base.
   return {
-    // Echoes the hero voxel ball - now all shades of green (green tokens only).
+    // Echoes the hero voxel ball - all shades of green, dim -> bright -> dim.
     ramp: stopsFrom([
+      g('--color-accent-dim'),
+      g('--color-buzz-great'),
+      g('--color-accent'),
       g('--color-accent-text'),
-      g('--color-buzz-peak'),
       g('--color-accent'),
       g('--color-buzz-great'),
       g('--color-accent-dim')
@@ -42,7 +49,7 @@ function readGradients(): BrandGradients {
     accent: stopsFrom([
       g('--color-accent-dim'),
       g('--color-accent'),
-      g('--color-buzz-peak'),
+      g('--color-accent-text'),
       g('--color-accent'),
       g('--color-accent-dim')
     ])
