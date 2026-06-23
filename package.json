@@ -18,7 +18,7 @@
     "framer-motion": "^12.40.0",
     "geist": "^1.7.2",
     "gradient-shimmer": "^0.1.1",
-    "gray-matter": "^4.0.3",
+    "js-yaml": "^4.2.0",
     "lucide-react": "^0.575.0",
     "mdast-util-to-string": "^4.0.0",
     "next": "16.2.7",
@@ -40,6 +40,7 @@
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^16.0.0",
     "@types/jest": "^29.5.12",
+    "@types/js-yaml": "^4.0.9",
     "@types/node": "^25.9.3",
     "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
@@ -56,6 +57,7 @@
     "typescript": "^5.4.2"
   },
   "overrides": {
-    "postcss": "$postcss"
+    "postcss": "$postcss",
+    "js-yaml": "^4.2.0"
   }
 }

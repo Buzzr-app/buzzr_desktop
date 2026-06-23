@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import matter from 'gray-matter';
+import yaml from 'js-yaml';
 
 /**
  * File-based blog CMS.
@@ -52,11 +52,21 @@ export type Post = PostFrontmatter & {
 
 const BLOG_DIR = path.join(process.cwd(), 'content', 'blog');
 
+// Minimal frontmatter parser (replaces gray-matter, which pinned a vulnerable
+// js-yaml 3.x). Splits the leading `---` fenced YAML block from the MDX body and
+// loads it with js-yaml 4's safe-by-default `load`.
+function parseFrontmatter(raw: string): { data: Record<string, unknown>; content: string } {
+  const match = /^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/.exec(raw);
+  if (!match) return { data: {}, content: raw };
+  const data = (yaml.load(match[1]) as Record<string, unknown> | null) ?? {};
+  return { data, content: match[2] };
+}
+
 function readPostFile(slug: string): Post | null {
   const filepath = path.join(BLOG_DIR, `${slug}.mdx`);
   if (!fs.existsSync(filepath)) return null;
   const raw = fs.readFileSync(filepath, 'utf8');
-  const { data, content } = matter(raw);
+  const { data, content } = parseFrontmatter(raw);
   const fm = data as PostFrontmatter;
   return {
     slug,
