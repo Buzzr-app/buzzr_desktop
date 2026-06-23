@@ -242,8 +242,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Shared dark landing surface */
 .landing-dark {
   background:
-    radial-gradient(circle at 50% 6%, rgb(var(--accent-rgb) / 0.12), transparent 34%),
-    linear-gradient(180deg, #0c0c0f 0%, #0a0a0c 52%, #0a0a0c 100%);
+    radial-gradient(circle at 50% 7%, rgb(var(--accent-rgb) / 0.2), transparent 40%),
+    radial-gradient(ellipse 130% 92% at 50% 58%, rgb(var(--accent-rgb) / 0.12), transparent 64%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-canvas) 90%, var(--color-accent)) 0%,
+      var(--color-canvas) 54%,
+      var(--color-canvas) 100%
+    );
 }
 
 /* Header glass and nested control radii. */
@@ -332,8 +338,10 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 43%, rgb(var(--accent-rgb) / 0.18), transparent 30%),
-    radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.055), transparent 38%),
+    radial-gradient(ellipse 42% 30% at 50% 60%, rgba(0, 0, 0, 0.62), transparent 72%),
+    radial-gradient(circle at 50% 43%, rgb(var(--accent-rgb) / 0.11), transparent 38%),
+    radial-gradient(ellipse 92% 72% at 50% 52%, rgb(var(--accent-rgb) / 0.08), transparent 62%),
+    radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.04), transparent 40%),
     linear-gradient(180deg, rgba(8, 9, 12, 0.2), rgba(8, 9, 12, 0.72));
 }
 
@@ -1763,6 +1771,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media (prefers-reduced-motion: reduce) {
   .money-bill { animation: none; opacity: var(--mo, 0.85); }
+}
+
+/* ─── Footer money fountain (FooterMoney) ──────────────────────────────────
+   Bills blow up from the bottom of the final CTA, tumbling + fading as they
+   rise. The layer's opacity is driven by scroll proximity in JS. */
+.footer-money-bill {
+  will-change: transform, opacity;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgb(var(--accent-rgb) / 0.25));
+  animation: footer-money-rise var(--dur, 3.6s) cubic-bezier(0.33, 0, 0.4, 1) infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes footer-money-rise {
+  0%   { transform: translateY(30px) translateX(0) rotate(var(--r0, -12deg)) scale(0.55); opacity: 0; }
+  16%  { opacity: var(--o, 0.9); }
+  84%  { opacity: var(--o, 0.9); }
+  100% { transform: translateY(-260px) translateX(var(--dx, 0)) rotate(var(--r1, 12deg)) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-money-bill { animation: none; opacity: 0; }
 }
 
 /* ─── League galaxy (LeagueOrbit) ─────────────────────────────────────────────

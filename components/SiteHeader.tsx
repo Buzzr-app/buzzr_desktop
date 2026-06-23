@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  BookOpen,
+  History,
   MessagesSquare,
   ScrollText,
   Trophy,
@@ -153,21 +155,23 @@ export function SiteHeader() {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/blog"
-              className="site-nav-control font-hero inline-flex min-h-[38px] items-center px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero group inline-flex min-h-[38px] items-center gap-1.5 px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Blog
+              <BookOpen size={14} strokeWidth={1.75} aria-hidden className="text-white/40 transition-colors group-hover:text-white/70" />
+              <span>Blog</span>
             </Link>
             <Link
               href="/changelog"
-              className="site-nav-control font-hero inline-flex min-h-[38px] items-center px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero group inline-flex min-h-[38px] items-center gap-1.5 px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Changelog
+              <History size={14} strokeWidth={1.75} aria-hidden className="text-white/40 transition-colors group-hover:text-white/70" />
+              <span>Changelog</span>
             </Link>
             <Link
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="site-nav-cta font-hero ml-1.5 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-4 text-[14px] font-semibold text-on-accent hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-cta font-hero ml-1.5 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-4 text-[14px] font-semibold text-on-accent transition-colors duration-200 hover:bg-white hover:text-canvas focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <AppleIcon size={15} />
               <ShimmerHoverLabel className="site-nav-cta-label">Get the app</ShimmerHoverLabel>

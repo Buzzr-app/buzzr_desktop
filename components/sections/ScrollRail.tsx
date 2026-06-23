@@ -43,9 +43,9 @@ export function ScrollRail() {
           <ScrollReveal>
             <h2
               id="rail-title"
-              className="max-w-[14ch] text-[clamp(34px,4.8vw,56px)] font-semibold leading-[0.98] tracking-[-0.04em] text-foreground"
+              className="max-w-[14ch] text-[clamp(34px,4.8vw,56px)] font-normal leading-[0.98] tracking-[-0.04em] text-foreground"
             >
-              Buzzr Bets tracks the slips, not the book.
+              <span className="font-semibold">Buzzr Bets</span> tracks the slips, not the book.
             </h2>
           </ScrollReveal>
 
