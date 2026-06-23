@@ -5,6 +5,12 @@ import {
   type LeagueSport
 } from '@/src/lib/constants';
 import { getLeagueLogo } from '@/src/lib/leagueLogos';
+import {
+  createLeagueVisualMark,
+  getLeagueShowcase,
+  type LeagueShowcase,
+  type ShowcaseMark
+} from '@/src/lib/leagueShowcase';
 
 export interface LeagueMedia {
   eyebrow: string;
@@ -20,23 +26,24 @@ export interface LeagueOrbitItem {
   league: League;
   sportLabel: string;
   logo: string | null;
-  fallbackLabel: string;
+  showcase: LeagueShowcase;
+  visualMark: ShowcaseMark;
   media: LeagueMedia;
 }
 
 const POSTER_BY_SPORT: Record<LeagueSport, string> = {
-  basketball: '/app-screens/games.png',
-  football: '/app-screens/dashboard.png',
+  basketball: '/app-screens/ios-rate-saved.png',
+  football: '/app-screens/ios-dashboard-created.png',
   baseball: '/app-screens/games.png',
-  hockey: '/app-screens/leagues.png',
-  soccer: '/app-screens/feed.png',
-  international: '/app-screens/leagues.png',
-  motor: '/app-screens/dashboard.png',
-  combat: '/app-screens/rate.png',
-  tennis: '/app-screens/games.png',
-  esports: '/app-screens/feed.png',
-  cricket: '/app-screens/leagues.png',
-  rugby: '/app-screens/leagues.png'
+  hockey: '/app-screens/ios-leagues.png',
+  soccer: '/app-screens/ios-feed.png',
+  international: '/app-screens/ios-leagues.png',
+  motor: '/app-screens/ios-dashboard-created.png',
+  combat: '/app-screens/ios-rate-saved.png',
+  tennis: '/app-screens/ios-feed.png',
+  esports: '/app-screens/ios-leagues.png',
+  cricket: '/app-screens/ios-leagues.png',
+  rugby: '/app-screens/ios-feed.png'
 };
 
 const VERIFIED_YOUTUBE_IDS: Readonly<Record<string, string>> = {};
@@ -121,7 +128,8 @@ export function buildLeagueOrbitItems(
       league,
       sportLabel: SPORT_LABELS[league.sport],
       logo,
-      fallbackLabel: league.label,
+      showcase: getLeagueShowcase(league),
+      visualMark: createLeagueVisualMark(league, logo),
       media: buildLeagueMedia(league)
     };
   });

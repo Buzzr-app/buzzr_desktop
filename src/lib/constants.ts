@@ -6,10 +6,10 @@ export const SITE_NAME = 'Buzzr';
  *  BUZZR TV (Fremantle) and cement the sports social app identity. */
 export const ALTERNATE_NAME = 'Buzzr Sports';
 
-export const SITE_TAGLINE = 'AI-native sports social media.';
+export const SITE_TAGLINE = 'Sports social app for every fan.';
 
 export const SITE_DESCRIPTION =
-  'Buzzr is the AI-native sports social app for Scroll, live game ratings, dashboards, friends and chat, leagues, and Buzzr Bets. Track the sports universe without sportsbook integrations.';
+  'Buzzr brings live ratings, team dashboards, friends and chat, leagues, and Buzzr Bets into one sports app.';
 
 export const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.getbuzzr.online';
 

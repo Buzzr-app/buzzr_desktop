@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useViewportGate } from '@/components/hooks/useViewportGate';
 import { cn } from '@/components/utils';
 
 /**
@@ -20,17 +21,25 @@ import { cn } from '@/components/utils';
  *    download; the static overlay + page background remain.
  */
 export function VideoBackdrop({
+  active = true,
   src = '/molten-flux.mp4',
   overlayClassName = 'bg-canvas/55',
   className,
   defer = false
 }: {
+  active?: boolean;
   src?: string;
   overlayClassName?: string;
   className?: string;
   defer?: boolean;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [gateRef, isNearViewport] = useViewportGate<HTMLDivElement>({
+    defaultActive: !defer,
+    disabled: !defer,
+    rootMargin: '1200px 0px'
+  });
+  const shouldLoad = active && (!defer || isNearViewport);
 
   useEffect(() => {
     const v = ref.current;
@@ -46,48 +55,37 @@ export function VideoBackdrop({
       return;
     }
 
-    if (!defer) return; // hero: source is in markup, autoPlay handles playback
+    if (!shouldLoad) {
+      v.pause();
+      v.load();
+      return;
+    }
 
-    let done = false;
-    const near = () => {
-      const r = v.getBoundingClientRect();
-      // Within ~1.5 viewports below or 0.5 above the fold.
-      return r.top < window.innerHeight * 1.5 && r.bottom > -window.innerHeight * 0.5;
-    };
-    const check = () => {
-      if (done || !near()) return;
-      done = true;
-      v.src = src;
-      v.play().catch(() => {
-        /* autoplay blocked (e.g. low-power mode): leave the first frame as a still */
-      });
-      window.removeEventListener('scroll', check);
-      window.removeEventListener('resize', check);
-    };
-    // No mount-time check: a deferred backdrop is below the fold by definition, so
-    // we wait for the user to scroll toward it. Checking at mount races layout and
-    // can fire before the element has settled into its real (off-screen) position.
-    window.addEventListener('scroll', check, { passive: true });
-    window.addEventListener('resize', check, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', check);
-      window.removeEventListener('resize', check);
-    };
-  }, [defer, src]);
+    v.play().catch(() => {
+      /* Autoplay blocked, low power mode, or tab throttling: keep the poster frame. */
+    });
+  }, [shouldLoad]);
 
   return (
-    <div aria-hidden className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}>
-      <video
-        ref={ref}
-        className="h-full w-full object-cover"
-        autoPlay
-        loop
-        muted
-        playsInline
-        preload="none"
-      >
-        {!defer ? <source src={src} type="video/mp4" /> : null}
-      </video>
+    <div
+      ref={gateRef}
+      aria-hidden
+      className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
+      data-video-backdrop-active={shouldLoad ? 'true' : 'false'}
+    >
+      {shouldLoad ? (
+        <video
+          ref={ref}
+          className="h-full w-full object-cover"
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="none"
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+      ) : null}
       <div className={cn('absolute inset-0', overlayClassName)} />
     </div>
   );

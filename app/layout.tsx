@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const fontVariables = `${geistSans.variable} ${geistMono.variable} ${heroFont.variable}`;
 
   return (
-    <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
+    <html lang="en" className={`${fontVariables} overflow-x-hidden`} data-scroll-behavior="smooth">
       <body className="bg-canvas text-foreground font-sans antialiased">
         <a
           href="#main-content"
@@ -80,7 +80,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
                     </span>
                   </div>
                   <p className="max-w-[260px] text-[14px] leading-[1.43] tracking-[0.1px] text-white/58">
-                    The AI-native sports social app for Scroll, dashboards, friends, leagues, and Buzzr Bets.
+                    The sports social app for live ratings, dashboards, friends, leagues, and Buzzr Bets.
                   </p>
                   <a
                     href="https://www.producthunt.com/products/buzzr-sports/reviews/new?utm_source=badge-product_review&utm_medium=badge&utm_source=badge-buzzr-sports"

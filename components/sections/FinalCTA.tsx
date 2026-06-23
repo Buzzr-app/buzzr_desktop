@@ -6,6 +6,8 @@ import { APP_STORE_URL } from '@/src/lib/constants';
 import { BrandMark } from '@/components/BrandMark';
 import { PixelAura } from '@/components/ui/PixelAura';
 
+const CTA_TRUST_ITEMS = ['Free on iOS', '5.0 App Store rating', '11 ratings', '49 leagues'] as const;
+
 export function FinalCTA() {
   return (
     <section
@@ -27,10 +29,23 @@ export function FinalCTA() {
         >
           Sports feels better when Buzzr gets it.
         </h2>
+        <p className="max-w-[520px] text-[16px] leading-[1.45] tracking-[0] text-white/64 motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.12s_both]">
+          Follow teams, rate games, and keep the crew close.
+        </p>
+        <ul className="flex max-w-[620px] flex-wrap justify-center gap-2 motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.15s_both]" aria-label="Buzzr app trust signals">
+          {CTA_TRUST_ITEMS.map((item) => (
+            <li
+              key={item}
+              className="rounded-full bg-white/[0.055] px-3 py-2 font-mono text-[10px] font-bold uppercase leading-none tracking-[0.08em] text-white/62 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.07)]"
+            >
+              {item}
+            </li>
+          ))}
+        </ul>
         <MagneticButton
           href={APP_STORE_URL}
           external
-          className={`${btnPrimary} mt-2 shadow-[var(--shadow-card)] motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.18s_both]`}
+          className={`${btnPrimary} mt-1 shadow-[var(--shadow-card)] motion-safe:animate-[ctaReveal_0.7s_var(--ease-out)_0.2s_both]`}
         >
           <AppleIcon size={18} />
           <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>

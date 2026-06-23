@@ -5,6 +5,7 @@ import { VideoSurface } from '@/components/ui/VideoSurface';
 import { LEAGUES } from '@/src/lib/constants';
 import { buildLeagueOrbitItems } from '@/src/lib/leagueMedia';
 import { getLeagueLogo } from '@/src/lib/leagueLogos';
+import { getLeagueShowcase } from '@/src/lib/leagueShowcase';
 
 // Official sample from the YouTube IFrame Player API documentation.
 const YOUTUBE_IFRAME_API_SAMPLE_ID = 'M7lc1UVf-VE';
@@ -19,7 +20,7 @@ describe('league orbit', () => {
     );
   });
 
-  it('uses local logos, provider-backed logos, and text fallbacks', () => {
+  it('uses local logos, provider-backed logos, and generated visual marks', () => {
     const items = buildLeagueOrbitItems();
     const nba = items.find((item) => item.league.label === 'NBA');
     const ipl = items.find((item) => item.league.label === 'IPL');
@@ -30,9 +31,10 @@ describe('league orbit', () => {
     const afcon = items.find((item) => item.league.label === 'AFCON');
     const asianCup = items.find((item) => item.league.label === 'ASIAN CUP');
     const boxing = items.find((item) => item.league.label === 'BOXING');
-    const textFallbacks = items.filter((item) => item.logo === null);
+    const crestFallbacks = items.filter((item) => item.visualMark.kind === 'crest');
 
     expect(nba?.logo).toBe(getLeagueLogo('NBA'));
+    expect(nba?.visualMark.kind).toBe('image');
     expect(ipl?.logo).toBe(getLeagueLogo('IPL'));
     expect(ncaaw?.logo).toBe(getLeagueLogo('NCAAW'));
     expect(wwc?.logo).toBe(getLeagueLogo('WWC'));
@@ -40,7 +42,7 @@ describe('league orbit', () => {
     expect(euros?.logo).toBe(getLeagueLogo('EUROS'));
     expect(afcon?.logo).toBe(getLeagueLogo('AFCON'));
     expect(asianCup?.logo).toBe(getLeagueLogo('ASIAN CUP'));
-    expect(textFallbacks.map((item) => item.league.label)).toEqual([
+    expect(crestFallbacks.map((item) => item.league.label)).toEqual([
       'BOXING',
       'BBL',
       'CPL',
@@ -55,7 +57,18 @@ describe('league orbit', () => {
       'RUGBY CHAMP'
     ]);
     expect(boxing?.logo).toBeNull();
-    expect(boxing?.fallbackLabel).toBe('BOXING');
+    expect(boxing?.visualMark.kind).toBe('crest');
+    expect(boxing?.visualMark.code).toBe('BOX');
+  });
+
+  it('provides curated teams and player chips for every league', () => {
+    for (const league of LEAGUES) {
+      const showcase = getLeagueShowcase(league);
+
+      expect(showcase.teams).toHaveLength(12);
+      expect(showcase.players.length).toBeGreaterThanOrEqual(4);
+      expect(showcase.teams.every((team) => team.mark.kind === 'image' || team.mark.kind === 'crest')).toBe(true);
+    }
   });
 
   it('allows only verified youtube IDs or null media fallbacks', () => {
@@ -74,12 +87,58 @@ describe('league orbit', () => {
   it('renders every league as a reachable control', () => {
     render(<LeagueOrbit />);
 
+    expect(screen.getByText('Hover or tap a league.')).toBeInTheDocument();
+    expect(screen.getByText('Nearby nodes flip into teams.')).toBeInTheDocument();
+
     for (const league of LEAGUES) {
       const trigger = screen.getByTestId(`league-orbit-trigger-${league.label}`);
 
       expect(trigger).toBeVisible();
       expect(trigger).toHaveAttribute('type', 'button');
       expect(trigger).toHaveTextContent(league.label);
+    }
+  });
+
+  it('flips nearby league nodes into active league teams on hover and shows players', () => {
+    render(<LeagueOrbit />);
+
+    fireEvent.mouseEnter(screen.getByTestId('league-orbit-trigger-NBA'));
+
+    expect(screen.getByTestId('league-orbit-team-node-NBA-NYK')).toBeInTheDocument();
+    expect(screen.getAllByText('Jalen Brunson').length).toBeGreaterThan(0);
+    expect(screen.queryByText('Aja Wilson')).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(screen.getByTestId('league-orbit-trigger-NFL'));
+
+    expect(screen.getByTestId('league-orbit-team-node-NFL-KC')).toBeInTheDocument();
+    expect(screen.getAllByText('Patrick Mahomes').length).toBeGreaterThan(0);
+  });
+
+  it('reshuffles showcase teams and exposes hierarchy tiers', () => {
+    render(<LeagueOrbit />);
+
+    const nbaTrigger = screen.getByTestId('league-orbit-trigger-NBA');
+    fireEvent.mouseEnter(nbaTrigger);
+
+    const firstOrder = screen
+      .getAllByTestId(/^league-orbit-team-node-NBA-/)
+      .map((node) => node.getAttribute('data-team-code'));
+
+    fireEvent.mouseEnter(screen.getByTestId('league-orbit-trigger-NFL'));
+    fireEvent.mouseEnter(nbaTrigger);
+
+    const secondOrder = screen
+      .getAllByTestId(/^league-orbit-team-node-NBA-/)
+      .map((node) => node.getAttribute('data-team-code'));
+
+    expect(secondOrder).not.toEqual(firstOrder);
+    expect(nbaTrigger).toHaveAttribute('data-orbit-tier', 'league');
+    expect(screen.getAllByTestId(/^league-orbit-team-node-NBA-/)[0]).toHaveAttribute(
+      'data-orbit-tier',
+      'team'
+    );
+    for (const chip of screen.getAllByTestId('league-orbit-player-chip-NBA-JB')) {
+      expect(chip).toHaveAttribute('data-orbit-tier', 'player');
     }
   });
 });

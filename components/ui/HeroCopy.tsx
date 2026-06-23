@@ -8,6 +8,9 @@ import { AppleIcon, DiscordIcon } from '@/components/ui/BrandIcons';
 import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
 import { HERO_BANDS, bandProgress, sampleHeroProgress } from '@/src/lib/heroProgress';
 
+const HERO_REVEAL_COPY =
+  'Follow every team, rate live games, and keep your crew in the same feed.';
+
 /**
  * HeroCopy - the pinned-scroll narrative overlay that lives inside the sticky
  * hero stage. It samples the same `[data-hero-pin]` progress the WebGL scene
@@ -104,7 +107,7 @@ export function HeroCopy() {
           aria-hidden
           viewBox="0 0 560 560"
           style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
-          className="hero-encircle pointer-events-none absolute left-1/2 top-[48%] h-[min(104vw,90vh)] w-[min(104vw,90vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none md:top-[49%]"
+          className="hero-encircle pointer-events-none absolute left-1/2 top-[48%] h-[min(100vw,90vh)] w-[min(100vw,90vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none md:top-[49%]"
         >
           <defs>
             <path id="heroArcTop" d="M 58 302 Q 280 10 502 302" fill="none" />
@@ -118,11 +121,11 @@ export function HeroCopy() {
           </text>
         </svg>
 
-        <div className="pointer-events-auto absolute inset-x-0 bottom-[22vh] flex animate-fade-in-up stagger-2 flex-wrap items-center justify-center gap-3 px-6 sm:bottom-[12vh]">
+        <div className="pointer-events-auto absolute inset-x-0 bottom-[14vh] flex animate-fade-in-up stagger-2 flex-col items-center justify-center gap-2 px-4 sm:bottom-[12vh] sm:flex-row sm:gap-3 sm:px-6">
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center gap-2 rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
           >
             <AppleIcon size={17} />
             <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
@@ -132,7 +135,7 @@ export function HeroCopy() {
             href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-control border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
           >
             <DiscordIcon size={17} />
             Join the Discord<span className="sr-only"> (opens in new tab)</span>
@@ -164,16 +167,13 @@ export function HeroCopy() {
         className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[19vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[20vh]"
       >
         <p className="font-hero max-w-[34ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white md:max-w-[40ch]">
-          <ShimmerText kind="accent" className="text-accent-text">
-            AI-Native
-          </ShimmerText>{' '}
-          sports social media for every game that moves the room.
+          {HERO_REVEAL_COPY}
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3">
           <MagneticButton
             href={APP_STORE_URL}
             external
-            className="inline-flex items-center rounded-control bg-accent px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex w-[168px] items-center justify-center rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
           >
             Get the app<span className="sr-only"> (opens in new tab)</span>
           </MagneticButton>
@@ -181,7 +181,7 @@ export function HeroCopy() {
             href={DISCORD_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center rounded-control border border-white/15 bg-black/35 px-5 py-3 text-[15px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+            className="inline-flex w-[168px] items-center justify-center rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
           >
             Join the Discord<span className="sr-only"> (opens in new tab)</span>
           </Link>

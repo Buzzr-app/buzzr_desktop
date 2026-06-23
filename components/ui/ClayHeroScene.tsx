@@ -240,10 +240,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       antialias: true,
       alpha: true,
       powerPreference: 'high-performance',
-      // Retain the last frame in the drawing buffer so off-rAF / hidden-tab
-      // captures (and toDataURL) reflect the current pose instead of an empty
-      // buffer. Negligible cost for a scene this small.
-      preserveDrawingBuffer: true
+      preserveDrawingBuffer: false
     });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.8));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
@@ -428,7 +425,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       prevExplode = explode;
     };
 
-    /* ── clean clay phone ── */
+    /* Clean clay phone. */
     const phoneGroup = new THREE.Group();
     sceneGroup.add(phoneGroup);
 
@@ -440,7 +437,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const bodyGeo = new RoundedBoxGeometry(1.55, 3.18, 0.34, 6, 0.2);
     // Dark graphite titanium: anchor on --color-subtle pulled toward --color-canvas
     // and drop metalness so the front fill light stops catching it as silver. This
-    // unifies the WebGL phone with the darker CSS phones (DataBento/promo) without
+    // unifies the WebGL phone with the darker CSS phone previews without
     // touching the scene lights (which also rake the basketball) or the bands.
     const phoneBodyColor = () =>
       new THREE.Color(tokens.subtle).lerp(new THREE.Color(tokens.canvas), 0.35);
@@ -549,23 +546,25 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     const poseScene = (p: number, t: number) => {
       const isNarrow = camera.aspect < 0.72;
       const explode = bandProgress(HERO_BANDS.burst, p);
-      ballUniforms.uExplode.value = explode;
-      ballUniforms.uTime.value = t;
-      ballUniforms.uFresnel.value = lerp(0.6, 0.95, explode);
-      applyExplosion(explode);
+      const ballFade = bandProgress(HERO_BANDS.burstFade, p);
+      ball.visible = ballFade < 0.985;
+      if (ball.visible) {
+        ballUniforms.uExplode.value = explode;
+        ballUniforms.uTime.value = t;
+        ballUniforms.uFresnel.value = lerp(0.6, 0.95, explode);
+        applyExplosion(explode);
 
-      // The ball starts at visual center. The frosted copy layer handles legibility.
-      const ballScale = lerp(isNarrow ? 0.32 : 0.56, isNarrow ? 0.72 : 0.95, explode);
-      ball.scale.setScalar(ballScale);
-      ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
+        // The ball starts at visual center. The frosted copy layer handles legibility.
+        const ballScale = lerp(isNarrow ? 0.32 : 0.56, isNarrow ? 0.72 : 0.95, explode);
+        ball.scale.setScalar(ballScale);
+        ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
+      }
 
       const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
       phone.visible = rise > 0.018;
-      // Settle the risen phone lower in frame so it clears the post-scroll copy
-      // (BUZZR + tagline + CTAs) instead of crowding the buttons.
-      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.42 : -0.5, rise);
+      phone.position.y = lerp(isNarrow ? -4.2 : -3.0, isNarrow ? -0.08 : 0.12, rise);
       phone.position.z = lerp(-0.45, 0.2, rise); // pulled forward, in front of where the ball was
-      const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.58 : 0.7, rise);
+      const sc = lerp(isNarrow ? 0.46 : 0.58, isNarrow ? 0.72 : 0.82, rise);
       phone.scale.setScalar(sc);
 
       const surface = bandProgress(HERO_BANDS.phoneSurface, p);

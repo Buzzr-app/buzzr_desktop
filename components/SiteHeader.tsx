@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
-  ChartSpline,
   MessagesSquare,
   ScrollText,
   Trophy,
@@ -24,7 +23,6 @@ type NavItem = { id: string; label: string; Icon: LucideIcon };
 const SECTIONS: NavItem[] = [
   { id: 'surfaces', label: 'Scroll', Icon: ScrollText },
   { id: 'promo', label: 'Friends', Icon: MessagesSquare },
-  { id: 'data', label: 'Dashboards', Icon: ChartSpline },
   { id: 'leagues', label: 'Leagues', Icon: Trophy },
   { id: 'rail', label: 'Bets', Icon: WalletCards }
 ];

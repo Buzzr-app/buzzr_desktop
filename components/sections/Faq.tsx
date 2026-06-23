@@ -5,7 +5,7 @@ import { LEAGUES, LEAGUE_COUNT } from '@/src/lib/constants';
 const LEAGUE_LIST = LEAGUES.map((l) => l.long).join(', ');
 
 const FAQS = [
-  { q: 'What is Buzzr?', a: 'Buzzr is the AI-native sports social app. Scroll live games, rate the action, follow dashboards, chat with friends, track leagues, and keep DFS slips in Buzzr Bets.' },
+  { q: 'What is Buzzr?', a: 'Buzzr is the sports social app for live ratings, dashboards, friends and chat, leagues, and Buzzr Bets.' },
   { q: 'What is a Buzzr Score?', a: 'A single 1 to 10 signal for how alive a game feels. 9 and up is Peak, 8 to 8.9 is Great, 6.5 to 7.9 is Good, 5 to 6.4 is Mid, 3 to 4.9 is Bad, below 3 is Garbage. It blends star power, rivalry, stakes, game state, and fan reaction.' },
   { q: 'Is Buzzr a betting app?', a: 'No. Buzzr does not integrate sportsbooks, place wagers, or sell odds. Buzzr Bets is personal DFS slip tracking for picks placed elsewhere.' },
   { q: 'Which sports and leagues does it cover?', a: `Buzzr covers ${LEAGUE_COUNT} leagues across major sports: ${LEAGUE_LIST}. Coverage tier varies by league.` },

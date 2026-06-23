@@ -14,7 +14,6 @@ import { ScrollReveal } from '@/components/ScrollReveal';
 import { Hero } from '@/components/sections/Hero';
 import { SurfacesGrid } from '@/components/sections/SurfacesGrid';
 import { PromoReels } from '@/components/sections/PromoReels';
-import { DataBento } from '@/components/sections/DataBento';
 import { LeaguesWall } from '@/components/sections/LeaguesWall';
 import { Faq } from '@/components/sections/Faq';
 import { Reviews, REVIEWS_SUMMARY } from '@/components/sections/Reviews';
@@ -22,8 +21,8 @@ import { FinalCTA } from '@/components/sections/FinalCTA';
 import { BRAND_ASSETS } from '@/src/lib/brandAssets';
 import { OpenSource } from '@/components/sections/OpenSource';
 
-const PAGE_TITLE = `${SITE_NAME} · AI-native sports social media`;
-const PAGE_DESCRIPTION = `Buzzr is the AI-native sports social app for Scroll, live game ratings, dashboards, friends and chat, ${LEAGUE_COUNT} leagues, and Buzzr Bets. Free on iOS and Android.`;
+const PAGE_TITLE = `${SITE_NAME} · Sports social app for every fan`;
+const PAGE_DESCRIPTION = `Follow teams, rate live games, chat with friends, browse ${LEAGUE_COUNT} leagues, and track Buzzr Bets. Free on iOS.`;
 
 export const metadata: Metadata = {
   title: PAGE_TITLE,
@@ -142,31 +141,28 @@ export default function HomePage() {
       />
 
       <Hero />
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal landing-section-reveal--first">
         <SurfacesGrid />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <PromoReels />
       </ScrollReveal>
-      <ScrollReveal>
-        <DataBento />
-      </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <LeaguesWall />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <ScrollRail />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <OpenSource />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <Reviews />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <Faq />
       </ScrollReveal>
-      <ScrollReveal>
+      <ScrollReveal className="landing-section-reveal">
         <FinalCTA />
       </ScrollReveal>
     </div>

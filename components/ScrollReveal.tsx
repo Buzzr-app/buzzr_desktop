@@ -37,7 +37,7 @@ export function ScrollReveal({
       ref={ref}
       className={cn(className)}
       style={{
-        containIntrinsicSize: inView ? undefined : '900px',
+        containIntrinsicSize: inView ? undefined : '560px',
         contentVisibility: inView ? 'visible' : 'auto',
         opacity: inView ? 1 : 0,
         transform: inView ? 'translateY(0)' : 'translateY(8px)',
