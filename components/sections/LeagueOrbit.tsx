@@ -500,7 +500,7 @@ export function LeagueOrbit() {
           id="leagues-title"
           className="text-balance text-[clamp(36px,5.2vw,72px)] font-semibold leading-[0.95] tracking-[0] text-foreground"
         >
-          All {LEAGUE_COUNT} leagues in one sports graph.
+          All {LEAGUE_COUNT} leagues in one <em style={{ fontStyle: 'italic' }}>buzzin</em> app.
         </h2>
       </header>
 

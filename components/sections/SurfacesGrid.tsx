@@ -3,6 +3,7 @@ import { type CSSProperties } from 'react';
 import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
+import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
 
 type BentoCard = {
   emojis: readonly string[];
@@ -86,11 +87,11 @@ const LEAGUE_SORT_ROWS: ReadonlyArray<{
   { code: 'MLB', league: 'Baseball', name: 'Mets, Phillies, Dodgers', metric: '6 boards', tone: 'gold' }
 ];
 
-const CHAT_MESSAGES = [
-  { align: 'left', avatar: 'M', name: 'Maya', text: 'Garden is loud. Save that block.', time: '0:18' },
-  { align: 'right', avatar: 'You', name: 'You', text: 'Clip saved. Run it back after the buzzer.', time: 'now' },
-  { align: 'left', avatar: 'J', name: 'Jules', text: 'Brunson is hunting switches again.', time: '0:06' }
-] as const;
+const CHAT_MESSAGES: readonly { align: 'left' | 'right'; avatarSeed: AvatarSeed; name: string; text: string; time: string }[] = [
+  { align: 'left', avatarSeed: 'maya', name: 'Maya', text: 'Garden is loud. Save that block.', time: '0:18' },
+  { align: 'right', avatarSeed: 'sam', name: 'You', text: 'Clip saved. Run it back after the buzzer.', time: 'now' },
+  { align: 'left', avatarSeed: 'jordan', name: 'Jules', text: 'Brunson is hunting switches again.', time: '0:06' }
+];
 
 export function SurfacesGrid() {
   return (
@@ -232,9 +233,9 @@ function ChatProofPreview() {
 
       <div className="chat-proof-preview__header">
         <span className="chat-proof-preview__avatar-stack" aria-hidden>
-          <span>M</span>
-          <span>J</span>
-          <span>S</span>
+          <span><Avatar seed="maya" size={30} className="block" /></span>
+          <span><Avatar seed="jordan" size={30} className="block" /></span>
+          <span><Avatar seed="sid" size={30} className="block" /></span>
         </span>
         <span className="chat-proof-preview__title">
           <strong>Celtics Crew</strong>
@@ -246,7 +247,7 @@ function ChatProofPreview() {
       <div className="chat-proof-preview__messages">
         {CHAT_MESSAGES.map((message) => (
           <span key={`${message.name}-${message.text}`} data-align={message.align}>
-            <em>{message.avatar}</em>
+            <em><Avatar seed={message.avatarSeed} size={28} className="block" /></em>
             <span>
               <small>
                 {message.name} <b>{message.time}</b>

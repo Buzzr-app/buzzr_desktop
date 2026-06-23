@@ -760,6 +760,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .chat-proof-preview__avatar-stack span {
   display: grid;
+  overflow: hidden;
   width: 30px;
   height: 30px;
   margin-left: -10px;
@@ -797,6 +798,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .chat-proof-preview__messages > span > em {
   display: grid;
+  overflow: hidden;
   width: 28px;
   height: 28px;
   place-items: center;
