@@ -1,15 +1,16 @@
 import type { Metadata } from 'next';
-import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { SITE_NAME, BASE_URL, COMPANY_NAME } from '@/src/lib/constants';
 import {
   getAllPostSlugs,
+  getAllPosts,
   getPostBySlug,
   formatPublishedDate,
   wordCount,
   tagSlug
 } from '@/src/lib/blog';
+import { BlogCover } from '@/components/blog/BlogCover';
 import { authorJsonLd, getAuthor } from '@/src/lib/authors';
 import { Prose } from '@/components/blog/Prose';
 import { EditorialShell } from '@/components/blog/EditorialShell';
@@ -68,6 +69,7 @@ export default async function BlogPostPage({ params }: PageProps) {
   const url = `${BASE_URL}/blog/${post.slug}`;
   const author = getAuthor(post.author);
   const words = wordCount(post.body);
+  const coverSeed = getAllPosts().findIndex((p) => p.slug === post.slug);
 
   const blogPostingLd = {
     '@context': 'https://schema.org',
@@ -167,32 +169,14 @@ export default async function BlogPostPage({ params }: PageProps) {
           ))}
         </EditorialTagRail>
 
-        <figure className="relative mb-12 aspect-[16/10] w-full overflow-hidden rounded-[8px] border border-white/10 bg-[#121820]">
-          <Image
+        <figure aria-hidden className="relative mb-12 aspect-[16/10] w-full overflow-hidden rounded-[8px] border border-white/10 bg-canvas">
+          <BlogCover
             src={post.cover.src}
             alt={post.cover.alt}
-            fill
+            seed={coverSeed >= 0 ? coverSeed : 0}
             priority
             sizes="(max-width: 1100px) 100vw, 1040px"
-            className="object-cover opacity-[0.86] saturate-[0.9]"
           />
-          {post.cover.credit ? (
-            <figcaption className="absolute bottom-0 right-0 max-w-[90%] bg-[#090e13]/88 px-3 py-1.5 font-mono text-[11px] uppercase leading-[1.6] tracking-[0.1em] text-white/48 backdrop-blur-sm">
-              Photo:{' '}
-              {post.cover.creditUrl ? (
-                <a
-                  href={post.cover.creditUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-white/62 underline decoration-white/25 underline-offset-2 hover:text-white"
-                >
-                  {post.cover.credit}
-                </a>
-              ) : (
-                post.cover.credit
-              )}
-            </figcaption>
-          ) : null}
         </figure>
 
         <div className="grid gap-12 lg:grid-cols-[minmax(0,720px)_220px] lg:items-start">

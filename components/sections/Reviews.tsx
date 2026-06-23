@@ -49,6 +49,16 @@ const REVIEWS: Review[] = [
   }
 ];
 
+// Submitted App Store screenshots (public/app-store), shown as the Preview gallery.
+const APP_STORE_SHOTS: { src: string; alt: string }[] = [
+  { src: '/app-store/01-ai-native.jpg', alt: 'Buzzr - the AI-native sports social app' },
+  { src: '/app-store/02-rate-every-game.jpg', alt: 'Buzzr - rate every game' },
+  { src: '/app-store/03-track-your-teams.jpg', alt: 'Buzzr - track your teams' },
+  { src: '/app-store/04-discover-the-buzz.jpg', alt: 'Buzzr - discover the buzz' },
+  { src: '/app-store/05-search-everything.jpg', alt: 'Buzzr - search everything' },
+  { src: '/app-store/06-build-your-profile.jpg', alt: 'Buzzr - build your profile' }
+];
+
 // 5 to 1 star distribution for the histogram (avg 5.0 across 11 ratings).
 const DISTRIBUTION: { stars: number; pct: number }[] = [
   { stars: 5, pct: 1 },
@@ -120,8 +130,9 @@ export function Reviews() {
         </svg>
       </h2>
 
-      {/* Summary: big score + distribution histogram */}
-      <div className="mt-6 grid gap-8 border-b border-border pb-10 sm:grid-cols-[auto_1fr] sm:items-end sm:gap-14">
+      {/* Summary: rating block on the left, compact screenshot gallery on the right */}
+      <div className="mt-6 grid gap-8 border-b border-border pb-10 sm:grid-cols-[auto_1fr] sm:items-center sm:gap-12">
+        {/* Left: big score + stars, with distribution histogram beneath */}
         <div>
           <div className="score-mono text-[72px] font-semibold leading-[0.9] tracking-[-0.03em] text-foreground">
             {REVIEWS_SUMMARY.rating.toFixed(1)}
@@ -130,21 +141,39 @@ export function Reviews() {
             <Stars value={5} sizeClass="h-4 w-4" />
           </div>
           <p className="mt-1.5 text-[13px] text-muted">out of 5</p>
+
+          <div className="mt-5 w-full max-w-[220px]">
+            {DISTRIBUTION.map((row) => (
+              <span
+                key={row.stars}
+                className="mb-1.5 block h-[6px] overflow-hidden rounded-full bg-foreground/[0.08] last:mb-0"
+              >
+                <span
+                  className="block h-full rounded-full bg-accent"
+                  style={{ width: `${row.pct * 100}%` }}
+                />
+              </span>
+            ))}
+            <p className="mt-3 text-[13px] text-muted">{REVIEWS_SUMMARY.count} Ratings</p>
+          </div>
         </div>
 
-        <div className="w-full max-w-[300px] justify-self-end">
-          {DISTRIBUTION.map((row) => (
-            <span
-              key={row.stars}
-              className="mb-1.5 block h-[6px] overflow-hidden rounded-full bg-foreground/[0.08] last:mb-0"
+        {/* Right: compact horizontal-scroll thumbnail gallery of the App Store shots */}
+        <div className="app-store-gallery -mx-6 flex snap-x snap-mandatory gap-3 overflow-x-auto px-6 pb-1 sm:mx-0 sm:px-0 sm:justify-self-end">
+          {APP_STORE_SHOTS.map((shot) => (
+            <div
+              key={shot.src}
+              className="relative aspect-[1242/2688] w-[96px] shrink-0 snap-start overflow-hidden rounded-card border border-white/[0.07] bg-canvas shadow-[var(--shadow-card)] sm:w-[116px]"
             >
-              <span
-                className="block h-full rounded-full bg-accent"
-                style={{ width: `${row.pct * 100}%` }}
+              <Image
+                src={shot.src}
+                alt={shot.alt}
+                fill
+                sizes="(max-width: 640px) 96px, 116px"
+                className="object-cover"
               />
-            </span>
+            </div>
           ))}
-          <p className="mt-3 text-right text-[13px] text-muted">{REVIEWS_SUMMARY.count} Ratings</p>
         </div>
       </div>
 

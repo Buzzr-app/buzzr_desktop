@@ -137,7 +137,7 @@ export default async function TagPage({ params }: PageProps) {
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
         {posts.map((post, i) => (
-          <PostCard key={post.slug} post={post} priority={i < 3} />
+          <PostCard key={post.slug} post={post} seed={i} priority={i < 3} />
         ))}
       </div>
 

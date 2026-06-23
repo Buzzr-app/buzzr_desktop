@@ -4,11 +4,14 @@ import Image from 'next/image';
 import {
   type CSSProperties,
   type FocusEvent,
+  type MouseEvent as ReactMouseEvent,
   useEffect,
   useMemo,
+  useRef,
   useState
 } from 'react';
 import { useViewportGate } from '@/components/hooks/useViewportGate';
+import { GyroidField } from '@/components/ui/GyroidField';
 import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { LEAGUE_COUNT, type LeagueStatus } from '@/src/lib/constants';
@@ -107,7 +110,6 @@ function OrbitRingLines() {
           className="orbit-ring-line absolute left-1/2 top-1/2 rounded-full border border-white/10 bg-[radial-gradient(circle,rgb(var(--accent-rgb)_/_0.045),transparent_64%)]"
           style={{
             height: `calc(${ring.radius} * 2)`,
-            transform: 'translate(-50%, -50%)',
             width: `calc(${ring.radius} * 2)`
           }}
         />
@@ -137,9 +139,6 @@ function VisualMark({
           unoptimized={isRemoteLeagueLogo(mark.src)}
           className="orbit-visual-mark__image h-full w-full object-contain"
         />
-        <span aria-hidden className="orbit-visual-mark__fallback">
-          {mark.code}
-        </span>
       </span>
     );
   }
@@ -329,8 +328,8 @@ function MobileLeagueRail({
     <div className="mt-8 lg:hidden">
       <div className="orbit-aura mx-auto aspect-square w-[min(320px,82vw)]">
         <div aria-hidden className="orbit-aura__bloom" />
+        <GyroidField variant="reels" className="orbit-aura__field" />
         <div aria-hidden className="orbit-aura__core" />
-        <div aria-hidden className="orbit-aura__grain" />
         <div aria-hidden className="orbit-aura__vignette" />
         <OrbitCenter item={activeItem} />
       </div>
@@ -384,6 +383,9 @@ export function LeagueOrbit() {
   const [activeLabel, setActiveLabel] = useState(initialItem?.league.label ?? '');
   const [isInteracting, setIsInteracting] = useState(false);
   const [showcaseSeed, setShowcaseSeed] = useState(0);
+  const stageRef = useRef<HTMLDivElement>(null);
+  const parallaxRaf = useRef<number | null>(null);
+  const pointer = useRef({ x: 0, y: 0 });
   const activeItem =
     items.find((item) => item.league.label === activeLabel) ?? initialItem;
   const activeIndex = Math.max(
@@ -428,6 +430,14 @@ export function LeagueOrbit() {
     };
   }, [ambientLabels, isInteracting, isStageVisible]);
 
+  useEffect(() => {
+    return () => {
+      if (parallaxRaf.current != null) {
+        window.cancelAnimationFrame(parallaxRaf.current);
+      }
+    };
+  }, []);
+
   if (!activeItem) {
     return null;
   }
@@ -446,6 +456,38 @@ export function LeagueOrbit() {
     }
   };
 
+  // Pointer parallax: the orbit field leans toward the cursor (outer rings drift
+  // more than the center for depth), eased back to rest when the pointer leaves.
+  // CSS-var driven + rAF-throttled so it never triggers a React re-render.
+  const applyParallax = () => {
+    parallaxRaf.current = null;
+    const el = stageRef.current;
+    if (!el) return;
+    el.style.setProperty('--orbit-px', pointer.current.x.toFixed(3));
+    el.style.setProperty('--orbit-py', pointer.current.y.toFixed(3));
+  };
+
+  const handleStageMove = (event: ReactMouseEvent<HTMLDivElement>) => {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    pointer.current = {
+      x: ((event.clientX - rect.left) / rect.width) * 2 - 1,
+      y: ((event.clientY - rect.top) / rect.height) * 2 - 1
+    };
+    if (parallaxRaf.current == null) {
+      parallaxRaf.current = window.requestAnimationFrame(applyParallax);
+    }
+  };
+
+  const handleStageLeave = () => {
+    setIsInteracting(false);
+    const el = stageRef.current;
+    if (el) {
+      el.style.setProperty('--orbit-px', '0');
+      el.style.setProperty('--orbit-py', '0');
+    }
+  };
+
   return (
     <Section
       ref={sectionRef}
@@ -454,40 +496,34 @@ export function LeagueOrbit() {
       className="max-w-[1380px] overflow-hidden py-16 md:py-20"
     >
       <header className="mx-auto max-w-[760px] text-center">
-        <p className="font-mono text-[12px] uppercase leading-[2] tracking-[0.12em] text-accent-text">
-          League orbit
-        </p>
         <h2
           id="leagues-title"
-          className="mt-3 text-[clamp(36px,5.2vw,72px)] font-semibold leading-[0.95] tracking-[0] text-foreground"
+          className="text-balance text-[clamp(36px,5.2vw,72px)] font-semibold leading-[0.95] tracking-[0] text-foreground"
         >
-          All {LEAGUE_COUNT} leagues in one sports graph.
+          All {LEAGUE_COUNT} leagues in one <em style={{ fontStyle: 'italic' }}>buzzin</em> app.
         </h2>
-        <div className="orbit-interaction-cue mt-5" aria-label="League graph interaction guide">
-          <span>Hover or tap a league.</span>
-          <span>Nearby nodes flip into teams.</span>
-          <span>Players light up in the center.</span>
-        </div>
       </header>
 
       <div
+        ref={stageRef}
         className="orbit-stage relative mt-12 hidden min-h-[980px] lg:block"
         data-interacting={isInteracting ? 'true' : 'false'}
         onBlur={handleStageBlur}
-        onMouseLeave={() => setIsInteracting(false)}
+        onMouseMove={handleStageMove}
+        onMouseLeave={handleStageLeave}
       >
         <div aria-hidden className="orbit-core-glow" />
         <OrbitRingLines />
 
         <div className="orbit-aura z-10">
           <div aria-hidden className="orbit-aura__bloom" />
+          <GyroidField variant="reels" className="orbit-aura__field" />
           <div aria-hidden className="orbit-aura__core" />
-          <div aria-hidden className="orbit-aura__grain" />
           <div aria-hidden className="orbit-aura__vignette" />
           <OrbitCenter item={activeItem} />
         </div>
 
-        <ul className="absolute inset-0" aria-label="Covered leagues">
+        <ul className="orbit-node-layer absolute inset-0" aria-label="Covered leagues">
           {ORBIT_RINGS.map((ring) => (
             <li key={ring.ring} className={cn('orbit-spin', `orbit-spin-${ring.ring}`)}>
               <ul>

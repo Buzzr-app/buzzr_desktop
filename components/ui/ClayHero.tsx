@@ -81,7 +81,7 @@ export function ClayHero({
       ref={pinRef}
       data-hero-active={isHeroActive ? 'true' : 'false'}
       data-hero-pin
-      className={`relative h-[155vh] md:h-[165vh] motion-reduce:h-auto ${className ?? ''}`}
+      className={`relative h-[220vh] md:h-[260vh] motion-reduce:h-auto ${className ?? ''}`}
     >
       <div className="sticky top-0 h-screen w-full overflow-hidden hero-stage landing-dark">
         <VideoBackdrop

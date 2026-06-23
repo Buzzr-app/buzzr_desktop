@@ -72,11 +72,14 @@
   --text-display--line-height: 1.04;
   --text-display--letter-spacing: -0.024em;
 
-  /* Radii - soft, on a tight scale */
-  /* One radius language: chip / control / card (+ rounded-full for true pills). */
+  /* Radii - one algorithmic scale: 8 / 11 / 16 / 24 (chip / control / card / card-lg).
+     Pills use rounded-full. Large glass surfaces (bento, carousel cards, app-store
+     gallery) all share --radius-card-lg; nested children use parent - padding so
+     corners stay concentric. */
   --radius-chip:    8px;
   --radius-control: 11px;
   --radius-card:    16px;
+  --radius-card-lg: 24px;
   --radius-input:   11px;
   --radius-button:  11px;
   --radius-callout: 16px;
@@ -94,7 +97,7 @@ html {
 }
 
 html {
-  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   scroll-padding-top: 80px;
 }
@@ -114,7 +117,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: var(--color-canvas);
   color: var(--color-foreground);
-  overflow-x: hidden;
+  /* `clip` (not `hidden`) kills horizontal overflow WITHOUT turning <body> into a
+     scroll container. `overflow-x: hidden` forces the used overflow-y to `auto`,
+     which makes <body> a scrollport and silently breaks `position: sticky` on the
+     pinned hero stage (it scrolls away instead of pinning -> black dead zone). */
+  overflow-x: clip;
 }
 
 ::selection {
@@ -124,6 +131,13 @@ body {
 :focus-visible {
   outline: 2px solid rgb(var(--accent-rgb) / 0.6);
   outline-offset: 2px;
+}
+
+/* Prevent heading widows site-wide: balance wrapping so a heading never drops a
+   single lonely word onto its last line. */
+h1,
+h2 {
+  text-wrap: balance;
 }
 
 /* Headings lead with size + tracking, not mass. Explicit utilities still win. */
@@ -228,8 +242,14 @@ h1, h2, h3, h4, h5, h6 {
 /* Shared dark landing surface */
 .landing-dark {
   background:
-    radial-gradient(circle at 50% 6%, rgb(var(--accent-rgb) / 0.12), transparent 34%),
-    linear-gradient(180deg, #0c0c0f 0%, #0a0a0c 52%, #0a0a0c 100%);
+    radial-gradient(circle at 50% 7%, rgb(var(--accent-rgb) / 0.2), transparent 40%),
+    radial-gradient(ellipse 130% 92% at 50% 58%, rgb(var(--accent-rgb) / 0.12), transparent 64%),
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-canvas) 90%, var(--color-accent)) 0%,
+      var(--color-canvas) 54%,
+      var(--color-canvas) 100%
+    );
 }
 
 /* Header glass and nested control radii. */
@@ -267,33 +287,37 @@ h1, h2, h3, h4, h5, h6 {
   letter-spacing: 0;
   white-space: nowrap;
 }
+/* Clean accent pill: one soft brand shadow + a single hairline top sheen. No
+   stacked insets / heavy gloss - reads flat and modern, not plasticky. */
 .site-nav-cta {
   position: relative;
   isolation: isolate;
-  min-width: 132px;
-  height: 44px;
+  min-width: 124px;
+  height: 40px;
   overflow: hidden;
-  border-radius: var(--nav-control-radius);
+  border-radius: 999px;
   box-shadow:
-    0 22px 58px -26px rgb(var(--accent-rgb) / 0.92),
-    0 8px 22px -14px rgba(0, 0, 0, 0.7),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34),
-    inset 0 -1px 0 rgba(2, 28, 14, 0.28);
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 18px -9px rgb(var(--accent-rgb) / 0.5);
   letter-spacing: 0;
   line-height: 1;
   white-space: nowrap;
   font-kerning: normal;
+  transition: box-shadow 200ms ease, background-color 200ms ease;
 }
 .site-nav-cta::before {
   content: '';
   position: absolute;
-  inset: 1px;
+  inset: 0;
   z-index: -1;
-  border-radius: calc(var(--nav-control-radius) - 1px);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.24), transparent 42%),
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.28), transparent 44%);
-  opacity: 0.76;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), transparent 54%);
+  opacity: 0.7;
+}
+.site-nav-cta:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    0 9px 22px -9px rgb(var(--accent-rgb) / 0.66);
 }
 .site-nav-cta-label {
   display: inline-flex;
@@ -314,8 +338,10 @@ h1, h2, h3, h4, h5, h6 {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 43%, rgb(var(--accent-rgb) / 0.18), transparent 30%),
-    radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.055), transparent 38%),
+    radial-gradient(ellipse 42% 30% at 50% 60%, rgba(0, 0, 0, 0.62), transparent 72%),
+    radial-gradient(circle at 50% 43%, rgb(var(--accent-rgb) / 0.11), transparent 38%),
+    radial-gradient(ellipse 92% 72% at 50% 52%, rgb(var(--accent-rgb) / 0.08), transparent 62%),
+    radial-gradient(ellipse at 50% 48%, rgba(255, 255, 255, 0.04), transparent 40%),
     linear-gradient(180deg, rgba(8, 9, 12, 0.2), rgba(8, 9, 12, 0.72));
 }
 
@@ -349,6 +375,24 @@ h1, h2, h3, h4, h5, h6 {
     rgb(var(--background-rgb))
   );
 }
+/* Mirror feather on the trailing edge so the boundary INTO the next section
+   melts too - every adjacent seam now dissolves, not just the first. */
+.landing-section-reveal::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: -1;
+  height: clamp(96px, 13vh, 168px);
+  pointer-events: none;
+  transform: translateY(72%);
+  background: linear-gradient(
+    180deg,
+    rgb(var(--background-rgb)),
+    color-mix(in srgb, var(--color-canvas) 70%, transparent) 46%,
+    transparent
+  );
+}
 .landing-section-reveal--first {
   margin-top: clamp(-260px, -18vh, -150px);
 }
@@ -360,33 +404,37 @@ h1, h2, h3, h4, h5, h6 {
   gap: 16px;
 }
 .bento-card {
-  --bento-radius: 28px;
-  --bento-pad: 16px;
+  --bento-radius: var(--radius-card-lg);
+  --bento-pad: 18px;
+  /* One shared surface ladder so every inner tile/chip reads consistently. */
+  --bento-tile: rgb(255 255 255 / 0.05);
+  --bento-tile-strong: rgb(255 255 255 / 0.07);
+  --bento-hairline: rgb(255 255 255 / 0.08);
+  --bento-accent-soft: rgb(var(--accent-rgb) / 0.14);
+  --bento-chip-radius: var(--radius-control);
+  --bento-pill-radius: 999px;
   position: relative;
   contain: layout paint;
   display: flex;
-  min-height: 354px;
+  min-height: 360px;
   flex-direction: column;
   isolation: isolate;
   overflow: hidden;
-  border: 0;
+  border: 1px solid var(--bento-hairline);
   border-radius: var(--bento-radius);
   background:
-    linear-gradient(145deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.012)),
-    rgba(18, 19, 23, 0.68);
-  -webkit-backdrop-filter: blur(18px) saturate(1.08);
-  backdrop-filter: blur(18px) saturate(1.08);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.085),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.025),
-    0 26px 80px -64px rgba(0, 0, 0, 0.92);
+    linear-gradient(160deg, rgb(255 255 255 / 0.035), rgb(255 255 255 / 0.008)),
+    rgb(255 255 255 / 0.02);
+  -webkit-backdrop-filter: blur(18px) saturate(1.06);
+  backdrop-filter: blur(18px) saturate(1.06);
+  box-shadow: 0 24px 70px -60px rgb(0 0 0 / 0.9);
   transition:
-    background-color 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    box-shadow 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 180ms cubic-bezier(0.23, 1, 0.32, 1);
+    border-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    background-color 200ms cubic-bezier(0.23, 1, 0.32, 1),
+    transform 200ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .bento-card--featured {
-  min-height: 430px;
+  min-height: 432px;
 }
 .bento-card__preview {
   position: relative;
@@ -397,7 +445,30 @@ h1, h2, h3, h4, h5, h6 {
 .bento-card__copy {
   position: relative;
   z-index: 2;
-  padding: 18px 22px 22px;
+  display: grid;
+  gap: 5px;
+  padding: 18px var(--bento-pad) var(--bento-pad);
+}
+.bento-card__eyebrow {
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+}
+.bento-card__title {
+  font-size: clamp(20px, 2.2vw, 26px);
+  font-weight: 800;
+  line-height: 1.04;
+  letter-spacing: -0.03em;
+}
+.bento-card__descriptor {
+  max-width: 42ch;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--color-muted);
 }
 .bento-preview-shell {
   position: relative;
@@ -407,15 +478,12 @@ h1, h2, h3, h4, h5, h6 {
   height: 100%;
   place-items: center;
   overflow: hidden;
-  border-radius: calc(var(--bento-radius) - 10px);
+  /* Concentric with the card: inner radius = card radius - padding inset. */
+  border-radius: calc(var(--bento-radius) - var(--bento-pad));
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.032), rgba(255, 255, 255, 0.008)),
-    rgba(6, 7, 10, 0.62);
-  -webkit-backdrop-filter: blur(12px) saturate(1.04);
-  backdrop-filter: blur(12px) saturate(1.04);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.055),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+    linear-gradient(180deg, rgb(255 255 255 / 0.02), rgb(255 255 255 / 0.004)),
+    color-mix(in srgb, var(--color-canvas) 80%, transparent);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
 }
 @media (min-width: 768px) {
   .bento-layout {
@@ -435,12 +503,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 @media (hover: hover) and (pointer: fine) {
   .bento-card:hover {
-    background-color: rgba(27, 29, 35, 0.7);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(255, 255, 255, 0.028),
-      0 28px 82px -60px rgba(0, 0, 0, 0.94);
-    transform: translateY(-2px);
+    border-color: rgb(var(--accent-rgb) / 0.28);
+    background-color: rgb(255 255 255 / 0.03);
+    transform: translateY(-3px);
   }
 }
 .bento-card:active { transform: scale(0.995); }
@@ -480,8 +545,9 @@ h1, h2, h3, h4, h5, h6 {
 .dashboard-proof-preview__topbar {
   justify-content: space-between;
   gap: 10px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.055);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 10px 12px;
 }
 .dashboard-proof-preview__topbar span:first-child {
@@ -501,20 +567,20 @@ h1, h2, h3, h4, h5, h6 {
 .chat-proof-preview small {
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.11em;
+  font-weight: 700;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.42);
+  color: var(--color-muted);
 }
 .dashboard-proof-preview__action,
 .chat-proof-preview__live {
-  border-radius: 999px;
-  background: rgba(0, 214, 122, 0.14);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-accent-soft);
   padding: 6px 9px;
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   line-height: 1;
   text-transform: uppercase;
   color: var(--color-accent-text);
@@ -530,18 +596,20 @@ h1, h2, h3, h4, h5, h6 {
   min-width: 0;
   align-items: center;
   gap: 7px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.055);
-  padding: 6px 9px 6px 6px;
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 6px 10px 6px 6px;
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  color: rgba(255, 255, 255, 0.62);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);
 }
 .dashboard-proof-preview__league-tabs span[data-active='true'],
 .league-sort-preview__tabs span[data-active='true'] {
-  background: rgba(0, 214, 122, 0.18);
+  background: rgb(var(--accent-rgb) / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(var(--accent-rgb) / 0.22);
   color: var(--color-accent-text);
 }
 .league-chip-logo,
@@ -550,20 +618,20 @@ h1, h2, h3, h4, h5, h6 {
   flex: 0 0 auto;
   place-items: center;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.075);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  background: var(--bento-tile-strong);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
 }
 .league-chip-logo {
   width: 26px;
   height: 26px;
-  border-radius: 10px;
+  border-radius: var(--radius-chip);
   padding: 4px;
 }
 .league-chip-logo > span,
 .team-proof-logo > span {
   font-family: var(--font-geist-mono);
   font-size: 9px;
-  font-weight: 950;
+  font-weight: 800;
   color: var(--color-accent-text);
 }
 .dashboard-proof-preview__body {
@@ -574,20 +642,21 @@ h1, h2, h3, h4, h5, h6 {
 .dashboard-proof-preview__team {
   min-width: 0;
   gap: 11px;
-  border-radius: 20px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.035));
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile-strong);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 14px;
 }
 .team-proof-logo {
   width: 46px;
   height: 46px;
-  border-radius: 16px;
+  border-radius: var(--radius-card);
   padding: 6px;
 }
 .team-proof-logo--compact {
   width: 30px;
   height: 30px;
-  border-radius: 11px;
+  border-radius: var(--radius-chip);
   padding: 4px;
 }
 .dashboard-proof-preview__team span {
@@ -600,21 +669,21 @@ h1, h2, h3, h4, h5, h6 {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--color-foreground);
-  font-size: clamp(18px, 2vw, 26px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
+  font-size: clamp(17px, 1.9vw, 23px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
   line-height: 1;
 }
 .dashboard-proof-preview__team em {
   width: max-content;
-  border-radius: 999px;
-  background: rgba(0, 214, 122, 0.12);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-accent-soft);
   padding: 4px 7px;
   font-family: var(--font-geist-mono);
   font-size: 9px;
   font-style: normal;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-weight: 700;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-accent-text);
 }
@@ -627,8 +696,9 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   min-height: 82px;
   align-content: space-between;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.065);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 12px;
 }
 .dashboard-proof-preview__widgets strong {
@@ -636,46 +706,33 @@ h1, h2, h3, h4, h5, h6 {
   text-overflow: ellipsis;
   white-space: nowrap;
   color: var(--color-foreground);
-  font-size: clamp(18px, 2vw, 25px);
-  font-weight: 950;
-  letter-spacing: -0.04em;
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
   line-height: 1;
 }
 .dashboard-proof-preview__widgets span[data-tone='accent'] strong { color: var(--color-accent-text); }
-.dashboard-proof-preview__widgets span[data-tone='cool'] strong { color: #7dd3fc; }
-.dashboard-proof-preview__widgets span[data-tone='gold'] strong { color: #facc15; }
 .dashboard-proof-preview__teams {
   gap: 8px;
   overflow: hidden;
 }
 .dashboard-proof-preview__teams span {
-  display: inline-grid;
-  min-width: 74px;
-  grid-template-columns: 30px 1fr;
-  grid-template-rows: auto auto;
+  display: inline-flex;
+  min-width: 0;
   align-items: center;
-  column-gap: 7px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 7px;
-}
-.dashboard-proof-preview__teams .team-proof-logo {
-  grid-row: span 2;
+  gap: 7px;
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 5px 11px 5px 5px;
 }
 .dashboard-proof-preview__teams strong {
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--color-foreground);
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 950;
+  font-weight: 800;
+  letter-spacing: 0.04em;
   line-height: 1;
-}
-.dashboard-proof-preview__teams small {
-  color: rgba(255, 255, 255, 0.36);
-  font-family: var(--font-geist-mono);
-  font-size: 8px;
-  font-weight: 900;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
 }
 .bento-preview-chat {
   align-content: center;
@@ -691,9 +748,10 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: 1fr auto auto auto 1fr;
   align-items: center;
   gap: 8px;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 8px 10px;
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 8px 12px;
   text-align: center;
 }
 .chat-proof-preview__score span,
@@ -701,9 +759,9 @@ h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-geist-mono);
   font-size: 10px;
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
   letter-spacing: 0.1em;
-  color: rgba(255, 255, 255, 0.48);
+  color: var(--color-muted);
 }
 .chat-proof-preview__score strong {
   color: var(--color-foreground);
@@ -723,19 +781,20 @@ h1, h2, h3, h4, h5, h6 {
 }
 .chat-proof-preview__avatar-stack span {
   display: grid;
+  overflow: hidden;
   width: 30px;
   height: 30px;
   margin-left: -10px;
   place-items: center;
-  border-radius: 999px;
-  background: rgba(0, 214, 122, 0.16);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile-strong);
   box-shadow:
-    0 0 0 2px rgba(8, 9, 12, 0.92),
-    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    0 0 0 2px color-mix(in srgb, var(--color-canvas) 92%, transparent),
+    inset 0 0 0 1px var(--bento-hairline);
   color: var(--color-accent-text);
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 950;
+  font-weight: 800;
 }
 .chat-proof-preview__title {
   display: grid;
@@ -760,41 +819,44 @@ h1, h2, h3, h4, h5, h6 {
 }
 .chat-proof-preview__messages > span > em {
   display: grid;
+  overflow: hidden;
   width: 28px;
   height: 28px;
   place-items: center;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.07);
-  color: rgba(255, 255, 255, 0.72);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile-strong);
+  color: var(--color-foreground);
   font-family: var(--font-geist-mono);
   font-size: 9px;
   font-style: normal;
-  font-weight: 950;
+  font-weight: 800;
 }
 .chat-proof-preview__messages > span[data-align='right'] > em {
   grid-column: 2;
   grid-row: 1;
-  background: rgba(0, 214, 122, 0.18);
+  background: rgb(var(--accent-rgb) / 0.18);
   color: var(--color-accent-text);
 }
 .chat-proof-preview__messages > span > span {
   display: grid;
   gap: 4px;
-  border-radius: 18px 18px 18px 7px;
-  background: rgba(255, 255, 255, 0.065);
+  border-radius: 16px 16px 16px 6px;
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 10px 12px;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--color-foreground);
   font-size: 13px;
-  font-weight: 750;
+  font-weight: 600;
   line-height: 1.22;
 }
 .chat-proof-preview__messages > span[data-align='right'] > span {
-  border-radius: 18px 18px 7px 18px;
-  background: rgba(0, 214, 122, 0.18);
+  border-radius: 16px 16px 6px 16px;
+  background: rgb(var(--accent-rgb) / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(var(--accent-rgb) / 0.2);
 }
 .chat-proof-preview__messages b {
-  color: rgba(255, 255, 255, 0.32);
-  font-weight: 900;
+  color: var(--color-muted);
+  font-weight: 700;
 }
 .chat-proof-preview__meta {
   display: flex;
@@ -802,12 +864,13 @@ h1, h2, h3, h4, h5, h6 {
   gap: 8px;
 }
 .chat-proof-preview__meta span {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 7px 9px;
-  color: rgba(255, 255, 255, 0.72);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 7px 11px;
+  color: var(--color-muted);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 600;
 }
 .bento-preview-leagues {
   min-height: 248px;
@@ -829,15 +892,16 @@ h1, h2, h3, h4, h5, h6 {
 .league-sort-preview__count {
   display: grid;
   place-items: center;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.055);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 14px;
 }
 .league-sort-preview__count strong {
   color: var(--color-foreground);
   font-family: var(--font-geist-mono);
   font-size: 30px;
-  font-weight: 950;
+  font-weight: 800;
   line-height: 1;
 }
 .league-sort-preview__rows {
@@ -850,8 +914,9 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: 32px minmax(0, 1fr) auto;
   align-items: center;
   gap: 9px;
-  border-radius: 17px;
-  background: rgba(255, 255, 255, 0.06);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 8px;
 }
 .league-sort-preview__rows strong {
@@ -859,20 +924,21 @@ h1, h2, h3, h4, h5, h6 {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: rgba(255, 255, 255, 0.86);
+  color: var(--color-foreground);
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 700;
   line-height: 1.15;
 }
 .league-sort-preview__rows em {
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 5px 7px;
-  color: rgba(255, 255, 255, 0.54);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 5px 8px;
+  color: var(--color-muted);
   font-family: var(--font-geist-mono);
   font-size: 9px;
   font-style: normal;
-  font-weight: 900;
+  font-weight: 700;
   white-space: nowrap;
 }
 .bento-preview-bets {
@@ -883,11 +949,9 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   width: min(100%, 360px);
   gap: 12px;
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.052);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.065),
-    inset 0 -1px 0 rgba(255, 255, 255, 0.02);
+  border-radius: var(--bento-radius);
+  background: color-mix(in srgb, var(--color-canvas) 62%, transparent);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 16px;
 }
 .bets-slip-preview__top,
@@ -904,18 +968,18 @@ h1, h2, h3, h4, h5, h6 {
 .bets-slip-preview__summary small {
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  font-weight: 900;
+  font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.48);
+  color: var(--color-muted);
 }
 .bets-slip-preview__top strong {
-  border-radius: 999px;
-  background: rgba(0, 214, 122, 0.14);
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-accent-soft);
   padding: 6px 9px;
   font-family: var(--font-geist-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--color-accent-text);
 }
@@ -926,13 +990,14 @@ h1, h2, h3, h4, h5, h6 {
   display: grid;
   flex: 1;
   gap: 5px;
-  border-radius: 16px;
-  background: rgba(0, 0, 0, 0.22);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 12px;
   color: var(--color-foreground);
   font-size: 24px;
-  font-weight: 900;
-  letter-spacing: -0.035em;
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 .bets-slip-preview__legs {
   display: grid;
@@ -940,25 +1005,26 @@ h1, h2, h3, h4, h5, h6 {
 }
 .bets-slip-preview__legs span {
   gap: 9px;
-  border-radius: 15px;
-  background: rgba(255, 255, 255, 0.052);
+  border-radius: var(--bento-chip-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 10px 11px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--color-foreground);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 600;
 }
 .bets-slip-preview__legs em {
-  width: 9px;
-  height: 9px;
+  width: 8px;
+  height: 8px;
   flex: 0 0 auto;
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.34);
+  border-radius: var(--bento-pill-radius);
+  background: var(--color-muted);
 }
 .bets-slip-preview__legs span[data-state='hit'] em {
-  background: #00d67a;
+  background: var(--color-accent);
 }
 .bets-slip-preview__legs span[data-state='tracking'] em {
-  background: #facc15;
+  background: rgb(var(--accent-rgb) / 0.5);
 }
 .bento-preview-signals {
   color: var(--color-accent-text);
@@ -966,10 +1032,22 @@ h1, h2, h3, h4, h5, h6 {
 }
 .fan-signal-card {
   width: min(100%, 330px);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.055);
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.07);
+  border-radius: var(--bento-radius);
+  background: var(--bento-tile);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
   padding: 18px;
+}
+.fan-signal-live {
+  border-radius: var(--bento-pill-radius);
+  background: var(--bento-accent-soft);
+  padding: 6px 9px;
+  font-family: var(--font-geist-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--color-accent-text);
 }
 .fan-signal-card svg {
   margin-block: 14px;
@@ -980,9 +1058,10 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-radius: 14px;
-  background: rgba(0, 0, 0, 0.24);
-  padding: 8px 9px;
+  border-radius: var(--bento-chip-radius);
+  background: color-mix(in srgb, var(--color-canvas) 55%, transparent);
+  box-shadow: inset 0 0 0 1px var(--bento-hairline);
+  padding: 8px 10px;
 }
 .fan-signal-reaction strong {
   font-family: var(--font-geist-mono);
@@ -1000,17 +1079,62 @@ h1, h2, h3, h4, h5, h6 {
   left: var(--emoji-x);
   top: var(--emoji-y);
   opacity: 0;
-  transform: translate3d(-50%, 12px, 0) scale(0.88);
+  transform: translate3d(-50%, 14px, 0) scale(0.5) rotate(-12deg);
   transition:
-    opacity 180ms cubic-bezier(0.23, 1, 0.32, 1),
-    transform 220ms cubic-bezier(0.23, 1, 0.32, 1);
+    opacity 200ms ease,
+    transform 460ms cubic-bezier(0.34, 1.46, 0.5, 1);
   transition-delay: var(--emoji-delay);
-  font-size: 24px;
-  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.28));
+  font-size: 25px;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 10px 16px rgba(0, 0, 0, 0.34));
 }
 .bento-card:hover .emoji-burst span {
   opacity: 1;
-  transform: translate3d(-50%, -18px, 0) scale(1);
+  transform: translate3d(-50%, -22px, 0) scale(1) rotate(0deg);
+}
+
+/* ─── Bento preview micro-interactions ─────────────────────────────────────
+   On card hover the dashboard tiles and chat messages settle up in a clean
+   stagger, and the live/now badges get a soft accent pulse. Subtle, fast,
+   restrained - life, not noise. Reduced motion opts out. */
+.dashboard-proof-preview__team,
+.dashboard-proof-preview__widgets span,
+.dashboard-proof-preview__teams span,
+.chat-proof-preview__messages > span,
+.chat-proof-preview__meta span {
+  transition: transform 360ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  .bento-card:hover .dashboard-proof-preview__team,
+  .bento-card:hover .dashboard-proof-preview__widgets span,
+  .bento-card:hover .chat-proof-preview__messages > span,
+  .bento-card:hover .chat-proof-preview__meta span {
+    transform: translateY(-3px);
+  }
+  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(2) { transition-delay: 45ms; }
+  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(3) { transition-delay: 90ms; }
+  .bento-card:hover .dashboard-proof-preview__widgets span:nth-child(4) { transition-delay: 135ms; }
+  .bento-card:hover .chat-proof-preview__messages > span:nth-child(2) { transition-delay: 55ms; }
+  .bento-card:hover .chat-proof-preview__messages > span:nth-child(3) { transition-delay: 110ms; }
+  .bento-card:hover .chat-proof-preview__meta span:nth-child(2) { transition-delay: 60ms; }
+  .bento-card:hover .chat-proof-preview__meta span:nth-child(3) { transition-delay: 120ms; }
+  .bento-card:hover .chat-proof-preview__live,
+  .bento-card:hover .dashboard-proof-preview__action {
+    animation: bento-badge-pulse 1.7s ease-in-out infinite;
+  }
+}
+@keyframes bento-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgb(var(--accent-rgb) / 0); }
+  50%      { box-shadow: 0 0 0 5px rgb(var(--accent-rgb) / 0.14); }
+}
+/* bento micro-interactions v1 */
+@media (prefers-reduced-motion: reduce) {
+  .bento-card:hover .dashboard-proof-preview__team,
+  .bento-card:hover .dashboard-proof-preview__widgets span,
+  .bento-card:hover .chat-proof-preview__messages > span,
+  .bento-card:hover .chat-proof-preview__meta span { transform: none; }
+  .bento-card:hover .chat-proof-preview__live,
+  .bento-card:hover .dashboard-proof-preview__action { animation: none; }
 }
 
 .dashboard-widget-stage {
@@ -1419,11 +1543,69 @@ h1, h2, h3, h4, h5, h6 {
   .pixel-aura__grid span { animation: none; }
 }
 
-.promo-carousel {
+/* Generative gyroid backdrops (components/ui/GyroidField.tsx): token-driven veils
+   that keep foreground content legible over the animated field. color-mix keeps
+   the scrim on the --color-canvas token (no hardcoded hex). */
+/* Feather the CTA gyroid wrapper so the generative field has no hard top edge
+   below the FAQ - it fades IN from above and gently OUT at the bottom. The mask
+   is neutral black-alpha (mask luminance only); the visible top scrim that melts
+   to canvas is the token-driven gradient below. */
+.cta-gyroid {
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 130px,
+    #000 calc(100% - 90px),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    #000 130px,
+    #000 calc(100% - 90px),
+    transparent 100%
+  );
+}
+/* Thin top scrim that blends the section down from the FAQ into canvas. */
+.cta-gyroid-scrim {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: clamp(140px, 20vh, 240px);
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    var(--color-canvas) 0%,
+    color-mix(in srgb, var(--color-canvas) 60%, transparent) 44%,
+    transparent 100%
+  );
+}
+.gyroid-veil-cta {
+  background:
+    radial-gradient(
+      125% 92% at 50% 48%,
+      color-mix(in srgb, var(--color-canvas) 56%, transparent) 0%,
+      color-mix(in srgb, var(--color-canvas) 32%, transparent) 46%,
+      color-mix(in srgb, var(--color-canvas) 90%, transparent) 100%
+    );
+}
+.gyroid-veil-reels {
+  background:
+    linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--color-canvas) 74%, transparent) 0%,
+      color-mix(in srgb, var(--color-canvas) 46%, transparent) 26%,
+      color-mix(in srgb, var(--color-canvas) 52%, transparent) 70%,
+      color-mix(in srgb, var(--color-canvas) 88%, transparent) 100%
+    );
+}
+
+.promo-carousel,
+.app-store-gallery {
   overscroll-behavior-x: contain;
   scrollbar-width: none;
 }
-.promo-carousel::-webkit-scrollbar {
+.promo-carousel::-webkit-scrollbar,
+.app-store-gallery::-webkit-scrollbar {
   display: none;
 }
 .promo-carousel__card {
@@ -1521,6 +1703,94 @@ h1, h2, h3, h4, h5, h6 {
 }
 [data-hero-active='false'] .hero-grain {
   animation: none;
+}
+
+/* ─── Hero logo swarm ──────────────────────────────────────────────────────
+   Buzzr marks that drift + breathe in the side gutters during the reveal,
+   standing in for the old wordmark. Each logo runs two desynced loops: a
+   buoyant float (translate/rotate) and a slow breathe (opacity). Group opacity
+   is owned by the pin choreography; reduced motion shows a static placement. */
+.hero-logo-swarm {
+  pointer-events: none;
+}
+.hero-logo {
+  position: absolute;
+  display: block;
+  will-change: transform, opacity;
+  animation:
+    hero-logo-float var(--dur, 8s) ease-in-out infinite alternate,
+    hero-logo-breathe var(--bdur, 6s) ease-in-out infinite;
+  animation-delay: var(--d, 0s), var(--bd, 0s);
+}
+.hero-logo__img {
+  display: block;
+}
+.hero-logo__img--mark {
+  filter: drop-shadow(0 10px 26px rgb(var(--accent-rgb) / 0.32));
+}
+.hero-logo__img--tile {
+  box-shadow:
+    0 14px 30px -10px rgb(0 0 0 / 0.6),
+    0 0 0 1px rgb(var(--accent-rgb) / 0.2) inset;
+}
+@keyframes hero-logo-float {
+  from { transform: translate3d(0, 0, 0) rotate(-3.5deg); }
+  to   { transform: translate3d(var(--logo-dx, 10px), var(--logo-dy, -16px), 0) rotate(3.5deg); }
+}
+@keyframes hero-logo-breathe {
+  0%, 100% { opacity: calc(var(--logo-o, 0.7) * 0.45); }
+  50%      { opacity: var(--logo-o, 0.7); }
+}
+/* swarm motion v1 */
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo {
+    animation: none;
+    opacity: var(--logo-o, 0.7);
+  }
+}
+
+/* ─── Money drift (MoneyField) ─────────────────────────────────────────────
+   Bills float through a section: a slow buoyant "fly" (translate + rotate)
+   plus an opacity breathe, both desynced per-bill. Reduced motion = static. */
+.money-bill {
+  will-change: transform, opacity;
+  line-height: 1;
+  filter: drop-shadow(0 5px 14px rgb(var(--accent-rgb) / 0.28));
+  animation:
+    money-fly var(--dur, 9s) ease-in-out infinite alternate,
+    money-breathe var(--bdur, 6s) ease-in-out infinite;
+  animation-delay: var(--d, 0s), var(--bd, 0s);
+}
+@keyframes money-fly {
+  from { transform: translate3d(0, 0, 0) rotate(var(--ra, -8deg)); }
+  to   { transform: translate3d(var(--mx, 16px), var(--my, -30px), 0) rotate(var(--rb, 10deg)); }
+}
+@keyframes money-breathe {
+  0%, 100% { opacity: calc(var(--mo, 0.85) * 0.66); }
+  50%      { opacity: var(--mo, 0.85); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .money-bill { animation: none; opacity: var(--mo, 0.85); }
+}
+
+/* ─── Footer money fountain (FooterMoney) ──────────────────────────────────
+   Bills blow up from the bottom of the final CTA, tumbling + fading as they
+   rise. The layer's opacity is driven by scroll proximity in JS. */
+.footer-money-bill {
+  will-change: transform, opacity;
+  line-height: 1;
+  filter: drop-shadow(0 4px 10px rgb(var(--accent-rgb) / 0.25));
+  animation: footer-money-rise var(--dur, 3.6s) cubic-bezier(0.33, 0, 0.4, 1) infinite;
+  animation-delay: var(--d, 0s);
+}
+@keyframes footer-money-rise {
+  0%   { transform: translateY(30px) translateX(0) rotate(var(--r0, -12deg)) scale(0.55); opacity: 0; }
+  16%  { opacity: var(--o, 0.9); }
+  84%  { opacity: var(--o, 0.9); }
+  100% { transform: translateY(-260px) translateX(var(--dx, 0)) rotate(var(--r1, 12deg)) scale(1); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .footer-money-bill { animation: none; opacity: 0; }
 }
 
 /* ─── League galaxy (LeagueOrbit) ─────────────────────────────────────────────
@@ -1627,8 +1897,22 @@ h1, h2, h3, h4, h5, h6 {
   animation: none;
 }
 
-/* The hairline rings themselves drift slowly too, so the whole field feels alive. */
-.orbit-ring-line { animation: none; }
+/* Hairline rings: centered + pointer parallax (same magnitude as the node layer
+   so rings and nodes stay aligned as the field leans toward the cursor). */
+.orbit-ring-line {
+  animation: none;
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 7px), calc(-50% + var(--orbit-py, 0) * 7px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* Node layer leans a touch further than the center for depth; z-index keeps the
+   orbiting nodes above the center aura (the transform would otherwise drop it
+   behind). Magnitude kept small so the field drifts subtly, not slides. */
+.orbit-node-layer {
+  z-index: 20;
+  transform: translate(calc(var(--orbit-px, 0) * 7px), calc(var(--orbit-py, 0) * 7px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
+  will-change: transform;
+}
 
 /* Node micro-interaction (Emil): transform/opacity only, custom ease-out, press
    feedback. A staggered reveal fades nodes up on first paint. Hover gated. */
@@ -1683,6 +1967,13 @@ h1, h2, h3, h4, h5, h6 {
   flex: 0 0 auto;
   place-items: center;
   border-radius: 15px;
+  /* Opaque tile so a transparent logo never reveals the pattern/aura behind it
+     (and so there is no ghost text under the mark). */
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.09);
+  background:
+    radial-gradient(circle at 42% 20%, rgb(var(--accent-rgb) / 0.16), transparent 46%),
+    linear-gradient(150deg, rgb(30 36 42 / 0.92), rgb(7 9 12 / 0.95));
   box-shadow: 0 12px 28px rgb(0 0 0 / 0.34);
 }
 .orbit-visual-mark__image {
@@ -1848,7 +2139,9 @@ h1, h2, h3, h4, h5, h6 {
   top: 50%;
   height: var(--orbit-core);
   width: var(--orbit-core);
-  transform: translate(-50%, -50%);
+  /* Pointer parallax: the center drifts a hair (less than the outer field) for depth. */
+  transform: translate(calc(-50% + var(--orbit-px, 0) * 3px), calc(-50% + var(--orbit-py, 0) * 3px));
+  transition: transform 640ms cubic-bezier(0.23, 1, 0.32, 1);
 }
 .orbit-aura {
   position: relative;
@@ -1872,13 +2165,32 @@ h1, h2, h3, h4, h5, h6 {
   0%, 100% { opacity: 0.7;  transform: scale(0.96); }
   50%      { opacity: 0.95; transform: scale(1.04); }
 }
-/* Tight inner core glow so the logo reads against the bloom. */
+/* Generated gyroid pattern disc behind the center logo (replaces the old grain).
+   GyroidField paints it in brand green; masked to a soft circle so it melts at
+   the rim. DOM order (bloom -> field -> core -> vignette -> logo) does the layering. */
+.orbit-aura__field {
+  position: absolute;
+  inset: -14%;
+  border-radius: 999px;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0.9;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%);
+          mask-image: radial-gradient(circle at 50% 50%, #000 30%, transparent 70%);
+}
+.orbit-aura__field canvas { height: 100%; width: 100%; display: block; }
+/* Dark scrim under the logo/name so they stay legible over the pattern. */
 .orbit-aura__core {
   position: absolute;
-  inset: 8%;
+  inset: 4%;
   border-radius: 999px;
-  background: radial-gradient(circle at 50% 50%, color-mix(in oklab, var(--color-accent) 20%, transparent), transparent 66%);
   pointer-events: none;
+  background: radial-gradient(
+    circle at 50% 46%,
+    color-mix(in srgb, var(--color-canvas) 74%, transparent) 0%,
+    color-mix(in srgb, var(--color-canvas) 32%, transparent) 44%,
+    transparent 66%
+  );
 }
 /* Film grain over the aura - monochrome turbulence, screen-blended so the green shows through. */
 .orbit-aura__grain {

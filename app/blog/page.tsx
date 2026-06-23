@@ -106,7 +106,7 @@ export default function BlogIndexPage() {
         </>
       }
       headerAside={
-        <div className="rounded-[14px] border border-border bg-surface p-6">
+        <div className="rounded-card border border-border bg-surface p-6">
           <p className="font-mono text-[11px] uppercase leading-none tracking-[0.14em] text-muted">
             Field notes
           </p>
@@ -138,12 +138,12 @@ export default function BlogIndexPage() {
       )}
 
       {!leadPost ? (
-        <p className="rounded-[14px] border border-border bg-surface p-6 text-[15px] leading-[1.6] text-muted">
+        <p className="rounded-card border border-border bg-surface p-6 text-[15px] leading-[1.6] text-muted">
           Nothing here yet. New posts drop soon.
         </p>
       ) : (
         <>
-          <PostCard post={leadPost} priority variant="lead" />
+          <PostCard post={leadPost} seed={0} priority variant="lead" />
 
           {restPosts.length > 0 ? (
             <>
@@ -155,7 +155,7 @@ export default function BlogIndexPage() {
               </div>
               <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 {restPosts.map((post, i) => (
-                  <PostCard key={post.slug} post={post} priority={i < 2} />
+                  <PostCard key={post.slug} post={post} seed={i + 1} priority={i < 2} />
                 ))}
               </div>
             </>

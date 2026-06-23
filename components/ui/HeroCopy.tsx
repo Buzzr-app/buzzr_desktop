@@ -1,15 +1,8 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
-import Link from 'next/link';
-import { MagneticButton } from '@/components/ui/MagneticButton';
-import { ShimmerText, ShimmerHoverLabel } from '@/components/ui/BrandShimmer';
-import { AppleIcon, DiscordIcon } from '@/components/ui/BrandIcons';
-import { APP_STORE_URL, DISCORD_URL } from '@/src/lib/constants';
+import { HeroLogoSwarm } from '@/components/ui/HeroLogoSwarm';
 import { HERO_BANDS, bandProgress, sampleHeroProgress } from '@/src/lib/heroProgress';
-
-const HERO_REVEAL_COPY =
-  'Follow every team, rate live games, and keep your crew in the same feed.';
 
 /**
  * HeroCopy - the pinned-scroll narrative overlay that lives inside the sticky
@@ -18,46 +11,37 @@ const HERO_REVEAL_COPY =
  *
  *   p≈0.0  → centered intro headline + CTAs
  *   p≈0.5  → intro dissolves as the ball detonates
- *   p≈1.0  → centered "BUZZR" reveal,
- *            framing the phone now standing center stage.
+ *   p≈1.0  → phone stands center stage; Buzzr marks drift in the side gutters.
+ *            No CTAs at the end of scroll - the persistent nav CTA covers that.
  *
  * Styles are written straight to refs each frame (no per-frame React render).
- * Reduced motion collapses the pin, so we just paint the final centered state.
+ * Reduced motion collapses the pin, so we just paint the final composition.
  */
 export function HeroCopy() {
   const rootRef = useRef<HTMLDivElement>(null);
   const introRef = useRef<HTMLDivElement>(null);
-  const wordRef = useRef<HTMLDivElement>(null);
-  const taglineRef = useRef<HTMLDivElement>(null);
+  const swarmRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const root = rootRef.current;
     const intro = introRef.current;
-    const word = wordRef.current;
-    const tagline = taglineRef.current;
-    if (!root || !intro || !word || !tagline) return;
+    const swarm = swarmRef.current;
+    if (!root || !intro || !swarm) return;
 
     const pin = root.closest<HTMLElement>('[data-hero-pin]');
     const reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const paint = (p: number) => {
-      // Intro layer fades + lifts away as the sequence starts.
+      // Intro layer (headline + CTAs) fades + lifts away as the sequence starts.
       const out = bandProgress(HERO_BANDS.introOut, p);
       intro.style.opacity = String(1 - out);
       intro.style.transform = `translateY(${-22 * out}px)`;
       intro.style.pointerEvents = out > 0.5 ? 'none' : 'auto';
 
-      // Brand wordmark drops in from above (top band).
-      const wIn = bandProgress(HERO_BANDS.logo, p);
-      word.style.opacity = String(wIn);
-      word.style.transform = `translateY(${-22 * (1 - wIn)}px)`;
-      word.style.letterSpacing = `${-0.012 + 0.04 * (1 - wIn)}em`;
-
-      // Tagline + CTAs rise in from below (bottom band), trailing the wordmark.
-      const tIn = bandProgress(HERO_BANDS.tagline, p);
-      tagline.style.opacity = String(tIn);
-      tagline.style.transform = `translateY(${20 * (1 - tIn)}px)`;
-      tagline.style.pointerEvents = tIn > 0.5 ? 'auto' : 'none';
+      // Floating Buzzr marks fade + settle in on the same band the wordmark used.
+      const sIn = bandProgress(HERO_BANDS.logo, p);
+      swarm.style.opacity = String(sIn);
+      swarm.style.transform = `translateY(${10 * (1 - sIn)}px)`;
     };
 
     // Reduced motion → static final composition, no scroll region to sample.
@@ -101,91 +85,60 @@ export function HeroCopy() {
           The home for all sports fans.
         </h1>
 
-        {/* Headline wraps the ball on two arcs (Encircle). The dark text outline
-            keeps it legible over the green/molten without a blur scrim. */}
-        <svg
+        {/* Headline rings the ball on two symmetric arcs (Encircle). No outline
+            border - a soft cast shadow carries legibility; a slight perspective
+            tilt makes the words read as if they curve around the globe in 3D. */}
+        <div
           aria-hidden
-          viewBox="0 0 560 560"
-          style={{ fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif' }}
-          className="hero-encircle pointer-events-none absolute left-1/2 top-[48%] h-[min(100vw,90vh)] w-[min(100vw,90vh)] -translate-x-1/2 -translate-y-1/2 animate-fade-in-up select-none md:top-[49%]"
+          className="pointer-events-none absolute left-1/2 top-[50%] h-[106vh] w-[106vh] -translate-x-1/2 -translate-y-1/2 select-none md:top-[51%]"
+          style={{ perspective: '1500px' }}
         >
-          <defs>
-            <path id="heroArcTop" d="M 58 302 Q 280 10 502 302" fill="none" />
-            <path id="heroArcBot" d="M 96 346 Q 280 592 464 346" fill="none" />
-          </defs>
-          <text fontSize="45" fontWeight="800" letterSpacing="-1.45" fill="#ffffff" stroke="#04120a" strokeWidth="2" strokeLinejoin="round" paintOrder="stroke">
-            <textPath href="#heroArcTop" startOffset="50%" textAnchor="middle">The home for all</textPath>
-          </text>
-          <text fontSize="45" fontWeight="800" letterSpacing="-1.45" fill="#ffffff" stroke="#04120a" strokeWidth="2" strokeLinejoin="round" paintOrder="stroke">
-            <textPath href="#heroArcBot" startOffset="50%" textAnchor="middle">sports fans.</textPath>
-          </text>
-        </svg>
-
-        <div className="pointer-events-auto absolute inset-x-0 bottom-[14vh] flex animate-fade-in-up stagger-2 flex-col items-center justify-center gap-2 px-4 sm:bottom-[12vh] sm:flex-row sm:gap-3 sm:px-6">
-          <MagneticButton
-            href={APP_STORE_URL}
-            external
-            className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            <AppleIcon size={17} />
-            <ShimmerHoverLabel>Get the app</ShimmerHoverLabel>
-            <span className="sr-only"> (opens in new tab)</span>
-          </MagneticButton>
-          <Link
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-[168px] items-center justify-center gap-2 rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            <DiscordIcon size={17} />
-            Join the Discord<span className="sr-only"> (opens in new tab)</span>
-          </Link>
+          <div className="h-full w-full" style={{ transform: 'rotateX(4deg)', transformStyle: 'preserve-3d' }}>
+            <svg
+              viewBox="0 0 560 560"
+              style={{
+                fontFamily: 'var(--ff-hero), var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif',
+                overflow: 'visible',
+                filter: 'drop-shadow(0 6px 24px rgba(0, 0, 0, 0.45))'
+              }}
+              className="hero-encircle h-full w-full animate-fade-in-up"
+            >
+              <defs>
+                {/* Big but contained ring, tight to the center so every word stays on-screen. */}
+                <path id="heroArcTop" d="M 72 232 Q 280 -24 488 232" fill="none" />
+                <path id="heroArcBot" d="M 72 328 Q 280 584 488 328" fill="none" />
+              </defs>
+              {/* "The [home icon] for all" - 'home' is the icon at the apex,
+                  'all' switches to a cool italic serif. */}
+              <text fontSize="55" fontWeight="800" letterSpacing="-2.4" fill="#ffffff">
+                <textPath href="#heroArcTop" startOffset="27%" textAnchor="middle">The</textPath>
+              </text>
+              <g
+                transform="translate(257 81) scale(1.9)"
+                fill="none"
+                stroke="#ffffff"
+                strokeWidth="2.1"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <path d="M9 22V12h6v10" />
+              </g>
+              <text fontSize="55" fontWeight="800" letterSpacing="-2.4" fill="#ffffff">
+                <textPath href="#heroArcTop" startOffset="70%" textAnchor="middle">for all</textPath>
+              </text>
+              <text fontSize="55" fontWeight="800" letterSpacing="-2.4" fill="#ffffff">
+                <textPath href="#heroArcBot" startOffset="50%" textAnchor="middle">sports fans.</textPath>
+              </text>
+            </svg>
+          </div>
         </div>
 
-        <div className="pointer-events-none absolute bottom-7 left-1/2 flex -translate-x-1/2 animate-fade-in-up stagger-5 items-center gap-2 font-mono text-[11px] uppercase tracking-[0.14em] text-white/42">
-          <span>Scroll to explore</span>
-          <span aria-hidden>↓</span>
-        </div>
       </div>
 
-      <div
-        ref={wordRef}
-        className="absolute inset-x-0 top-0 flex justify-center px-6 pt-[7vh] opacity-0 will-change-[transform,opacity] md:pt-[8vh]"
-      >
-        <ShimmerText
-          kind="ramp"
-          duration={2.4}
-          pauseBetween={1400}
-          className="font-hero select-none text-center text-[clamp(46px,10vw,116px)] font-extrabold leading-[0.9] tracking-[-0.02em] text-white"
-        >
-          BUZZR
-        </ShimmerText>
-      </div>
-
-      <div
-        ref={taglineRef}
-        className="absolute inset-x-0 top-0 flex flex-col items-center gap-4 px-6 pt-[19vh] text-center opacity-0 will-change-[transform,opacity] md:pt-[20vh]"
-      >
-        <p className="font-hero max-w-[34ch] text-balance text-[clamp(17px,2.1vw,25px)] font-semibold leading-[1.18] tracking-[-0.02em] text-white md:max-w-[40ch]">
-          {HERO_REVEAL_COPY}
-        </p>
-        <div className="flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-3">
-          <MagneticButton
-            href={APP_STORE_URL}
-            external
-            className="inline-flex w-[168px] items-center justify-center rounded-control bg-accent px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-on-accent shadow-[0_14px_34px_-12px_rgb(var(--accent-rgb)_/_0.6)] transition-[background-color,transform] duration-200 ease-out hover:bg-accent-dim active:scale-[0.97] focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            Get the app<span className="sr-only"> (opens in new tab)</span>
-          </MagneticButton>
-          <Link
-            href={DISCORD_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-[168px] items-center justify-center rounded-control border border-white/15 bg-black/35 px-4 py-3 text-[14px] font-semibold tracking-[-0.01em] text-white backdrop-blur-md transition-[background-color,border-color,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-black/55 active:translate-y-0 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] sm:w-auto sm:px-5 sm:text-[15px]"
-          >
-            Join the Discord<span className="sr-only"> (opens in new tab)</span>
-          </Link>
-        </div>
+      {/* Reveal: Buzzr marks drift in the gutters around the risen phone. */}
+      <div ref={swarmRef} className="absolute inset-0 opacity-0 will-change-[transform,opacity]">
+        <HeroLogoSwarm />
       </div>
     </div>
   );

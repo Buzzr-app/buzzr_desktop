@@ -73,12 +73,12 @@ function pickDensityTier() {
   const lowPower = cores <= 4 || dpr >= 2.5;
 
   if (mobile || (lowPower && w < 1100)) {
-    return { g: 0.092, pixelRatioCap: 1.3 }; // mobile / low  -> ~4-7k cubes
+    return { g: 0.085, pixelRatioCap: 1.3 }; // mobile / low  -> ~5-8k cubes
   }
   if (w >= 1500 && cores >= 8 && dpr <= 2) {
-    return { g: 0.057, pixelRatioCap: 1.8 }; // desktop high -> ~16-20k cubes
+    return { g: 0.052, pixelRatioCap: 1.8 }; // desktop high -> finer, ~20-24k cubes
   }
-  return { g: 0.066, pixelRatioCap: 1.6 };   // desktop mid  -> ~11-14k cubes
+  return { g: 0.06, pixelRatioCap: 1.6 };    // desktop mid  -> ~13-16k cubes
 }
 
 function buildVoxels() {
@@ -214,7 +214,7 @@ function buildGreenRamp(tk: SceneTokens): THREE.Color[] {
   const great = new THREE.Color(tk.ramp[1]); // buzz-great, deeper green
   const canvasCol = new THREE.Color(tk.canvas); // warm app near-black -> on-brand shadow
   return [
-    peak.clone().lerp(SHADE_WHITE, 0.3), // 0 highlight (top-lit sheen)
+    peak.clone().lerp(SHADE_WHITE, 0.46), // 0 highlight (brighter top-lit sheen)
     peak.clone(), // 1 bright brand green
     peak.clone().lerp(great, 0.5), // 2 mid green
     great.clone(), // 3 shadow green (emissive base)
@@ -314,7 +314,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       uRamp: { value: rampColors },
       uExplode: { value: 0 },
       uFresnel: { value: 0.6 }, // rim now feeds emissive only
-      uSeamW: { value: 0.072 }, // seam half-width (arc radians) - TUNABLE
+      uSeamW: { value: 0.056 }, // seam half-width (arc radians) - crisper panels
       uSeamDark: { value: 0.86 }, // retained (seam now uses the canvas-green stop)
       uLightDir: { value: key.position.clone().normalize() } // key light -> real terminator
     };
@@ -354,7 +354,7 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
         );
 
       shader.fragmentShader =
-        'uniform float uFresnel;\nuniform float uExplode;\n' +
+        'uniform float uFresnel;\nuniform float uExplode;\nuniform float uTime;\n' +
         'varying vec3 vPanel;\nvarying vec3 vSeamCol;\nvarying float vSeam;\nvarying float vSeamCore;\nvarying float vSeamAO;\nvarying float vFresnel;\nvarying float vRand;\n' +
         shader.fragmentShader
           .replace(
@@ -369,10 +369,12 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
           .replace(
             'vec3 totalEmissiveRadiance = emissive;',
             'float panelLit = 1.0 - vSeam;\n' +
-              '  vec3 totalEmissiveRadiance = emissive + vPanel * (0.04 + uExplode * 0.18 + vFresnel * uFresnel * 0.5) * panelLit;'
+              '  float twinkle = 0.55 + 0.45 * sin(uTime * 7.0 + vRand * 30.0);\n' +
+              '  float burstGlow = uExplode * uExplode * (0.85 * twinkle + 0.22);\n' +
+              '  vec3 totalEmissiveRadiance = emissive + vPanel * (0.04 + burstGlow + vFresnel * uFresnel * 0.5) * panelLit;'
           );
     };
-    voxMat.customProgramCacheKey = () => 'voxelBasketball_v3';
+    voxMat.customProgramCacheKey = () => 'voxelBasketball_v4';
 
     const ball = new THREE.InstancedMesh(voxGeo, voxMat, vox.count);
     ball.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -381,28 +383,78 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     ball.position.set(0, -1.05, -0.18);
     sceneGroup.add(ball);
 
+    /* ── ripple: a SOFT, blurred brand-green spread that washes across the whole
+       stage on each idle bounce - a wide diffuse ring with feathered edges (drawn
+       as a radial-gradient texture), never a hard line, scaled page-wide ── */
+    const rippleCanvas = document.createElement('canvas');
+    rippleCanvas.width = rippleCanvas.height = 256;
+    const rcx = rippleCanvas.getContext('2d');
+    const ac = new THREE.Color(tokens.accent);
+    const rcr = Math.round(ac.r * 255);
+    const rcg = Math.round(ac.g * 255);
+    const rcb = Math.round(ac.b * 255);
+    if (rcx) {
+      const rgrad = rcx.createRadialGradient(128, 128, 0, 128, 128, 128);
+      rgrad.addColorStop(0.0, `rgba(${rcr},${rcg},${rcb},0)`);
+      rgrad.addColorStop(0.46, `rgba(${rcr},${rcg},${rcb},0)`);
+      rgrad.addColorStop(0.7, `rgba(${rcr},${rcg},${rcb},0.8)`);
+      rgrad.addColorStop(0.82, `rgba(${rcr},${rcg},${rcb},0.16)`);
+      rgrad.addColorStop(1.0, `rgba(${rcr},${rcg},${rcb},0)`);
+      rcx.fillStyle = rgrad;
+      rcx.fillRect(0, 0, 256, 256);
+    }
+    const rippleTex = new THREE.CanvasTexture(rippleCanvas);
+    rippleTex.colorSpace = THREE.SRGBColorSpace;
+    const ringGeo = new THREE.PlaneGeometry(2, 2);
+    const ringMat = new THREE.MeshBasicMaterial({
+      map: rippleTex,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      depthTest: false,
+      side: THREE.DoubleSide,
+      toneMapped: false
+    });
+    const ripple = new THREE.Mesh(ringGeo, ringMat);
+    ripple.renderOrder = 1;
+    ripple.visible = false;
+    sceneGroup.add(ripple);
+
+
     // Reusable scratch + per-instance writer for the explosion.
     const m4 = new THREE.Matrix4();
     const qTmp = new THREE.Quaternion();
     const pTmp = new THREE.Vector3();
     const sTmp = new THREE.Vector3();
     const axTmp = new THREE.Vector3();
-    const BURST = 2.15;
+    const BURST = 3.25;
 
     const writeInstance = (i: number, explode: number) => {
       const local = clamp01((explode - vox.rand[i] * 0.16) / 0.84);
-      const dist = local * BURST * (0.45 + vox.rand[i]);
+      // Vast spread with strong per-voxel speed variation -> a deep star-field,
+      // not a uniform shell. A swirl twists each outward path so the burst reads
+      // like an expanding galaxy, and a little vertical drift gives it depth.
+      const dist = local * BURST * (0.3 + vox.rand[i] * 1.5);
+      const swirl = local * (0.5 + vox.rand[i] * 1.1);
+      const cs = Math.cos(swirl);
+      const sn = Math.sin(swirl);
+      const dx0 = vox.dir[i * 3];
+      const dy0 = vox.dir[i * 3 + 1];
+      const dz0 = vox.dir[i * 3 + 2];
+      const dxr = dx0 * cs - dz0 * sn;
+      const dzr = dx0 * sn + dz0 * cs;
       pTmp.set(
-        vox.base[i * 3] + vox.dir[i * 3] * dist,
-        vox.base[i * 3 + 1] + vox.dir[i * 3 + 1] * dist,
-        vox.base[i * 3 + 2] + vox.dir[i * 3 + 2] * dist
+        vox.base[i * 3] + dxr * dist,
+        vox.base[i * 3 + 1] + dy0 * dist + local * (vox.rand[i] - 0.4) * 0.5,
+        vox.base[i * 3 + 2] + dzr * dist
       );
-      const angle = local * (2.0 + vox.rand[i] * 3.2);
+      const angle = local * (2.4 + vox.rand[i] * 4.0);
       axTmp.set(vox.axis[i * 3], vox.axis[i * 3 + 1], vox.axis[i * 3 + 2]);
       qTmp.setFromAxisAngle(axTmp, angle);
-      // SHRINK-TO-ZERO burst: opaque voxels cannot alpha-fade, so each holds
-      // size through early flight then smoothsteps its scale to exactly 0.
-      const start = 0.35 + vox.rand[i] * 0.15;
+      // Hold size longer so voxels fly far as bright points (stars), then shrink
+      // to exactly 0 by the end of flight (opaque cubes cannot alpha-fade).
+      const start = 0.52 + vox.rand[i] * 0.22;
       const shrink = 1 - smooth(start, 1, local);
       const s = vox.scl[i] * shrink;
       sTmp.set(s, s, s);
@@ -558,6 +610,12 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
         const ballScale = lerp(isNarrow ? 0.32 : 0.56, isNarrow ? 0.72 : 0.95, explode);
         ball.scale.setScalar(ballScale);
         ball.position.y = lerp(isNarrow ? -0.06 : -0.08, isNarrow ? 0.12 : 0.16, explode);
+        // Idle "bound" on the Z axis only: the ball pulses toward and away from
+        // the camera - popping out of the screen and sinking back - easing out as
+        // the burst begins. No vertical motion.
+        const idle = 1 - explode;
+        const bounceZ = 0.62 * idle * Math.abs(Math.sin(t * 2.6));
+        ball.position.z = -0.18 + bounceZ;
       }
 
       const rise = easeOutCubic(bandProgress(HERO_BANDS.phoneRise, p));
@@ -676,6 +734,9 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       ball.dispose(); // releases the InstancedMesh instanceMatrix GPU buffer
       voxGeo.dispose();
       voxMat.dispose();
+      ringGeo.dispose();
+      ringMat.dispose();
+      rippleTex.dispose();
       bodyGeo.dispose();
       bodyMat.dispose();
       frameGeo.dispose();

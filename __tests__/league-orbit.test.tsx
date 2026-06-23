@@ -87,9 +87,6 @@ describe('league orbit', () => {
   it('renders every league as a reachable control', () => {
     render(<LeagueOrbit />);
 
-    expect(screen.getByText('Hover or tap a league.')).toBeInTheDocument();
-    expect(screen.getByText('Nearby nodes flip into teams.')).toBeInTheDocument();
-
     for (const league of LEAGUES) {
       const trigger = screen.getByTestId(`league-orbit-trigger-${league.label}`);
 

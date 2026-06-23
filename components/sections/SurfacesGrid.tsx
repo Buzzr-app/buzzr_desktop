@@ -3,8 +3,12 @@ import { type CSSProperties } from 'react';
 import { Section } from '@/components/ui/Section';
 import { cn } from '@/components/utils';
 import { getLeagueLogo, isRemoteLeagueLogo } from '@/src/lib/leagueLogos';
+import { Avatar, type AvatarSeed } from '@/components/ui/Avatar';
+import { GyroidField } from '@/components/ui/GyroidField';
 
 type BentoCard = {
+  category: string;
+  descriptor: string;
   emojis: readonly string[];
   featured?: boolean;
   preview: 'dashboard' | 'friends' | 'leagues' | 'signals' | 'bets';
@@ -32,27 +36,37 @@ type TeamChip = {
 const BENTO_CARDS: readonly BentoCard[] = [
   {
     title: 'Dashboards For Every Team',
+    category: 'Dashboards',
+    descriptor: 'Every league and team, sorted on one home screen.',
     preview: 'dashboard',
     featured: true,
     emojis: ['❤️', '🏀', '⭐', '📊']
   },
   {
     title: 'Friends And Chat',
+    category: 'Chat',
+    descriptor: 'Live crew threads beside the score.',
     preview: 'friends',
     emojis: ['💬', '🔥', '🙌']
   },
   {
     title: 'League Map',
+    category: 'Leagues',
+    descriptor: 'Browse 49 leagues, tap to follow.',
     preview: 'leagues',
     emojis: ['🏆', '⚽', '🏁']
   },
   {
     title: 'Fan Signals',
+    category: 'Signals',
+    descriptor: 'Read the room in real time.',
     preview: 'signals',
     emojis: ['📈', '⚡', '👀']
   },
   {
     title: 'Buzzr Bets',
+    category: 'Bets',
+    descriptor: 'Track every leg as it lands.',
     preview: 'bets',
     emojis: ['✅', '💵', '🎯']
   }
@@ -86,11 +100,11 @@ const LEAGUE_SORT_ROWS: ReadonlyArray<{
   { code: 'MLB', league: 'Baseball', name: 'Mets, Phillies, Dodgers', metric: '6 boards', tone: 'gold' }
 ];
 
-const CHAT_MESSAGES = [
-  { align: 'left', avatar: 'M', name: 'Maya', text: 'Garden is loud. Save that block.', time: '0:18' },
-  { align: 'right', avatar: 'You', name: 'You', text: 'Clip saved. Run it back after the buzzer.', time: 'now' },
-  { align: 'left', avatar: 'J', name: 'Jules', text: 'Brunson is hunting switches again.', time: '0:06' }
-] as const;
+const CHAT_MESSAGES: readonly { align: 'left' | 'right'; avatarSeed: AvatarSeed; name: string; text: string; time: string }[] = [
+  { align: 'left', avatarSeed: 'maya', name: 'Maya', text: 'Garden is loud. Save that block.', time: '0:18' },
+  { align: 'right', avatarSeed: 'sam', name: 'You', text: 'Clip saved. Run it back after the buzzer.', time: 'now' },
+  { align: 'left', avatarSeed: 'jordan', name: 'Jules', text: 'Brunson is hunting switches again.', time: '0:06' }
+];
 
 export function SurfacesGrid() {
   return (
@@ -127,9 +141,11 @@ function BentoSurfaceCard({ card }: { card: BentoCard }) {
         <SurfacePreview type={card.preview} />
       </div>
       <div className="bento-card__copy">
-        <h3 className="font-hero text-[clamp(24px,2.6vw,32px)] font-extrabold leading-[0.98] tracking-[-0.035em] text-foreground">
+        <span className="bento-card__eyebrow">{card.category}</span>
+        <h3 className="bento-card__title font-hero text-foreground">
           {card.title}
         </h3>
+        <p className="bento-card__descriptor">{card.descriptor}</p>
       </div>
       <EmojiBurst items={card.emojis} />
     </article>
@@ -202,7 +218,6 @@ function DashboardProofPreview() {
             <span key={team.code}>
               <TeamLogo logo={team.logo} label={team.label} compact />
               <strong>{team.code}</strong>
-              <small>saved</small>
             </span>
           ))}
         </div>
@@ -232,9 +247,9 @@ function ChatProofPreview() {
 
       <div className="chat-proof-preview__header">
         <span className="chat-proof-preview__avatar-stack" aria-hidden>
-          <span>M</span>
-          <span>J</span>
-          <span>S</span>
+          <span><Avatar seed="maya" size={30} className="block" /></span>
+          <span><Avatar seed="jordan" size={30} className="block" /></span>
+          <span><Avatar seed="sid" size={30} className="block" /></span>
         </span>
         <span className="chat-proof-preview__title">
           <strong>Celtics Crew</strong>
@@ -246,7 +261,7 @@ function ChatProofPreview() {
       <div className="chat-proof-preview__messages">
         {CHAT_MESSAGES.map((message) => (
           <span key={`${message.name}-${message.text}`} data-align={message.align}>
-            <em>{message.avatar}</em>
+            <em><Avatar seed={message.avatarSeed} size={28} className="block" /></em>
             <span>
               <small>
                 {message.name} <b>{message.time}</b>
@@ -354,12 +369,10 @@ function FanSignalsPreview() {
     <div className="bento-preview-shell bento-preview-signals">
       <div className="fan-signal-card">
         <div className="flex items-center justify-between">
-          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-white/48">
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
             Heat
           </span>
-          <span className="rounded-full bg-accent/14 px-2 py-1 font-mono text-[10px] text-accent-text">
-            Live
-          </span>
+          <span className="fan-signal-live">Live</span>
         </div>
         <svg viewBox="0 0 260 104" role="img" aria-label="Buzzr fan signal chart">
           <path
@@ -397,8 +410,9 @@ function FanSignalsPreview() {
 
 function BetsSlipPreview() {
   return (
-    <div className="bento-preview-shell bento-preview-bets">
-      <div className="bets-slip-preview" aria-label="Buzzr Bets tracked slip preview">
+    <div className="bento-preview-shell bento-preview-bets relative overflow-hidden">
+      <GyroidField variant="hex" className="absolute inset-0 z-0" />
+      <div className="bets-slip-preview relative z-10" aria-label="Buzzr Bets tracked slip preview">
         <div className="bets-slip-preview__top">
           <span>Tracked slip</span>
           <strong>Live</strong>

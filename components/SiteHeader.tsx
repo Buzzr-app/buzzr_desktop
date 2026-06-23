@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  BookOpen,
+  History,
   MessagesSquare,
   ScrollText,
   Trophy,
@@ -132,23 +134,17 @@ export function SiteHeader() {
                       href={hrefFor(id)}
                       onClick={(e) => handleAnchor(e, id)}
                       aria-current={isActive ? 'location' : undefined}
-                      className={`site-nav-control font-hero group relative inline-flex min-h-[44px] items-center gap-1.5 px-3 py-2.5 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
-                        isActive ? 'text-white' : 'text-white/62 hover:text-white'
+                      className={`site-nav-control font-hero group inline-flex min-h-[38px] items-center gap-1.5 px-3.5 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] ${
+                        isActive ? 'bg-white/[0.08] text-white' : 'text-white/55 hover:bg-white/[0.05] hover:text-white'
                       }`}
                     >
                       <Icon
                         size={14}
                         strokeWidth={1.75}
                         aria-hidden
-                        className={isActive ? 'text-accent-text' : 'text-white/45 transition-colors group-hover:text-white/75'}
+                        className={isActive ? 'text-accent-text' : 'text-white/40 transition-colors group-hover:text-white/70'}
                       />
                       <span>{label}</span>
-                      <span
-                        aria-hidden
-                        className={`absolute bottom-1.5 left-1/2 h-[3px] -translate-x-1/2 rounded-full bg-accent transition-[opacity,width] duration-200 ${
-                          isActive ? 'w-3 opacity-100' : 'w-1 opacity-0 group-hover:opacity-45'
-                        }`}
-                      />
                     </Link>
                   </li>
                 );
@@ -159,21 +155,23 @@ export function SiteHeader() {
           <div className="hidden md:flex items-center gap-1">
             <Link
               href="/blog"
-              className="site-nav-control font-hero inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] font-semibold text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero group inline-flex min-h-[38px] items-center gap-1.5 px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Blog
+              <BookOpen size={14} strokeWidth={1.75} aria-hidden className="text-white/40 transition-colors group-hover:text-white/70" />
+              <span>Blog</span>
             </Link>
             <Link
               href="/changelog"
-              className="site-nav-control font-hero inline-flex min-h-[44px] items-center px-3 py-2.5 text-[14px] font-semibold text-white/62 transition-colors hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-control font-hero group inline-flex min-h-[38px] items-center gap-1.5 px-3.5 text-[14px] font-semibold text-white/55 transition-colors hover:bg-white/[0.05] hover:text-white focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
-              Changelog
+              <History size={14} strokeWidth={1.75} aria-hidden className="text-white/40 transition-colors group-hover:text-white/70" />
+              <span>Changelog</span>
             </Link>
             <Link
               href={APP_STORE_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="site-nav-cta font-hero ml-1 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-[18px] text-[14px] font-bold text-on-accent transition-[background-color,box-shadow,transform] duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent-dim focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
+              className="site-nav-cta font-hero ml-1.5 inline-flex shrink-0 items-center justify-center gap-2 bg-accent px-4 text-[14px] font-semibold text-on-accent transition-colors duration-200 hover:bg-white hover:text-canvas focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]"
             >
               <AppleIcon size={15} />
               <ShimmerHoverLabel className="site-nav-cta-label">Get the app</ShimmerHoverLabel>

@@ -52,7 +52,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   const fontVariables = `${geistSans.variable} ${geistMono.variable} ${heroFont.variable}`;
 
   return (
-    <html lang="en" className={`${fontVariables} overflow-x-hidden`} data-scroll-behavior="smooth">
+    <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
       <body className="bg-canvas text-foreground font-sans antialiased">
         <a
           href="#main-content"
