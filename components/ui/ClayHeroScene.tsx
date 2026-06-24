@@ -383,43 +383,6 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
     ball.position.set(0, -1.05, -0.18);
     sceneGroup.add(ball);
 
-    /* ── ripple: a SOFT, blurred brand-green spread that washes across the whole
-       stage on each idle bounce - a wide diffuse ring with feathered edges (drawn
-       as a radial-gradient texture), never a hard line, scaled page-wide ── */
-    const rippleCanvas = document.createElement('canvas');
-    rippleCanvas.width = rippleCanvas.height = 256;
-    const rcx = rippleCanvas.getContext('2d');
-    const ac = new THREE.Color(tokens.accent);
-    const rcr = Math.round(ac.r * 255);
-    const rcg = Math.round(ac.g * 255);
-    const rcb = Math.round(ac.b * 255);
-    if (rcx) {
-      const rgrad = rcx.createRadialGradient(128, 128, 0, 128, 128, 128);
-      rgrad.addColorStop(0.0, `rgba(${rcr},${rcg},${rcb},0)`);
-      rgrad.addColorStop(0.46, `rgba(${rcr},${rcg},${rcb},0)`);
-      rgrad.addColorStop(0.7, `rgba(${rcr},${rcg},${rcb},0.8)`);
-      rgrad.addColorStop(0.82, `rgba(${rcr},${rcg},${rcb},0.16)`);
-      rgrad.addColorStop(1.0, `rgba(${rcr},${rcg},${rcb},0)`);
-      rcx.fillStyle = rgrad;
-      rcx.fillRect(0, 0, 256, 256);
-    }
-    const rippleTex = new THREE.CanvasTexture(rippleCanvas);
-    rippleTex.colorSpace = THREE.SRGBColorSpace;
-    const ringGeo = new THREE.PlaneGeometry(2, 2);
-    const ringMat = new THREE.MeshBasicMaterial({
-      map: rippleTex,
-      transparent: true,
-      opacity: 0,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false,
-      depthTest: false,
-      side: THREE.DoubleSide,
-      toneMapped: false
-    });
-    const ripple = new THREE.Mesh(ringGeo, ringMat);
-    ripple.renderOrder = 1;
-    ripple.visible = false;
-    sceneGroup.add(ripple);
 
 
     // Reusable scratch + per-instance writer for the explosion.
@@ -734,9 +697,6 @@ export default function ClayHeroScene({ wrapperSelector }: { wrapperSelector?: s
       ball.dispose(); // releases the InstancedMesh instanceMatrix GPU buffer
       voxGeo.dispose();
       voxMat.dispose();
-      ringGeo.dispose();
-      ringMat.dispose();
-      rippleTex.dispose();
       bodyGeo.dispose();
       bodyMat.dispose();
       frameGeo.dispose();

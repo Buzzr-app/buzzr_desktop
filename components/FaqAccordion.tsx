@@ -54,7 +54,7 @@ export function FaqAccordion({ items }: { items: FaqItem[] }) {
                 aria-controls={panelId}
                 onClick={() => setOpenIndex(isOpen ? null : i)}
                 onKeyDown={(e) => onKeyDown(e, i)}
-                className="flex w-full items-center justify-between gap-6 py-5 text-left text-[16px] leading-[1.5] tracking-[-0.025em] text-foreground transition-colors hover:text-muted focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgb(var(--accent-rgb)_/_0.55)] rounded-sm"
+                className="flex w-full items-center justify-between gap-4 py-5 text-left text-[15px] sm:gap-6 sm:text-[16px] leading-[1.5] tracking-[-0.025em] text-foreground transition-colors hover:text-muted focus-visible:outline-none focus-visible:shadow-[0_0_0_2px_rgb(var(--accent-rgb)_/_0.55)] rounded-sm"
               >
                 <span>{item.q}</span>
                 <span

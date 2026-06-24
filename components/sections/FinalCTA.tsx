@@ -20,7 +20,7 @@ export function FinalCTA() {
       <div aria-hidden className="gyroid-veil-cta absolute inset-0" />
       <div aria-hidden className="cta-gyroid-scrim" />
       <FooterMoney className="absolute inset-x-0 bottom-0 z-[5] h-[340px] overflow-hidden" />
-      <div className="relative z-10 mx-auto flex max-w-[760px] flex-col items-center gap-7 px-6 py-28 text-center [--ease-out:cubic-bezier(0.23,1,0.32,1)]">
+      <div className="relative z-10 mx-auto flex max-w-[760px] flex-col items-center gap-6 px-6 py-20 text-center sm:gap-7 sm:py-28 [--ease-out:cubic-bezier(0.23,1,0.32,1)]">
         <BrandMark
           alt="Buzzr"
           size={92}

@@ -23,6 +23,13 @@ export function ScrollReveal({
     const el = ref.current;
     if (!el) return;
 
+    // No IntersectionObserver (old/edge env) -> reveal immediately; never trap
+    // content behind a feature that isn't present.
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => { if (entry?.isIntersecting) setInView(true); },
       { threshold: 0.08, rootMargin }
@@ -35,7 +42,7 @@ export function ScrollReveal({
   return (
     <div
       ref={ref}
-      className={cn(className)}
+      className={cn('scroll-reveal', className)}
       style={{
         containIntrinsicSize: inView ? undefined : '560px',
         contentVisibility: inView ? 'visible' : 'auto',
@@ -44,7 +51,7 @@ export function ScrollReveal({
         transition: inView
           ? `opacity 0.22s cubic-bezier(0.22,1,0.36,1) ${delay * 40}ms, transform 0.22s cubic-bezier(0.22,1,0.36,1) ${delay * 40}ms`
           : 'none',
-        willChange: 'opacity, transform',
+        willChange: inView ? undefined : 'opacity, transform',
       }}
     >
       {children}

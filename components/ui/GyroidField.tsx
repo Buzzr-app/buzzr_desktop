@@ -410,8 +410,10 @@ export function GyroidField({
                  : variant === 'hex' ? HEX_FRAGMENT_SRC
                  : FRAGMENT_SRC;
     const program = gl.createProgram()!;
-    gl.attachShader(program, compile(gl.VERTEX_SHADER, VERTEX_SRC));
-    gl.attachShader(program, compile(gl.FRAGMENT_SHADER, fragSrc));
+    const vertShader = compile(gl.VERTEX_SHADER, VERTEX_SRC);
+    const fragShader = compile(gl.FRAGMENT_SHADER, fragSrc);
+    gl.attachShader(program, vertShader);
+    gl.attachShader(program, fragShader);
     gl.linkProgram(program);
     if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
       if (process.env.NODE_ENV !== 'production') {
@@ -419,6 +421,10 @@ export function GyroidField({
       }
       return;
     }
+    // Shaders are linked into the program now; free the standalone GL objects
+    // (deleteProgram alone does not free shaders that were never marked).
+    gl.deleteShader(vertShader);
+    gl.deleteShader(fragShader);
     gl.useProgram(program);
 
     // Fullscreen triangle (covers clip space with one primitive).

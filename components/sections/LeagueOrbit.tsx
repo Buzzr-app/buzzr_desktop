@@ -193,7 +193,7 @@ function OrbitCenter({ item }: { item: LeagueOrbitItem }) {
       <p className="orbit-center__name mt-4 text-[19px] font-semibold leading-none tracking-[0] text-foreground">
         {item.league.long}
       </p>
-      <div className="mt-3 flex items-center justify-center gap-2">
+      <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-accent/35 bg-accent/10 px-3 py-1 font-mono text-[11px] uppercase leading-none tracking-[0.12em] text-accent-text">
           <span aria-hidden className="orbit-live-dot" />
           {STATUS_LABEL[item.league.status]}

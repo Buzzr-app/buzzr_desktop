@@ -49,9 +49,9 @@ export function OpenSource() {
               href={`https://www.npmjs.com/package/${pkg.name}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex flex-col gap-1.5 bg-surface px-5 py-4 transition-colors duration-200 hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none sm:flex-row sm:items-center sm:gap-5"
+              className="group flex min-w-0 flex-col gap-1.5 bg-surface px-5 py-4 transition-colors duration-200 hover:bg-subtle focus-visible:bg-subtle focus-visible:outline-none sm:flex-row sm:items-center sm:gap-5"
             >
-              <code className="shrink-0 font-mono text-[13px] tracking-[-0.01em] text-foreground sm:w-[268px]">
+              <code className="break-all font-mono text-[13px] tracking-[-0.01em] text-foreground sm:w-[268px] sm:break-normal sm:shrink-0">
                 {pkg.name}
               </code>
               <span className="flex-1 text-[14px] leading-[1.45] tracking-[-0.01em] text-muted">
