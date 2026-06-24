@@ -1102,6 +1102,19 @@ h1, h2, h3, h4, h5, h6 {
   .league-chip-logo { width: 20px; height: 20px; }
   .dashboard-proof-preview__teams { gap: 6px; }
   .dashboard-proof-preview__teams span { padding: 4px 8px 4px 4px; }
+
+  /* Leagues preview: let the tabs wrap (parent clips the 4th otherwise), and
+     shrink the fixed count column so team names stop truncating. */
+  .league-sort-preview__tabs { flex-wrap: wrap; gap: 5px; overflow: visible; }
+  .league-sort-preview__panel { grid-template-columns: 66px minmax(0, 1fr); gap: 8px; }
+  .league-sort-preview__count { padding: 10px; }
+  .league-sort-preview__count strong { font-size: 24px; }
+  .league-sort-preview__rows > span { grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 7px; }
+  /* Drop the secondary metric pill on mobile so the team name reads in full. */
+  .league-sort-preview__rows em { display: none; }
+
+  /* Bets summary numbers ease down so the two tiles never crowd. */
+  .bets-slip-preview__summary span { font-size: 20px; padding: 11px; }
 }
 
 .dashboard-widget-stage {
