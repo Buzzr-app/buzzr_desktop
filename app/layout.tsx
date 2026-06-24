@@ -54,6 +54,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={fontVariables} data-scroll-behavior="smooth">
       <body className="bg-canvas text-foreground font-sans antialiased">
+        {/* No-JS fallback: ScrollReveal starts hidden and reveals via an observer.
+            Without JS, force every reveal wrapper visible so the page body below
+            the hero is never blank. */}
+        <noscript>
+          <style>{'.scroll-reveal{opacity:1!important;transform:none!important}'}</style>
+        </noscript>
         <a
           href="#main-content"
           className="sr-only absolute left-4 top-4 z-50 border border-border bg-surface px-4 py-2 text-[14px] tracking-[-0.025em] text-foreground focus:not-sr-only focus:outline-none focus:shadow-[var(--shadow-focus)]"

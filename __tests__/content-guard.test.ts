@@ -184,23 +184,26 @@ describe('content guardrails', () => {
   it('keeps the refined encircle hero copy and decorative SVG headline', () => {
     const heroCopy = readFileSync(path.join(ROOT, 'components/ui/HeroCopy.tsx'), 'utf8');
 
-    expect(heroCopy).toContain('The home for all sports fans.');
-    expect(heroCopy).toContain('Follow every team, rate live games, and keep your crew in the same feed.');
+    // Accessible headline plus a decorative SVG that rings the ball on two arcs.
     expect(heroCopy).toContain('<h1 id="hero-title" className="sr-only">');
+    expect(heroCopy).toContain('The home for all sports fans.');
     expect(heroCopy).toContain('viewBox="0 0 560 560"');
     expect(heroCopy).toContain('hero-encircle');
-    expect(heroCopy).toContain('The home for all');
-    expect(heroCopy).toContain('sports fans.');
+    expect(heroCopy).toContain('heroArcTop');
+    expect(heroCopy).toContain('heroArcBot');
+    // Words split across the arcs, with a home icon at the apex.
+    expect(heroCopy).toContain('>The</textPath>');
+    expect(heroCopy).toContain('>for all</textPath>');
+    expect(heroCopy).toContain('>sports fans.</textPath>');
+    // The logo swarm reveal still drifts in around the risen phone.
+    expect(heroCopy).toContain('HeroLogoSwarm');
+
+    // No subcopy line, CTA button row, trust items, or AI-native positioning.
     expect(heroCopy).not.toContain('HERO_TRUST_ITEMS');
     expect(heroCopy).not.toContain('hero-product-proof');
     expect(heroCopy).not.toContain('hero-product-promise');
     expect(heroCopy).not.toContain('Follow teams. Rate games. Chat live.');
-    expect(heroCopy).toContain('bottom-[14vh]');
-    expect(heroCopy).toContain('flex-col items-center justify-center gap-2 px-4 sm:bottom-[12vh] sm:flex-row sm:gap-3 sm:px-6');
-    expect(heroCopy).toContain('px-4 py-3 text-[14px]');
-    expect(heroCopy).toContain('sm:px-5 sm:text-[15px]');
-    expect(heroCopy).toContain('w-[168px] items-center justify-center');
-    expect(heroCopy).toContain('sm:w-auto');
+    expect(heroCopy).not.toContain('Follow every team, rate live games, and keep your crew in the same feed.');
     expect(heroCopy).not.toContain('AI-Native');
     expect(heroCopy).not.toContain('The AI-native home for sports fans.');
   });
@@ -233,7 +236,11 @@ describe('content guardrails', () => {
     expect(surfacesGrid).not.toContain('/promo/buzzr-friends.mp4');
     expect(surfacesGrid).not.toContain('/promo/buzzr-bets.mp4');
     expect(surfacesGrid).not.toContain('LazyMotionPreview');
-    expect(surfacesGrid).toContain('EmojiBurst');
+    // Bento reactions use minimal lucide icons, not emoji bursts.
+    expect(surfacesGrid).toContain("from 'lucide-react'");
+    expect(surfacesGrid).toContain('Flame');
+    expect(surfacesGrid).toContain('Snowflake');
+    expect(surfacesGrid).not.toContain('EmojiBurst');
     expect(surfacesGrid).toContain('DashboardProofPreview');
     expect(surfacesGrid).toContain('LeagueSortPreview');
     expect(surfacesGrid).toContain('LeagueChipLogo');
@@ -381,14 +388,21 @@ describe('content guardrails', () => {
     expect(css).not.toContain('.hero-product-proof');
   });
 
-  it('uses install trust proof in the final app CTA', () => {
+  it('keeps the final app CTA minimal with a single install action', () => {
     const finalCta = readFileSync(path.join(ROOT, 'components/sections/FinalCTA.tsx'), 'utf8');
 
-    expect(finalCta).toContain('Free on iOS');
-    expect(finalCta).toContain('5.0 App Store rating');
-    expect(finalCta).toContain('11 ratings');
-    expect(finalCta).toContain('49 leagues');
-    expect(finalCta).toContain('Follow teams, rate games, and keep the crew close.');
+    expect(finalCta).toContain('Sports feels better when Buzzr gets it.');
+    expect(finalCta).toContain('Get the app');
+    expect(finalCta).toContain('APP_STORE_URL');
+    expect(finalCta).toContain('AppleIcon');
+    expect(finalCta).toContain('variant="cta"');
+
+    // The old multi-stat trust row was dropped for a single install button.
+    expect(finalCta).not.toContain('Free on iOS');
+    expect(finalCta).not.toContain('5.0 App Store rating');
+    expect(finalCta).not.toContain('11 ratings');
+    expect(finalCta).not.toContain('49 leagues');
+    expect(finalCta).not.toContain('Follow teams, rate games, and keep the crew close.');
   });
 
   it('keeps and polishes the Buzzr 2.0 launch banner', () => {

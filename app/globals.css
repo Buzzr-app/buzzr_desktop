@@ -1096,7 +1096,7 @@ h1, h2, h3, h4, h5, h6 {
   .dashboard-proof-preview__widgets strong,
   .dashboard-proof-preview__team strong { font-size: 14px; }
   .dashboard-proof-preview__team { padding: 11px; gap: 8px; }
-  .dashboard-proof-preview__league-tabs { gap: 5px; }
+  .dashboard-proof-preview__league-tabs { gap: 5px; flex-wrap: wrap; overflow: visible; }
   .dashboard-proof-preview__league-tabs span,
   .league-sort-preview__tabs span { padding: 5px 7px 5px 5px; font-size: 9px; gap: 5px; }
   .league-chip-logo { width: 20px; height: 20px; }
@@ -1329,14 +1329,9 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .dashboard-widget-stage__grid,
-  .emoji-burst span {
+  .dashboard-widget-stage__grid {
     animation: none;
     transition: none;
-  }
-  .emoji-burst span {
-    opacity: 0.5;
-    transform: translate3d(-50%, 0, 0) scale(1);
   }
 }
 
